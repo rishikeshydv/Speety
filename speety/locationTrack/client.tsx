@@ -12,20 +12,23 @@ import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-
-
+import { Locator } from './currentLocation';
 
 export default function Location() {
 
-const baseMapLayer = new TileLayer({
-  source: new OSM(),
-});
+Locator()
+.then((res)=>{
+  const [longitude,latitude] = res;
+  console.log('Coordinates Retrieved')
+  const baseMapLayer = new TileLayer({
+    source: new OSM(),
+  });
 
 const map = new Map({
   target: 'map', // specifying the HTML element ID where the map will be rendered
   layers: [baseMapLayer],
   view: new View({
-    center: [80.2459, 12.9860], //initial longitude and latitude
+    center: [longitude,latitude], //initial longitude and latitude
     zoom: 15, //how much can we zoom
   }),
 });
@@ -55,7 +58,11 @@ const markerVectorLayer = new VectorLayer({
 
 // Add style to Vector layer style map
 map.addLayer(markerVectorLayer);
-
+}
+)
+.catch((error)=>{
+  console.log(error)
+})
   return (
     <div>
       <div id='map' className='flex h-screen'>
