@@ -6,10 +6,10 @@ function NavbarLeft() {
     <div className='flex items-center justify-between h-1/2'>
       <div className='flex'>
         <ul className='flex'>
-          <li className='mx-10'><a href="#">Buy</a></li>
-          <li className='mx-10'><a href="#">Rent</a></li>
-          <li className='mx-10'><a href="#">Sell</a></li>
-          <li className='mx-10'><a href="#">Agent Finder</a></li>
+          <li className='mx-10'><a href="/buy">Buy</a></li>
+          <li className='mx-10'><a href="/rent">Rent</a></li>
+          <li className='mx-10'><a href="/sell">Sell</a></li>
+          <li className='mx-10'><a href="/agent">Agent Finder</a></li>
         </ul>
       </div>
       <div>
@@ -18,7 +18,7 @@ function NavbarLeft() {
 
       <div>
         <ul className='flex'>
-          <li className='mx-6'><a href="#">Help</a></li>
+          <li className='mx-6'><a href="/help">Help</a></li>
           <li className='mx-6'><a href="/auth/login">Sign In</a></li>
         </ul>
       </div>
