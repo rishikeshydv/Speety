@@ -12,7 +12,7 @@ import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import { Locator } from './currentLocation';
+import { Locator } from '@/locationTrack/currentLocation';
 
 export default function Location() {
 
