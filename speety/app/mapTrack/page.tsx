@@ -12,13 +12,13 @@ import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
-import { Locator } from "@/locationTrack/currentLocation";
+import {getLocation} from "@/locationTrack/currentLocation";
 
-export default function Location() {
-  Locator()
-    .then((res) => {
-      const [longitude, latitude] = res;
-      console.log("Coordinates Retrieved");
+export default async function Location() {
+  const res:any = await getLocation();
+    const [_latt,_long] = res;
+    console.log("Coordinates Received")
+
       const baseMapLayer = new TileLayer({
         source: new OSM(),
       });
@@ -27,7 +27,7 @@ export default function Location() {
         target: "map", // specifying the HTML element ID where the map will be rendered
         layers: [baseMapLayer],
         view: new View({
-          center: [longitude, latitude], //initial longitude and latitude
+          center: [_long, _latt], //initial longitude and latitude
           zoom: 15, //how much can we zoom
         }),
       });
@@ -43,7 +43,7 @@ export default function Location() {
 
       // Adding a marker on the map
       const marker = new Feature({
-        geometry: new Point(fromLonLat([80.24586, 12.9859])),
+        geometry: new Point(fromLonLat([_long, _latt])),
       });
       marker.setStyle(iconStyle);
 
@@ -57,10 +57,6 @@ export default function Location() {
 
       // Add style to Vector layer style map
       map.addLayer(markerVectorLayer);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
   return (
     <div>
       <div id="map" className="flex h-screen">
