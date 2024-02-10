@@ -1,174 +1,103 @@
 "use client";
-import signup from "@/firebase/auth/signup";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { addDoc, collection } from "firebase/firestore";
-import { auth } from "@/firebase/config";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { db } from "@/firebase/config";
+import React, { useState } from 'react'
+import { Navigate, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext';
+import signup from '@/firebase/auth/signup';
 
 export default function SignupPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const navigate = useNavigate()
 
-  const router = useRouter();
-  const [errorMsg, setErrorMsg] = useState<string>("");
-  const [user] = useAuthState(auth);
-  const userCollectionRef = collection(db, "user");
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setconfirmPassword] = useState('')
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const onSubmit = useCallback(async (data: Record<string, string>) => {
-    try {
-      const { email, password, confirmedPassword, firstName, lastName } =
-        data;
+  const userLoggedIn = useAuth()
 
-      if (password !== confirmedPassword) {
-        // show message to user that passwords do not match
-        setErrorMsg("Passwords do not match");
-        return;
+  const onSubmit = async (e:any) => {
+      e.preventDefault()
+      if(!isRegistering) {
+          setIsRegistering(true)
+          await signup(email, password)
       }
-
-      const { userCredential, error } = await signup(email, password);
-
-      if (!userCredential) {
-        setErrorMsg("Something went wrong. Please try again later.");
-      }
-      console.log(user);
-      // Store user in database
-      await createUserInDB(email, firstName, lastName);
-      router.push("/");
-    } catch (error) {
-      console.log(error);
-      setErrorMsg("Something went wrong. Please try again later.");
-    }
-  }, []);
-
-  const createUserInDB = async (
-    email: string,
-    firstName: string,
-    lastName: string
-  ) => {
-    // add user to database
-    const data = {
-      email,
-      full_name: `${firstName} ${lastName}`,
-    };
-
-    try {
-      await addDoc(userCollectionRef, data);
-    } catch (error) {
-      console.log(error);
-      setErrorMsg("Something went wrong. Please try again later.");
-    }
-  };
+  }
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="flex items-center justify-center w-full max-w-4xl gap-5 px-6">
-        <div className="w-full h-full">
-        </div>
-        <div className="w-full h-full flex items-center flex-col gap-5 justify-center">
-          <span className="w-full flex items-center justify-center gap-2">
-            <a href="/"><h1 className="font-sans text-6xl text-[#2E1760] font-bold">
-              Speety
-            </h1>
-            </a>
-          </span>
-          <form onSubmit={() => handleSubmit(onSubmit)} className="w-full h-full">
-            <div className="flex flex-col gap-4 w-full">
-              <div className="flex flex-row gap-3 w-full">
-                <div className="flex flex-col gap-1 w-full">
-                  <label htmlFor="firstName" className="text-neutral-800 ">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border-neutral-700 p-1 min-h-[40px] focus:border-[#FF725E]"
-                    style={{ borderWidth: "1px" }}
-                    id="firstName"
-                    required
-                    {...register("firstName", { required: true })}
-                  />
-                  {errors.firstName && <span>This field is required</span>}
+    <>
+            {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
+
+            <main className="w-full h-screen flex self-center place-content-center place-items-center">
+                <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl">
+                    <div className="text-center mb-6">
+                        <div className="mt-2">
+                            <h3 className="text-gray-800 text-xl font-semibold sm:text-2xl">Create a New Account</h3>
+                        </div>
+
+                    </div>
+                    <form
+                        onSubmit={onSubmit}
+                        className="space-y-4"
+                    >
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                autoComplete='email'
+                                required
+                                value={email} onChange={(e) => { setEmail(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                                Password
+                            </label>
+                            <input
+                                disabled={isRegistering}
+                                type="password"
+                                autoComplete='new-password'
+                                required
+                                value={password} onChange={(e) => { setPassword(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                                Confirm Password
+                            </label>
+                            <input
+                                disabled={isRegistering}
+                                type="password"
+                                autoComplete='off'
+                                required
+                                value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
+
+                        {errorMessage && (
+                            <span className='text-red-600 font-bold'>{errorMessage}</span>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={isRegistering}
+                            className={`w-full px-4 py-2 text-white font-medium rounded-lg ${isRegistering ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transition duration-300'}`}
+                        >
+                            {isRegistering ? 'Signing Up...' : 'Sign Up'}
+                        </button>
+                        <div className="text-sm text-center">
+                            Already have an account? {'   '}
+                            <Link to={'/login'} className="text-center text-sm hover:underline font-bold">Continue</Link>
+                        </div>
+                    </form>
                 </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label htmlFor="lastName" className="text-neutral-800 ">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border-neutral-700 p-1 min-h-[40px] focus:border-[#FF725E]"
-                    style={{ borderWidth: "1px" }}
-                    id="lastName"
-                    required
-                    {...register("lastName", { required: true })}
-                  />
-                  {errors.lastName && <span>This field is required</span>}
-                </div>
-              </div>
-              <div className="w-full flex flex-col gap-1">
-                <label htmlFor="email" className="text-neutral-800 ">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  className="w-full rounded-lg border-neutral-700 p-1 min-h-[40px] focus:border-[#FF725E]"
-                  style={{ borderWidth: "1px" }}
-                  id="email"
-                  required
-                  {...register("email", { required: true })}
-                />
-                {errors.email && <span>This field is required</span>}
-              </div>
-              <div className="w-full flex flex-col gap-1">
-                <label htmlFor="password" className="text-neutral-800 ">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-lg border-neutral-700 p-1 min-h-[40px] focus:border-[#FF725E]"
-                  style={{ borderWidth: "1px" }}
-                  id="password"
-                  required
-                  {...register("password", { required: true })}
-                />
-                {errors.password && <span>This field is required</span>}
-              </div>
-              <div className="w-full flex flex-col gap-1">
-                <label htmlFor="password" className="text-neutral-800 ">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-lg border-neutral-700 p-1 min-h-[40px] focus:border-[#FF725E]"
-                  style={{ borderWidth: "1px" }}
-                  id="confirmedPassword"
-                  required
-                  {...register("confirmedPassword", { required: true })}
-                />
-                {errors.confirmedPassword && (
-                  <span>{errorMsg || "This field is required"}</span>
-                )}
-              </div>
-              <span className="text-sm text-red-500 w-full flex items-center justify-center">
-                {errorMsg}
-              </span>
-              <button
-                type="submit"
-                onClick={handleSubmit(onSubmit)}
-                className="items-center w-full flex justify-center bg-neutral-700 py-2 rounded-lg transition duration-500 hover:bg-[# ]"
-              >
-                <span className="text-white font-semibold text-lg">
-                  Sign Up
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+            </main>
+            </>
   );
 }

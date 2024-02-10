@@ -1,16 +1,12 @@
 import React from 'react'
-import { auth } from '../config'
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { app } from '../config'
+import { signInWithEmailAndPassword,getAuth } from "firebase/auth";
 
-export default async function login(email: string, password: string) {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
+const auth = getAuth(app)
+export default async function Login(email: string, password: string) {
+    return signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      return userCredential;
-    } catch (error) {
-      return error;
-    }
   }

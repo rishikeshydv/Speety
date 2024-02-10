@@ -1,19 +1,12 @@
 import React from 'react'
-import { auth } from '../config'
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from '../config'
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+
+const auth = getAuth(app);
 export default async function signup(email: string, password: string) {
-    let userCredential, error;
-  
-    try {
-      userCredential = await createUserWithEmailAndPassword(
+    return createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      
-    } catch (e) {
-      error = e;
-    }
-  
-    return { userCredential, error };
   }
