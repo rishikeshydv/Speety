@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 
@@ -9,11 +10,10 @@ export default function Video() {
         "3b9a16d0c18201494db1dfb8be80d1bd"
       );
 
-
       zg.on(
         "roomStreamUpdate",
         async (roomID, updateType, streamList, extendedData) => {
-          if (updateType == "ADD") {
+          if (updateType === "ADD") {
             const rmVideo = document.getElementById("remote-video");
             const vd = document.createElement("video");
             vd.id = streamList[0].streamID;
@@ -29,10 +29,9 @@ export default function Video() {
             }).then((stream) => {
               vd.srcObject = stream;
             });
-            // New stream added, start playing the stream.
-          } else if (updateType == "DELETE" && zg && streamList[0].streamID) {
-            zg.stopPublishingStream(streamList[0].streamID);
-            zg.logoutRoom("123");
+          } else if (updateType === "DELETE" && zg && streamList[0].streamID) {
+            zg.stopPlayingStream(streamList[0].streamID); // Fixed method name
+            zg.logoutRoom("zego-room"); // Changed hard-coded roomID to "zego-room"
           }
         }
       );
@@ -40,7 +39,7 @@ export default function Video() {
       await zg.loginRoom(
         "zego-room",
         "token",
-        { userID: "123", userName: "kishan" },
+        { userID: "123", userName: "Rishi" },
         { userUpdate: true }
       );
 
@@ -50,21 +49,32 @@ export default function Video() {
           video: true,
         },
       });
-      // Get the audio tag.
+
       const localAudio = document.getElementById("local-video");
+
       const videoElement = document.createElement("video");
-      const td = document.getElementById("audio-local") as HTMLMediaElement;
       videoElement.id = "local-video";
       videoElement.className = "h-28 w-32";
       videoElement.autoplay = true;
       videoElement.muted = false;
+
       videoElement.playsInline = true;
+      
       localAudio?.appendChild(videoElement);
-      td!.srcObject = localStream;
+      videoElement.srcObject = localStream;
+
+      const streamID = "123" + Date.now();
+      zg.startPublishingStream(streamID, localStream);
     };
-    const streamID = "123" + Date.now();
-    zg.startPublishingStream(streamID, localStream);
-  }, []);
+
+    initializeApp(); // Call the initialization function
+
+    // Clean up function
+    return () => {
+      // Perform any cleanup, e.g., disconnect from Zego
+    };
+  }, []); // Dependency array is empty, effect runs only once
+
   return (
     <div>
       <div id="local-video"></div>
