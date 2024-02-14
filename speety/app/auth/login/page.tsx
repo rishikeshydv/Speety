@@ -1,89 +1,109 @@
 "use client";
-import Login from "@/firebase/auth/login";
+import Login from "@/firebase/auth/Login";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react"; 
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { auth } from "@/firebase/config";
+import { auth, db } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {Navigate,Link} from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
-export default function LoginPage() {
-  const userLoggedIn = useAuth();
+export default function SignInPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const [isSigningIn,setIsSigningIn] = useState(false);
+  const router = useRouter();
+  const [user] = useAuthState(auth);
   const [err, setErr] = useState<string | false>(false);
 
-  const onSubmit = async (e:any) => {
-      e.preventDefault()
-      if(!isSigningIn) {
-        setIsSigningIn(true)
-        await Login(email, password)
-        // doSendEmailVerification()
+  const onSubmit = useCallback(async (data: Record<string, string>) => {
+    try {
+      const { email, password } = data;
+      await Login(email, password)
+        .then(async function getUser() {
+       //router.push("/")
+          const docRef = collection(db, "User_Info");
+          const q = query(docRef, where("email", "==", email));
+          const docSnap = await getDocs(q);
+
+          if (docSnap.empty) {
+            // Handle error: User not found in database
+            setErr("User not found. Please try again or sign up.");
+            return;
+          }
+          docSnap.forEach((doc) => {
+            const userData = doc.data()
+            console.log(userData.firstName);
+            router.push("/")
+          });
+      }
+        )
+        .catch((err) => {
+          console.log(err);
+          setErr("Invalid email or password");
+        });
+    } catch (error) {
+      console.log(error);
+      setErr("Invalid email or password");
     }
-  };
+  }, []);
 
-  return (<div>
-    {userLoggedIn && (<Navigate to={'/'} replace={true} />)}
-
-    <main className="w-full h-screen flex self-center place-content-center place-items-center">
-        <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl">
-            <div className="text-center">
-                <div className="mt-2">
-                    <h3 className="text-gray-800 text-xl font-semibold sm:text-2xl">Welcome Back</h3>
-                </div>
-            </div>
-            <form
-                onSubmit={onSubmit}
-                className="space-y-5"
-            >
-                <div>
-                    <label className="text-sm text-gray-600 font-bold">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        autoComplete='email'
-                        required
-                        value={email} onChange={(e) => { setEmail(e.target.value) }}
-                        className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
-                    />
-                </div>
-
-
-                <div>
-                    <label className="text-sm text-gray-600 font-bold">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        autoComplete='current-password'
-                        required
-                        value={password} onChange={(e) => { setPassword(e.target.value) }}
-                        className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
-                    />
-                </div>
-
-                {err && (
-                    <span className='text-red-600 font-bold'>{err}</span>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={isSigningIn}
-                    className={`w-full px-4 py-2 text-white font-medium rounded-lg ${isSigningIn ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transition duration-300'}`}
+  return (
+    <div className="flex justify-center items-center w-screen h-screen">
+      <div className="flex items-center justify-center w-full md:gap-5 gap-3 px-6 lg:flex-row flex-col">
+        <div className="w-full h-full flex items-center flex-col gap-5 justify-center">
+          <span className="w-full font-sans flex items-center justify-center lg:text-3xl md:text-2xl text-xl text-[#FF725E] font-bold text-center">
+            Campus Commune
+          </span>
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full">
+            <div className="flex flex-col gap-4 w-full">
+              <div className="w-full flex flex-col gap-1">
+                <label htmlFor="email" className="text-neutral-800 ">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  className="w-full rounded-lg border-neutral-700 p-1 basis-[40px] focus:border-[#FF725E]"
+                  style={{ borderWidth: "1px" }}
+                  id="email"
+                  {...register("email", { required: true })}
+                />
+                {errors.email && <span>This field is required</span>}
+              </div>
+              <div className="w-full flex flex-col gap-1">
+                <label htmlFor="password" className="text-neutral-800 ">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border-neutral-700 p-1 basis-[40px] focus:border-[#FF725E]"
+                  style={{ borderWidth: "1px" }}
+                  id="email"
+                  {...register("password", { required: true })}
+                />
+                {errors.password && <span>This field is required</span>}
+              </div>
+              <div className="w-full flex items-center justify-center">
+                <span className="text-red-300 text-sm">{err ? err : ""}</span>
+              </div>
+              <button className="items-center w-full flex justify-center cursor-pointer bg-neutral-700 py-2 rounded-lg transition duration-500 hover:bg-[#ff533c]">
+                <span className="text-white font-semibold text-lg">Log In</span>
+              </button>
+              <p>
+                Don't have an account?{" "}
+                <span
+                  onClick={() => router.push("/auth/signup")}
+                  className="text-[#FF725E] cursor-pointer hover:underline"
                 >
-                    {isSigningIn ? 'Signing In...' : 'Sign In'}
-                </button>
-            </form>
-            <p className="text-center text-sm">Don't have an account? <Link to={'/auth/signup'} className="hover:underline font-bold">Sign up</Link></p>
-            <div className='flex flex-row text-center w-full'>
-                <div className='border-b-2 mb-2.5 mr-2 w-full'></div><div className='text-sm font-bold w-fit'>OR</div><div className='border-b-2 mb-2.5 ml-2 w-full'></div>
+                  Sign up
+                </span>
+              </p>
             </div>
+          </form>
         </div>
-    </main>
-</div>
+      </div>
+    </div>
   );
 }
