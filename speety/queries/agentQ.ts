@@ -1,16 +1,25 @@
-import { Firestore, collection, query, getDocs, where, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  QueryDocumentSnapshot,
+  DocumentData,
+} from "firebase/firestore";
 
+import {db} from "@/firebase/config"
 
 interface Agent {
   name: string;
-  company:string;
+  company: string;
   address: string;
   zip: string;
+  ratings:string
+
 }
 
-async function agentQ(db: Firestore, zip: string) {
+async function agentQ(zip: string){
   try {
-
     // Create a query to get documents where the "capital" field is equal to true
     const q = query(collection(db, "agentList"), where("zip", "==", zip));
 
@@ -36,4 +45,3 @@ async function agentQ(db: Firestore, zip: string) {
 }
 
 export { agentQ };
-
