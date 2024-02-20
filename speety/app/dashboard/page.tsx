@@ -3,27 +3,44 @@
 import React, { useState } from 'react';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from '@/firebase/config';
+import rejectHandler from "@/services/requestHandle/rejectHandler"
 
 interface _notification {
   uniqueId:string,
-  age: "NEW",
-  notificationType: "CHAT",
-  receiverEmail: "rishikeshadh4@gmail.com",
-  senderEmail: "ryadav@caldwell.edu",
-  status: "PENDING",
+  age: "NEW"|"OLD",
+  notificationType: "CHAT"|"VIDEO"|"LOCATION",
+  receiverEmail: string,
+  senderEmail: string,
+  status: "PENDING"|"ACCEPTED"|"DENIED",
+  date_time:string
 }
+const notificationList: _notification[] = [];
 const Dashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
-
+  
   async function getNotifications(){
-    const q = query(collection(db, "cities"));
+    const q = query(collection(db, "notifications"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
+      //console.log(doc.data().uniqueId)
+      const notificationData = doc.data();
+      const notification: _notification = {
+        uniqueId: notificationData.uniqueId as string,
+        age: notificationData.age,
+        notificationType: notificationData.notificationType,
+        receiverEmail: notificationData.receiverEmail,
+        senderEmail: notificationData.senderEmail,
+        status: notificationData.status,
+        date_time: notificationData.date_time as string
+      };
+      notificationList.push(notification);
+  //    console.log(notificationList)
     })
   }
+
+  getNotifications()
   
-  const notifications = ['Notification 1', 'Notification 2', 'Notification 3']; // Example notifications, replace with your own data
+  //const notifications = ['Notification 1', 'Notification 2', 'Notification 3']; // Example notifications, replace with your own data
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -46,8 +63,13 @@ const Dashboard = () => {
           <div className="notification-popup-content">
             <h2>Notifications</h2>
             <ul>
-              {notifications.map((notification, index) => (
-                <li key={index}>{notification}</li>
+              {notificationList.map((notification, index) => (
+                <li key={index}>
+                  {notification.senderEmail + "sent a "+ notification.notificationType + " request"}
+                  <button id="accept1" className='border'>Accept</button>
+                  <button id="reject1" className='border' onClick={()=>rejectHandler(notification.uniqueId)}>Reject</button>
+                  
+                  </li>
               ))}
             </ul>
             <button onClick={toggleNotifications}>Close</button>
