@@ -1,0 +1,22 @@
+// this is just a sample to create a collection in the firebase realtime database
+//through import JSON
+
+{
+    "notifications": [
+      {
+        "age": "NEW",
+        "notificationType": "CHAT",
+        "receiverEmail": "rishikeshadh4@gmail.com",
+        "senderEmail": "ryadav@caldwell.edu",
+        "status": "PENDING"
+      },
+      {
+        "age": "OLD",
+        "notificationType": "FRIEND_REQUEST",
+        "receiverEmail": "user@example.com",
+        "senderEmail": "friend@example.com",
+        "status": "ACCEPTED"
+      }
+    ]
+  }
+  
