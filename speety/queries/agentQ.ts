@@ -14,7 +14,8 @@ interface Agent {
   company: string;
   address: string;
   zip: string;
-  ratings:string
+  ratings:string;
+  email: string
 
 }
 

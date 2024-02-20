@@ -1,70 +1,98 @@
 "use client"
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import {
-  query,
-  collection,
-  orderBy,
-  onSnapshot,
-  limit,
-  Timestamp,
-  where
-} from "firebase/firestore";
-import { db } from "@/firebase/config";
-import Message from "@/components/Message";
-import SendMessage from "@/components/SendMessage";
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-interface MessageData {
-  uid: string;
-  text: string;
-  name: string;
-  createdAt: Timestamp
-}
+import { useState } from 'react';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
 
-const ChatBox = () => {
-  const email = "rishikeshadh4@gmail.com"
-  const [messages, setMessages] = useState<MessageData[]>([]);
-  const scroll = useRef<HTMLSpanElement>(null!);
-
+export default function Chat() {
   useEffect(() => {
-    const q = query(
-      collection(db, "messages"),
-      where("email", "==", email),
-      orderBy("createdAt", "desc"),
-      limit(50)
-    );
+    import("peerjs").then(({ default: Peer }) => {
+      //this is a function to start a call
+        const [user] = useAuthState(auth);
+        if (user) {
+          //this is the sender call id
+          const _email = user.email as string;
+          var peer = new Peer(_email);
 
-    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-      const fetchedMessages: MessageData[] = [];
-      QuerySnapshot.forEach((doc) => {
-        fetchedMessages.push({ ...doc.data(), uid: doc.id } as MessageData);
-      });
-      const sortedMessages = fetchedMessages.sort(
-        (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
-      );
-      setMessages(sortedMessages);
-    });
-    return () => unsubscribe();
-  }, []);
+          const router = useRouter();
+          const receiverEmail = router.query.email as string;
 
-  useEffect(() => {
-    if (scroll.current) {
-      scroll.current.scrollIntoView({ behavior: "smooth" });
+          const callerVideo = document.getElementById(
+            "caller"
+          ) as HTMLVideoElement;
+
+          var getUserMedia = navigator.mediaDevices.getUserMedia;
+          getUserMedia({ video: true, audio: true })
+            .then((stream: MediaStream) => {
+              var call = peer.call(receiverEmail, stream); //stream is the video/audio of callerUser
+              call.on("stream", function (remoteStream: MediaStream) {
+                //remoteStream is the video/audio of receiverUser
+                callerVideo.srcObject = stream;
+                try {
+                  callerVideo.play();
+                } catch (error) {
+                  console.log("Error playing the caller video", error);
+                }
+              });
+            })
+            .catch((err) => {
+              console.log("Error Occurred!");
+            });
+        }
+  });
+}, []);
+
+  //handle location feature
+    const router = useRouter();
+    const [address, setAddress] = useState<string>("");
+   
+    function routeLocation(){
+        const textVal = document.getElementById("message") as HTMLTextAreaElement;
+        setAddress(textVal.value)
+        if (address != ""){
+            // GetLatLng({address})
+            router.push("/location/${address}")
+        }
     }
-  }, [messages]);
 
   return (
-    <main className="chat-box">
-      <div className="messages-wrapper">
-        {messages?.map((message) => (
-          <Message key={message.uid} message={message} />
-        ))}
-      </div>
-      {/* when a new message enters the chat, the screen scrolls down to the scroll div */}
-      <span ref={scroll}></span>
-      <SendMessage scroll={scroll} />
-    </main>
+    <div>
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel>UserLists</ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel>
+              <Popover>
+                <PopoverTrigger>Location</PopoverTrigger>
+                <PopoverContent>
+                  Enter your location:
+                  <textarea id="message" placeholder="Enter Destination"></textarea>
+                  <PopoverContent>
+                    {" "}
+                    <button onClick={routeLocation}
+                    >Submit</button>
+                  </PopoverContent>
+                </PopoverContent>
+              </Popover>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel>Two</ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   );
-};
-
-export default ChatBox;
+}
