@@ -48,7 +48,7 @@ function NavbarLeft() {
         <ul className="flex">
         {user && (
         <li className='mx-6'>
-          <h2>{user.email}</h2> {/* Display user's email if authenticated */}
+          <a href="/dashboard/${user.email}"><h2>Dashboard</h2></a>
         </li>
       )}
 

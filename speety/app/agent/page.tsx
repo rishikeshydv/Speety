@@ -1,10 +1,14 @@
 "use client";
 import React from "react";
 import NavbarLeft from "@/components/navbarLeft";
-import { db } from "@/firebase/config";
+import { auth, db } from "@/firebase/config";
 import { useState } from "react";
 import { agentQ } from "@/queries/agentQ";
 import { AiFillMessage } from "react-icons/ai";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
+import roomIdGenerator from "@/api/roomIdApi";
+import pushNotifications from "@/queries/notificationPush";
 import {
   Table,
   TableBody,
@@ -22,11 +26,17 @@ export default function Agent() {
     company: string;
     address: string;
     zip: string;
+    email:string
   }
-
+  const router = useRouter();
+  const [user] = useAuthState(auth);
   const [zipValue, setZipValue] = useState<string>("");
   const [resultList, setResultList] = useState<Agent[]>([]);
 
+  // function sendRoomId(brokerName:string){
+  //   router.push(`/chat/${user?.email+brokerName}}`)
+  // }
+   
   const handleAgentSearch = async () => {
     try {
       const res = await agentQ(zipValue);
@@ -90,7 +100,7 @@ export default function Agent() {
               <TableCell>{agent.company}</TableCell>
               <TableCell>{agent.address}</TableCell>
               <TableCell className="text-right">{agent.zip}</TableCell>
-              <TableCell className="text-right"><a href="/chat"><AiFillMessage /></a></TableCell>
+              <TableCell className="text-right"><a href="#" onClick={()=>pushNotifications(user?.email as string,agent.email,"CHAT")}><AiFillMessage /></a></TableCell>
             </TableRow>
           ))}
           {/* )} */}

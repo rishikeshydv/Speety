@@ -1,84 +1,55 @@
+//when the video-icon is pressed in the chat room, we route it to /video/${receiverUserEmail}
+//the callerUser's video is shared directly
+
 "use client";
 import React, { useEffect } from "react";
-import { ZegoExpressEngine } from "zego-express-engine-webrtc";
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
 
-export default function Video() {
+
+//the argument _stream will be used for receiving calls only
+export default function Video(_stream:MediaStream) {
   useEffect(() => {
-    const initializeApp = async () => {
-      const zg = new ZegoExpressEngine(
-        35175772,
-        "3b9a16d0c18201494db1dfb8be80d1bd"
-      );
+    import("peerjs").then(({ default: Peer }) => {
+      //this is a function to start a call
+        const [user] = useAuthState(auth);
+        if (user) {
+          //this is the sender call id
+          const _email = user.email as string;
+          var peer = new Peer(_email);
 
-      zg.on(
-        "roomStreamUpdate",
-        async (roomID, updateType, streamList, extendedData) => {
-          if (updateType === "ADD") {
-            const rmVideo = document.getElementById("remote-video");
-            const vd = document.createElement("video");
-            vd.id = streamList[0].streamID;
-            vd.autoplay = true;
-            vd.playsInline = true;
-            vd.muted = false;
-            if (rmVideo) {
-              rmVideo.appendChild(vd);
-            }
-            zg.startPlayingStream(streamList[0].streamID, {
-              audio: true,
-              video: true,
-            }).then((stream) => {
-              vd.srcObject = stream;
+          const router = useRouter();
+          const receiverEmail = router.query.email as string;
+
+          const callerVideo = document.getElementById(
+            "caller"
+          ) as HTMLVideoElement;
+
+          var getUserMedia = navigator.mediaDevices.getUserMedia;
+          getUserMedia({ video: true, audio: true })
+            .then((stream: MediaStream) => {
+              var call = peer.call(receiverEmail, stream); //stream is the video/audio of callerUser
+              call.on("stream", function (remoteStream: MediaStream) {
+                //remoteStream is the video/audio of receiverUser
+                callerVideo.srcObject = stream;
+                try {
+                  callerVideo.play();
+                } catch (error) {
+                  console.log("Error playing the caller video", error);
+                }
+              });
+            })
+            .catch((err) => {
+              console.log("Error Occurred!");
             });
-          } else if (updateType === "DELETE" && zg && streamList[0].streamID) {
-            zg.stopPlayingStream(streamList[0].streamID); // Fixed method name
-            zg.logoutRoom("zego-room"); // Changed hard-coded roomID to "zego-room"
-          }
         }
-      );
-
-      await zg.loginRoom(
-        "zego-room",
-        "token",
-        { userID: "123", userName: "Rishi" },
-        { userUpdate: true }
-      );
-
-      const localStream = await zg.createStream({
-        camera: {
-          audio: true,
-          video: true,
-        },
-      });
-
-      const localAudio = document.getElementById("local-video");
-
-      const videoElement = document.createElement("video");
-      videoElement.id = "local-video";
-      videoElement.className = "h-28 w-32";
-      videoElement.autoplay = true;
-      videoElement.muted = false;
-
-      videoElement.playsInline = true;
-      
-      localAudio?.appendChild(videoElement);
-      videoElement.srcObject = localStream;
-
-      const streamID = "123" + Date.now();
-      zg.startPublishingStream(streamID, localStream);
-    };
-
-    initializeApp(); // Call the initialization function
-
-    // Clean up function
-    return () => {
-      // Perform any cleanup, e.g., disconnect from Zego
-    };
-  }, []); // Dependency array is empty, effect runs only once
-
+  });
+}, []);
   return (
     <div>
-      <div id="local-video"></div>
-      <div id="remote-video"></div>
+      <video id="caller"></video>
+      <video id="receiver"></video>
     </div>
   );
 }
