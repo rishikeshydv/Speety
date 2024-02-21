@@ -1,24 +1,67 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from '@/firebase/config';
-import rejectHandler from "@/services/requestHandle/rejectHandler"
+import rejectHandler from "@/services/requestHandle/rejectHandler";
+import acceptHandler from "@/services/requestHandle/acceptHandler";
+import { realtimeDatabase, db, auth } from "@/firebase/config";
+import { ref, onValue } from "firebase/database";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 interface _notification {
-  uniqueId:string,
-  age: "NEW"|"OLD",
-  notificationType: "CHAT"|"VIDEO"|"LOCATION",
-  receiverEmail: string,
-  senderEmail: string,
-  status: "PENDING"|"ACCEPTED"|"DENIED",
-  date_time:string
+  uniqueId: string;
+  age: "NEW" | "OLD";
+  notificationType: "CHAT" | "VIDEO" | "LOCATION";
+  receiverEmail: string;
+  senderEmail: string;
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+  date_time: string;
 }
 const notificationList: _notification[] = [];
 const Dashboard = () => {
+  const [user] = useAuthState(auth);
+  // Change notification logo dynamically
+  const notificationLogo = document.getElementById(
+    "notify_logo"
+  ) as HTMLImageElement;
+
+  const [sender_, setSender_] = useState("");
+  //retrieve the sender of the notification
+  async function senderGet() {
+    const q = query(
+      collection(db, "latestRequest"),
+      where("receipient", "==", user?.email)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setSender_(doc.data().sender);
+    });
+  }
+
+  //function statusChat(_senderEmail: string, _receiverEmail: string) {
+  const notificationReference = ref(
+    realtimeDatabase,
+    //here, the notification will only be shown to the receiver end
+    //therefore, we will use user?.email as the 2nd argument
+    `notifications/${sender_}_${user?.email}`
+  );
+  const valueLookup = onValue(notificationReference, (snapshot) => {
+    const chatStat = snapshot.val().status;
+    if (chatStat === "PENDING") {
+      //write a function to make a change to the notification icon
+      //what can you do is, if there is anything 'pending', just change the
+      //notification
+      //also if user is still in session, make a popup UI
+      notificationLogo.src = "speety/public/active.png";
+    } else {
+      notificationLogo.src = "speety/public/active.png";
+    }
+  });
+  //  }
+
   const [showNotifications, setShowNotifications] = useState(false);
-  
-  async function getNotifications(){
+
+  async function getNotifications() {
     const q = query(collection(db, "notifications"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -31,15 +74,15 @@ const Dashboard = () => {
         receiverEmail: notificationData.receiverEmail,
         senderEmail: notificationData.senderEmail,
         status: notificationData.status,
-        date_time: notificationData.date_time as string
+        date_time: notificationData.date_time as string,
       };
       notificationList.push(notification);
-  //    console.log(notificationList)
-    })
+      //    console.log(notificationList)
+    });
   }
 
-  getNotifications()
-  
+  getNotifications();
+
   //const notifications = ['Notification 1', 'Notification 2', 'Notification 3']; // Example notifications, replace with your own data
 
   const toggleNotifications = () => {
@@ -52,7 +95,9 @@ const Dashboard = () => {
       <nav>
         <ul>
           <li>
-            <button onClick={toggleNotifications}>Notifications</button>
+            <button onClick={toggleNotifications}>
+              <img id="notify_logo" src="" alt="notifications" />
+            </button>
           </li>
           {/* Add more options/buttons here */}
         </ul>
@@ -65,11 +110,27 @@ const Dashboard = () => {
             <ul>
               {notificationList.map((notification, index) => (
                 <li key={index}>
-                  {notification.senderEmail + "sent a "+ notification.notificationType + " request"}
-                  <button id="accept1" className='border'>Accept</button>
-                  <button id="reject1" className='border' onClick={()=>rejectHandler(notification.uniqueId)}>Reject</button>
-                  
-                  </li>
+                  {notification.senderEmail +
+                    "sent a " +
+                    notification.notificationType +
+                    " request"}
+                  <button
+                    id="accept1"
+                    className="border"
+                    onClick={() =>
+                      acceptHandler(sender_, user?.email as string)
+                    }
+                  >
+                    Accept
+                  </button>
+                  <button
+                    id="reject1"
+                    className="border"
+                    onClick={() => rejectHandler(notification.uniqueId)}
+                  >
+                    Reject
+                  </button>
+                </li>
               ))}
             </ul>
             <button onClick={toggleNotifications}>Close</button>

@@ -2,6 +2,9 @@
 //speety/services/notificationCheck/rrChat.ts checks for the chat notifications in realtime
 // and make an UI for the new notification with the required button
 
+//TODO: The code below is directly being used in pages/dashboard to change the notification logo
+//we dont need to import this portion of code /notificationCheck/rrChat.ts
+
 import { realtimeDatabase,db } from "@/firebase/config";
 import {
     collection,
@@ -16,18 +19,16 @@ export function statusChat(_senderEmail: string, _receiverEmail: string){
     const notificationReference = ref(realtimeDatabase,`notifications/${_senderEmail}_${_receiverEmail}`);
     const valueLookup = onValue(notificationReference,(snapshot)=>{
         const chatStat = snapshot.val().status;
-        if (chatStat === "PENDING"){
-
-
-        // writing a function to add the notification to the notification bar
-        //and a UI
-        
+        if (chatStat === "PENDING"){  
             
         //write a function to make a change to the notification icon
         //what can you do is, if there is anything 'pending', just change the
         //notification
         //also if user is still in session, make a popup UI
 
+        }
+
+        else {
 
         }
     })
