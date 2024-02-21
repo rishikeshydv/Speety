@@ -30,10 +30,12 @@ interface Message {
 
 export default function Chat() {
   const [user] = useAuthState(auth);
-  const temp:any = [];
   var [userList,setUserList]= useState([]);
+  var [clicked,setClicked]= useState("");
+
   //the function below returns a list to which userEmail is connected to
   //this is stored in the "connectedHistory" collection of firebase
+  //we will be using it to build the left UI of the chatroom
   async function getConnectedUsers(){
     if (user) {
       const connectionEstablishedQuery = query(
@@ -51,17 +53,46 @@ export default function Chat() {
   //starting the functions
 getConnectedUsers()
 
-//upon clicking the 
+//upon clicking the users in the left, we set the value of 'clicked'
   function userOnClick(clickedUser: string) {
+    setClicked(clickedUser)
+  }
+
+    const messageInput = document.getElementById('message-input') as HTMLButtonElement;
+    const sendButton = document.getElementById('send-button') as HTMLButtonElement;
+  //we will be sending and receiving messages now
     useEffect(() => {
       import("peerjs").then(({ default: Peer }) => {
         //creating peer of the sender user
-        var peer = new Peer(user?.email as string);
+        var peer = new Peer(user?.email as string);   
+
         //making connection with the receiver user email
-        var conn = peer.connect(clickedUser);
+        var conn = peer.connect(clicked);
+
+        peer.on('connection', (conn) => {
+          console.log('Connected to: ' + conn.peer);
+
+          //sending the message upon clicking on the send button
+          sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            conn.send(message);
+            messageInput.value = ''; // Clear the input box
+          });
+    
+          conn.on('data', (data) => {
+            displayMessage(data as string);
+          });
+
+          function displayMessage(message:string) {
+            const messagesDiv = document.getElementById('text-area') as HTMLElement;
+            const messageParagraph = document.createElement('p');
+            messageParagraph.textContent = message;
+            messagesDiv.appendChild(messageParagraph);
+          }
+        });
       });
     }, []);
-  }
+
 
 
   // here, we will be retrieving all the users that auth.email is connected with
@@ -94,11 +125,14 @@ getConnectedUsers()
               <ResizablePanel>
                 <div className="chat-messages">
                   <h2>Chat Messages</h2>
+                  <div id="text-area">
+
+                  </div>
                   <div>
-                  <textarea className="rows-4 cols-50"
+                  <textarea id="message-input" className="rows-4 cols-50"
                 placeholder="Enter text..."
               />
-              <button onClick={()=>{}}>Send</button>
+              <button id="send-button">Send</button>
                   <ul></ul>
                   </div>                  
                 </div>
