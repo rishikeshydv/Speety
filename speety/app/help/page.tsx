@@ -1,28 +1,8 @@
-"use client";
-import React from "react";
-import { useRouter } from "next/router";
-
-export default function Help() {
-  // const router = useRouter();
-  // const handleClick = () => {
-  //   router.push("/");
-  // };
-  return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <div>
-        <h1 className="text-4xl text-red-400">
-          Customer Support and Documentation Under Maintenance
-        </h1>
-      </div>
-      <div>
-        {/* <button
-          className="bg-blue-300 text-white hover:bg-blue-700"
-          onClick={handleClick}
-        >
-          Return to Home
-        </button> */}
-        <a  href="/" className="text-3xl font-sans font-bold bg-cyan-300">Return to Home</a>
-      </div>
-    </div>
-  );
-}
+//logic
+//TODO:
+//create a react form
+//upon submit, save it to the database
+//  use role based authorization
+//for admin, add a ticket page
+//add a realtime database onValue to listen to new tickets
+//import the ticket details into the ticket page and add some UI to them
