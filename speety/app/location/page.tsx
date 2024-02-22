@@ -1,3 +1,8 @@
+//temporarily i am using a <div> tag in the /chat/page.tsx for easy rendering
+//once a basic form of location is established, will think of a better UI
+
+
+//we are not using this code for now
 import React, { useState, useEffect } from 'react';
 import {
   Popover,
@@ -5,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useRouter } from "next/router";
-import GetLatLng from "@/api/locationApi";
+import GetLatLng from "@/services/location/addressConverter";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { Locator } from "@/services/location/currentLocation";
 import { addDoc, collection } from "firebase/firestore";
