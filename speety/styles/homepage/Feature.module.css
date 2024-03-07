@@ -1,0 +1,34 @@
+.card {
+  width:fit-content;
+  height: 350px;
+  padding: 40px;
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+}
+
+.card:last-child {
+  margin-right: 0; /* Remove margin from the last card to prevent extra space */
+}
+
+.image {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .title {
+    margin-top: 10px;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center; /* Center the text */
+  }
+  
+  .description {
+    margin-top: 5px;
+    font-size: 20px;
+    color: gray;
+    width:100;
+    text-align: justify;
+  }
+  
