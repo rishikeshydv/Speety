@@ -8,6 +8,7 @@ import Sec7 from "@/components/Footer";
 import poppins from "@/font/font";
 
 export default function Home() {
+
   return (
     <div className={poppins.className}>
       <Sec1 />
