@@ -25,7 +25,7 @@ const Dashboard = () => {
     "notify_logo"
   ) as HTMLImageElement;
 
-  const [sender_, setSender_] = useState("");
+  const [sender, setSender] = useState("");
   //retrieve the sender of the notification
   async function senderGet() {
     const q = query(
@@ -34,7 +34,7 @@ const Dashboard = () => {
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      setSender_(doc.data().sender);
+      setSender(doc.data().sender);
     });
   }
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
     realtimeDatabase,
     //here, the notification will only be shown to the receiver end
     //therefore, we will use user?.email as the 2nd argument
-    `notifications/${sender_}_${user?.email}`
+    `notifications/${sender}${user?.email}`
   );
   const valueLookup = onValue(notificationReference, (snapshot) => {
     const chatStat = snapshot.val().status;
@@ -118,7 +118,7 @@ const Dashboard = () => {
                     id="accept1"
                     className="border"
                     onClick={() =>
-                      acceptHandler(sender_, user?.email as string)
+                      acceptHandler(sender, user?.email as string)
                     }
                   >
                     Accept
