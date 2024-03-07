@@ -1,109 +1,100 @@
 "use client";
 import Login from "@/firebase/auth/Login";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import React,{ useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { auth, db } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import poppins from "@/font/font";
+import Typist from "react-typist-component";
+import { AiFillGoogleCircle } from "react-icons/ai";
+import { AiFillYahoo } from "react-icons/ai";
+import { FaMicrosoft } from "react-icons/fa6";
 
 export default function SignInPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const [err, setErr] = useState<string | false>(false);
+  const [email,setEmail]=useState("");
+  const [password,setPassword]=useState("");
 
-  const onSubmit = useCallback(async (data: Record<string, string>) => {
-    try {
-      const { email, password } = data;
-      await Login(email, password)
-        .then(async function getUser() {
-       //router.push("/")
-          const docRef = collection(db, "User_Info");
-          const q = query(docRef, where("email", "==", email));
-          const docSnap = await getDocs(q);
+  const emailOnChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
+      setEmail(event.target.value)
+  }
 
-          if (docSnap.empty) {
-            // Handle error: User not found in database
-            setErr("User not found. Please try again or sign up.");
-            return;
-          }
-          docSnap.forEach((doc) => {
-            const userData = doc.data()
-            console.log(userData.firstName);
-            router.push("/")
-          });
+  const passwordOnChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
+    setPassword(event.target.value)
+}
+
+//upon clicking on login, we check if such a customer exist
+async function onSubmitFunction() {
+  const docRef = collection(db, "User_Info");
+  const q = query(docRef, where("email", "==", email));
+  const docSnap = await getDocs(q);
+  if (docSnap.empty) {
+    useEffect(()=> {
+      const loginStatus = document.getElementById('login_status');
+      if (loginStatus){
+        loginStatus.innerText = "No such users exist"
       }
-        )
-        .catch((err) => {
-          console.log(err);
-          setErr("Invalid email or password");
-        });
-    } catch (error) {
-      console.log(error);
-      setErr("Invalid email or password");
     }
-  }, []);
+    ,[])
+    
+    return;
+  }
+  else {
+    docSnap.forEach(async (doc) => {
+      await Login(email, password)
+      const userData = doc.data()
+      console.log(userData.firstName);
+      router.push("/dashboard")
+    });
+  }
+
+}
+
 
   return (
-    <div className="flex justify-center items-center w-screen h-screen">
-      <div className="flex items-center justify-center w-full md:gap-5 gap-3 px-6 lg:flex-row flex-col">
-        <div className="w-full h-full flex items-center flex-col gap-5 justify-center">
-          <span className="w-full font-sans flex items-center justify-center lg:text-3xl md:text-2xl text-xl text-[#FF725E] font-bold text-center">
-            Campus Commune
-          </span>
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full">
-            <div className="flex flex-col gap-4 w-full">
-              <div className="w-full flex flex-col gap-1">
-                <label htmlFor="email" className="text-neutral-800 ">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  className="w-full rounded-lg border-neutral-700 p-1 basis-[40px] focus:border-[#FF725E]"
-                  style={{ borderWidth: "1px" }}
-                  id="email"
-                  {...register("email", { required: true })}
-                />
-                {errors.email && <span>This field is required</span>}
-              </div>
-              <div className="w-full flex flex-col gap-1">
-                <label htmlFor="password" className="text-neutral-800 ">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-lg border-neutral-700 p-1 basis-[40px] focus:border-[#FF725E]"
-                  style={{ borderWidth: "1px" }}
-                  id="email"
-                  {...register("password", { required: true })}
-                />
-                {errors.password && <span>This field is required</span>}
-              </div>
-              <div className="w-full flex items-center justify-center">
-                <span className="text-red-300 text-sm">{err ? err : ""}</span>
-              </div>
-              <button className="items-center w-full flex justify-center cursor-pointer bg-neutral-700 py-2 rounded-lg transition duration-500 hover:bg-[#ff533c]">
-                <span className="text-white font-semibold text-lg">Log In</span>
-              </button>
-              <p>
-                Don't have an account?{" "}
-                <span
-                  onClick={() => router.push("/auth/signup")}
-                  className="text-[#FF725E] cursor-pointer hover:underline"
-                >
-                  Sign up
-                </span>
-              </p>
-            </div>
-          </form>
-        </div>
+    <div className={poppins.className}>
+    <div className="flex">
+    <div className={`bg-gray-800 h-screen w-1/2 flex items-center`}>
+      {/* This div is for the left side of the page */}
+      <h1 className="text-9xl text-white px-16 text-center font-bold">
+        <Typist>Your trusted partner in wealth creation.</Typist>
+        {/* Your trusted partner in wealth creation. */}
+      </h1>
+    </div>
+
+    <div className="h-screen w-1/2 flex flex-col items-center justify-center">{/* This div is for the right side of the page */}
+    <img
+          src="/speety_logo.png"
+          alt="Speety Logo"
+          width={250}
+          height={130}
+          className="py-10"
+        />
+        <h1 className="text-xl text-gray-400"><Typist> Begin the journey with us ...</Typist></h1>
+      <button className="bg-gray-300 rounded-xl w-96 h-16 mt-8 text-2xl font-bold"><div className="flex flex-row items-center px-5"><AiFillGoogleCircle className="w-12 h-12"/><p className="ml-5">Continue with Google</p></div></button>
+      <button className="bg-gray-300 rounded-xl w-96 h-16 mt-2 text-2xl font-bold"><div className="flex flex-row items-center px-5"><AiFillYahoo className="w-16 h-16"/><p className="ml-2">Continue with Yahoo</p></div></button>
+      <button className="bg-gray-300 rounded-xl w-96 h-16 mt-2 text-2xl font-bold"><div className="flex flex-row items-center px-5"><FaMicrosoft className="w-10 h-10"/><p className="ml-2">Continue with Microsoft</p></div></button>
+      <div className="flex flex-row gap-2 items-center">
+          {/* This is for the horizontal line */}
+          <hr className="mt-7 border-gray-400 border-2 flex-grow w-24"/>
+          <p className="text-gray-500 text-xl mt-6 ">Or Continue with</p>
+          <hr className="border-2 border-gray-400 mt-7 flex-grow w-24"/>
+      </div>
+      <div className="flex flex-col">
+      <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Email</label>
+      <input type="text" required className="rounded-md bg-gray-200 h-16 w-96" onChange={emailOnChange} />
+      <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Password</label>
+      <input type="text" required className="rounded-md bg-gray-200 h-16 w-96" onChange={passwordOnChange}/>
+      <a href="#" className="mt-1 text-blue-700">Forgot Password?</a>
+      <p id="login_status" className="py-3"></p>
+      <button className="bg-gray-900 text-white mt-2 rounded-md h-12 w-96 font-bold text-xl" onClick={onSubmitFunction}>Continue</button>
+      <h3 className="mt-2 text-center text-xl">Don't have an account yet? <a href="#" className="text-blue-600">Sign up!</a></h3>
       </div>
     </div>
+  </div>
+  </div>
   );
 }

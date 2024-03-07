@@ -1,0 +1,22 @@
+.container {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+    margin-top: 60px;
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+  
+  .container:hover {
+    transform: translateZ(-5px);
+  }
+  
+  .image {
+    display: block;
+    width: 100%;
+    height: auto;
+
+  }
+  
