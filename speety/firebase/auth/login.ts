@@ -17,9 +17,9 @@ export default async function Login(email: string, password: string) {
         throw new Error('Incorrect password');
       case 'auth/user-not-found':
         throw new Error('User not found. Please sign up.');
-      // ... handle other common errors
-      default:
-        throw new Error('An error occurred. Please try again later.');
+      // // ... handle other common errors
+      // default:
+      //   throw new Error('An error occurred. Please try again later.');
     }
   }
 }

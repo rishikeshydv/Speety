@@ -13,6 +13,7 @@ import { AiFillYahoo } from "react-icons/ai";
 import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 
+
 export default function SignInPage() {
   const router = useRouter();
   var [user] = useAuthState(auth);
@@ -32,6 +33,13 @@ export default function SignInPage() {
     loginButton?.addEventListener("click", onSubmitFunction)
     //upon clicking on login, we check if such a customer exist
     async function onSubmitFunction() {
+      if (email === "" || password === "") {
+        if (loginStatus) {
+          loginStatus.innerText = "Please enter email and password";
+        }
+        return;
+      }
+      else {
       const docRef = collection(db, "User_Info");
       const q = query(docRef, where("email", "==", email));
       const docSnap = await getDocs(q);
@@ -46,11 +54,14 @@ export default function SignInPage() {
       } else {
         docSnap.forEach(async (doc) => {
           await Login(email, password);
+          console.log(user?.email);
           //upon login, route to the dashboard
           //right now, i am just routing to the home page becuase the dashbard is not ready
           router.push("/");
   
         });
+      }
+
       }
     }
   }, [email, password, router]);
@@ -135,7 +146,7 @@ export default function SignInPage() {
             </button>
             <h3 className="mt-2 text-center text-xl">
               Don&apos;t have an account yet?{" "}
-              <a href="#" className="text-blue-600">
+              <a href="/auth/signup" className="text-blue-600">
                 Sign up!
               </a>
             </h3>
