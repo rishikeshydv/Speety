@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 
 export default function Sec1() {
   const router = useRouter();
-  const getStartedClick = () => {
+  const loginDirect = () => {
       router.push("/auth/login")
   }
+
   return (
     <div>
       <section>
@@ -21,7 +22,7 @@ export default function Sec1() {
             height={130}
             className="ml-14"
           />
-          <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins" onClick={getStartedClick}>
+          <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins" onClick={loginDirect}>
             <span>Get started</span>
             &nbsp; &nbsp; &nbsp;
             <AiOutlineDoubleRight />
@@ -82,7 +83,7 @@ export default function Sec1() {
   </h1>
   
   {/* Get started button */}
-  <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins mb-5" onClick={getStartedClick}>
+  <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins mb-5" onClick={loginDirect}>
     <span>Get started</span>
     &nbsp; &nbsp; &nbsp;
     <AiOutlineDoubleRight />
