@@ -47,37 +47,52 @@ export default function SignupPage() {
     const loginStatus = document.getElementById("login_status");
     const signupButton = document.getElementById("signupButton");
     signupButton?.addEventListener("click", onRegisterFunction)
+
     async function onRegisterFunction() {
       //console.log(email, password, name, confirmPassword);
         if (email === "" || password === "" || name === "" || confirmPassword === "") {
           if (loginStatus) {
             loginStatus.innerText = "Please enter email and password";
+            return;
           }
-          return;
         }
-        else if (password !== confirmPassword) {
+        
+        if (password !== confirmPassword) {
           // show message to user that passwords do not match
           if (loginStatus) {
             loginStatus.innerText = "Passwords do not match";
+            return;
           }
         }
 
-        await signup(email, password)
-        // Store user in database
-        await createUserInDB(name,email,password);
-        router.push("/");
+        try{
+          await signup(email, password)
+          // Store user in database
+          await createUserInDB(name,email,password,"client");
+          router.push("/");
+        }
+        catch(error){
+          console.log(error);
+          if (loginStatus) {
+            loginStatus.innerText = "Something went wrong. Please try again later.";
+            return;
+          }
+        }
+
     };
 
     const createUserInDB = async (
       name: string,
       email: string,
-      password:string
+      password:string,
+      role: string
     ) => {
       // add user to database
       const data = {
         name,
         email,
-        password
+        password,
+        role
       };
 
       try {
@@ -89,8 +104,8 @@ export default function SignupPage() {
         }
       }
     };
-}, [confirmPassword, email, name, password]
-);
+  }, [confirmPassword, email, name, password]
+  );
   return (
     <div className={poppins.className}>
         <div className={`fixed bottom-32 top-32 left-1/3 right-1/3 flex flex-col items-center justify-center bg-gray-100 shadow-sm rounded-2xl`}>{/* This div is for the right side of the page */}
