@@ -1,29 +1,37 @@
 import { Firestore, collection, query, getDocs, where, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 
 
-interface Home {
-  price: string;
+interface Property{
+  price:number;
+  beds:string;
+  baths:string;
+  houseType:string;
+  transactionType:string;
   address: string;
-  zip: string;
-  bed: string;
-  bath: string;
+  apartment:string;
+  city:string;
+  state:string;
+  zip:string;
+  listedBy: string;
+  imageUrl:string[];
+  videoUrl:string[]
 }
 
-async function buyQ(db: Firestore, zip: string) {
+async function buyQ(db: Firestore, zip: string,priceUpper: string, priceLower: string, searchType: string, bed: string, bath: string, homeType: string) {
   try {
 
     // Create a query to get documents where the "capital" field is equal to true
-    const q = query(collection(db, "buyHome"), where("zip", "==", zip));
+    const q = query(collection(db, "propertyDetails"), where("zip", "==", zip) && where("price", "<", priceUpper) && where("price", ">", priceLower) && where("searchType", "==", searchType) && where("bed", "==", bed) && where("bath", "==", bath) && where("homeType", "==", homeType));
 
     // Execute the query and get the snapshot
     const buyResults = await getDocs(q);
 
     // Create an array to store the cities
-    const buyList: Home[] = [];
+    const buyList: Property[] = [];
 
     // Iterate through the snapshot and push each city to the array
     buyResults.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-      const buyData: Home = doc.data() as any;
+      const buyData: Property = doc.data() as any;
       buyList.push(buyData);
     });
     // Return the array of cities
