@@ -10,7 +10,7 @@ export default function TopRight() {
   var imageUrl = "/old-woman.png";
   return (
 //  <div className={`fixed flex bg-gray-200 rounded-3xl shadow-lg h-40 right-10 top-10 flex-grow`}>
-<div className={`fixed flex bg-gray-200 rounded-3xl shadow-xs h-20 mt-5 right-6 left-1/3`}>   
+<div className={`absolute flex bg-gray-200 rounded-3xl shadow-xs h-20 mt-5 right-6 left-1/4`}>   
       <div className="flex items-center px-5 py-5">
         <img
           src="/user.png"
@@ -21,7 +21,7 @@ export default function TopRight() {
         <h2 className="text-xl font-semibold text-gray-800 ml-5">{user}</h2>
         <h3 className="text-green-600 ml-5 font-bold text-xs">{onlineStatus}</h3>
         </div>
-        <div className={` fixed flex flex-row right-16`}>
+        <div className={` absolute flex flex-row right-6`}>
         <img
           src="/facetime.png"
           alt="Image description"
@@ -39,6 +39,14 @@ export default function TopRight() {
           alt="Image description"
           className="w-26 h-12 rounded-full ml-6"
         />
+
+<a href="/buy">
+<img
+          src="/cross.png"
+          alt="Image description"
+          className="w-26 h-12 rounded-full ml-6"
+        />
+        </a>
         </div>
       </div>
     </div>

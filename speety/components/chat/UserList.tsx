@@ -9,7 +9,7 @@ export default function UserList() {
   // },[]);
 
   TODO: return (
-    <div className={`fixed bg-gray-200 rounded-3xl shadow-xs w-80 top-28 left-40 bottom-7`}>
+    <div className={`absolute bg-gray-200 rounded-3xl shadow-xs w-96 top-28 left-44 bottom-7`}>
       {/* {inside these curly braces, write the logic for getting all the getDocs of the users
         and then forEach, add a ChatListProp
       } */}
