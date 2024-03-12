@@ -14,6 +14,13 @@ import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 
 
+interface User {
+  name: string;
+  password: string;
+  email: string;
+  role: string;
+}
+
 export default function SignInPage() {
   const router = useRouter();
   var [user] = useAuthState(auth);
@@ -30,7 +37,7 @@ export default function SignInPage() {
   useEffect(() => {
     const loginStatus = document.getElementById("login_status");
     const loginButton = document.getElementById("loginButton");
-    loginButton?.addEventListener("click", onSubmitFunction)
+    loginButton?.addEventListener("click", onSubmitFunction);
     //upon clicking on login, we check if such a customer exist
     async function onSubmitFunction() {
       if (email === "" || password === "") {
@@ -38,32 +45,35 @@ export default function SignInPage() {
           loginStatus.innerText = "Please enter email and password";
         }
         return;
-      }
-      else {
-      const docRef = collection(db, "User_Info");
-      const q = query(docRef, where("email", "==", email));
-      const docSnap = await getDocs(q);
-      if (docSnap.empty) {
-        if (loginStatus) {
-          loginStatus.innerText = "No such user exists! Please sign up.";
-          setEmail("");
-          setPassword("");  
+      } else {
+        const docRef = collection(db, "User_Info");
+        const q = query(docRef, where("email", "==", email));
+        try {
+          const docSnap = await getDocs(q);
+
+        if (docSnap.empty) {
+          if (loginStatus) {
+            loginStatus.innerText = "No such user exists! Please sign up.";
+            setEmail("");
+            setPassword("");
+          }
+
+          return;
+        }        
+        for (const doc of docSnap.docs) {
+          const userData = doc.data();
+          await Login(userData.email, userData.password);
+          console.log(user?.email);
+          router.push("/dashboard");
         }
 
-        return;
-      } else {
-        docSnap.forEach(async (doc) => {
-          await Login(email, password);
-          console.log(user?.email);
-          //upon login, route to the dashboard
-          //right now, i am just routing to the home page becuase the dashbard is not ready
-          router.push("/");
-  
-        });
       }
-
+      catch (error) {
+        console.error("Error querying Firestore:", error);
+        // Handle the error appropriately, such as displaying an error message to the user
       }
     }
+  }
   }, [email, password, router]);
 
   return (

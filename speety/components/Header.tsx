@@ -16,7 +16,7 @@ export default function Header() {
   }
   const logoutUser = () => {
     logout();
-    router.push('/auth/signin');
+    router.push('/auth/login');
   }
   return (
     <div className={poppins.className}>
