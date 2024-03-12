@@ -69,7 +69,7 @@ export default function SignupPage() {
           await signup(email, password)
           // Store user in database
           await createUserInDB(name,email,password,"client");
-          router.push("/");
+          router.push("/dashboard");
         }
         catch(error){
           console.log(error);
@@ -87,16 +87,14 @@ export default function SignupPage() {
       password:string,
       role: string
     ) => {
-      // add user to database
-      const data = {
-        name,
-        email,
-        password,
-        role
-      };
 
       try {
-        await addDoc(userCollectionRef, data);
+        await addDoc(collection(db, "User_Info"), {
+          name: name,
+          email: email,
+          password: password,
+          role: role
+        });
       } catch (error) {
         console.log(error);
         if (loginStatus) {
