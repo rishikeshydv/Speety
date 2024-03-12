@@ -3,7 +3,7 @@
  * @see https://v0.dev/t/B2aerZGlup6
  */
 "use client"
-
+import React, { useState } from 'react';
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -11,48 +11,69 @@ import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@
 import { Button } from "@/components/ui/button"
 import { collection, addDoc } from "firebase/firestore"; 
 import { db } from "@/firebase/config";
+import poppins from "@/font/font";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function PropertyPost() {
+  const [price, setPrice] = useState('');
+  const [beds, setBeds] = useState('');
+  const [baths, setBaths] = useState('');
+  const [houseType, setHouseType] = useState('');
+  const [transaction, setTransaction] = useState('');
+  const [address, setAddress] = useState('');
+  const [apartment, setApartment] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
+  const [listing, setListing] = useState('');
+  const [brokerId, setBrokerId] = useState("");
+  var [imgList,setImgList]=useState<string[]>([])
+  var [vidList,setImgList]=useState<string[]>([])
+
     async function postDB() {
         await addDoc(collection(db, "propertyDetails"), {
-//             price: 50000,
-//             beds: 3,
-//             baths: 2,
-//             houseType: "apartment",
-//             transactionType: "rent",
-//             address: "999 Roseland Ave",
-//             apartment: "Apt 2",
-//             city: "Caldwell",
-//             state: "NJ",
-//             zip: "07006",
-//             listedBy: "John Doe",
-//             imageUrl: ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fadjacent-houses&psig=AOvVaw2lFNW-7wOAAIkKNDy1iffR&ust=1709998279263000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCICK_Jf-5IQDFQAAAAAdAAAAABAO", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%3Fk%3Dhouse%2Bclipart&psig=AOvVaw2lFNW-7wOAAIkKNDy1iffR&ust=1709998279263000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCICK_Jf-5IQDFQAAAAAdAAAAABAW"],
-//             videoUrl:["https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fadjacent-houses&psig=AOvVaw2lFNW-7wOAAIkKNDy1iffR&ust=1709998279263000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCICK_Jf-5IQDFQAAAAAdAAAAABAO", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%3Fk%3Dhouse%2Bclipart&psig=AOvVaw2lFNW-7wOAAIkKNDy1iffR&ust=1709998279263000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCICK_Jf-5IQDFQAAAAAdAAAAABAW"]
-//  //           imageUrl:["https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage1.jpg?alt=media&token=3e3e7",[ "https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage2.jpg?alt=media&token=3e3e7"]],
+            price: price,
+            beds: beds,
+            baths: baths,
+            houseType: houseType,
+            transactionType: transaction,
+            address: address,
+            apartment: apartment,
+            city: city,
+            state: state,
+            zip: zip,
+            listedBy: listing,
+            brokerId:brokerId,
+            imageUrl: imgList,
+            videoUrl:vidList
+ //           imageUrl:["https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage1.jpg?alt=media&token=3e3e7",[ "https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage2.jpg?alt=media&token=3e3e7"]],
 
 
          }); 
     }
 
   return (
-    <Card>
+    <div className={poppins.className}>
+      <Header />
+    <Card className={`py-10 px-20 text-3xl`}>
       <CardHeader>
         <CardTitle>Property information</CardTitle>
-        <CardDescription>Enter the details of the property you&apos;re listing.</CardDescription>
+        <CardDescription className="text-xl">Enter the details of the property you&apos;re listing.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="price">Price</Label>
-            <Input id="price" placeholder="$" type="number" />
+            <Input id="price" placeholder="$" type="number" value={price} onChange={(e) => setPrice(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="beds">Beds</Label>
-            <Input id="beds" placeholder="Beds" type="number" />
+            <Input id="beds" placeholder="Beds" type="number" value={beds} onChange={(e) => setBeds(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="baths">Baths</Label>
-            <Input id="baths" placeholder="Baths" type="number" />
+            <Input id="baths" placeholder="Baths" type="number" value={baths} onChange={(e) => setBaths(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="type">Type</Label>
@@ -61,10 +82,13 @@ export default function PropertyPost() {
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="house">House</SelectItem>
-                <SelectItem value="apartment">Apartment</SelectItem>
-                <SelectItem value="townhouse">Townhouse</SelectItem>
-                <SelectItem value="condo">Condo</SelectItem>
+                <SelectItem value="Houses" onClick={() => setHouseType("Houses")}>Houses</SelectItem>
+                <SelectItem value="Apartments" onClick={() => setHouseType("Apartments")}>Apartments</SelectItem>
+                <SelectItem value="Townhouses" onClick={() => setHouseType("Townhomes")}>Townhomes</SelectItem>
+                <SelectItem value="Condos/Co-ops" onClick={() => setHouseType("Condos/Co-ops")}>Condos/Co-ops</SelectItem>
+                <SelectItem value="Multi-family" onClick={() => setHouseType("Multi-family")}>Multi-family</SelectItem>
+                <SelectItem value="Lots/Land" onClick={() => setHouseType("Lots/Land")}>Lots/Land</SelectItem>
+                <SelectItem value="Manufactured" onClick={() => setHouseType("Manufactured")}>Manufactured</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -75,46 +99,52 @@ export default function PropertyPost() {
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="rent">For Rent</SelectItem>
-                <SelectItem value="sell">For Sale</SelectItem>
+              <SelectItem value="Buy" onClick={() => setTransaction("Buy")}>For Buy</SelectItem>
+                <SelectItem value="Rent" onClick={() => setTransaction("Rent")}>For Rent</SelectItem>
+                <SelectItem value="Sell" onClick={() => setTransaction("Sale")}>For Sale</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="address">Address</Label>
-          <Input id="address" placeholder="123 Main St" />
+          <Input id="address" placeholder="123 Main St" value={address} onChange={(e) => setAddress(e.target.value)}/>
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="apartment">Apartment, suite, etc.</Label>
-          <Input id="apartment" placeholder="Apartment, suite, etc." />
+          <Input id="apartment" placeholder="Apartment, suite, etc." value={apartment} onChange={(e) => setApartment(e.target.value)}/>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="city">City</Label>
-            <Input id="city" placeholder="City" />
+            <Input id="city" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="state">State</Label>
-            <Input id="state" placeholder="State" />
+            <Input id="state" placeholder="State" value={state} onChange={(e) => setState(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="zip">ZIP code</Label>
-            <Input id="zip" placeholder="ZIP code" />
+            <Input id="zip" placeholder="ZIP code" value={zip} onChange={(e) => setZip(e.target.value)}/>
           </div>
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="listing">Listed by</Label>
-          <Input id="listing" placeholder="Person or agency listing the property" />
+          <Input id="listing" placeholder="Person or agency listing the property" value={listing} onChange={(e) => setListing(e.target.value)}/>
         </div>
+        <div className="flex flex-col space-y-1.5">
+          <Label htmlFor="listing">Broker ID</Label>
+          <Input id="listing" placeholder="Agent or Broker ID" value={listing} onChange={(e) => setListing(e.target.value)}/>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="images">Upload Images</Label>
-            <Input accept="image/*" id="images" type="file" />
+            <Input accept="image/*" id="images" type="file" value={brokerId} onChange={(e) => setBrokerId(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="videos">Upload Videos</Label>
-            <Input accept="video/*" id="videos" type="file" />
+            <Input accept="video/*" id="videos" type="file" multiple />
           </div>
         </div>
       </CardContent>
@@ -122,5 +152,7 @@ export default function PropertyPost() {
         <Button size="sm" onClick={postDB}>Save</Button>
       </CardFooter>
     </Card>
+    <Footer />
+    </div>
   )
 }

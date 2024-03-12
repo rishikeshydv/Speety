@@ -1,111 +1,89 @@
 "use client";
-import React from "react";
-import NavbarLeft from "@/components/navbarLeft";
-import { auth, db } from "@/firebase/config";
-import { useState } from "react";
+import React, { useState } from "react";
+//import NavbarLeft from "@/components/navbarLeft";
 import { agentQ } from "@/queries/agentQ";
-import { AiFillMessage } from "react-icons/ai";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/navigation";
-import roomIdGenerator from "@/api/roomIdApi";
-import pushNotifications from "@/queries/notificationPush";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { db } from "@/firebase/config";
+import poppins from "@/font/font";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AgentProp from "@/services/agent/AgentProp";
 
-export default function Agent() {
-  interface Agent {
-    name: string;
-    company: string;
-    address: string;
-    zip: string;
-    email:string
-  }
-  const router = useRouter();
-  const [user] = useAuthState(auth);
-  const [zipValue, setZipValue] = useState<string>("");
+interface Agent{
+  photoUrl:string; 
+  name:string;
+  stars:number;
+  phone:string;
+  usersReviews:number;
+  company: string;
+  license: string;
+  address:string;
+  email:string;
+  zip:string
+
+}
+
+export default function Buy() {
+  const [zipVal, setZipVal] = useState<string>("");
   const [resultList, setResultList] = useState<Agent[]>([]);
 
-  // function sendRoomId(brokerName:string){
-  //   router.push(`/chat/${user?.email+brokerName}}`)
-  // }
-   
-  const handleAgentSearch = async () => {
-    try {
-      const res = await agentQ(zipValue);
-      setResultList(res);
-    } catch (error) {
-      console.error(error);
-    }
+  async function handleSubmit() {
+    //write a logic to retrieve the entries from database based on the form data
+
+    const res = await agentQ(zipVal);
+    setResultList(res);
+    console.log(resultList);
+  }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setZipVal(event.target.value);
   };
 
-
   return (
-    <div>
-      <div className="text-2xl">
-        {" "}
-        <NavbarLeft />
-      </div>
-      <div
-        className="bg-cover bg-center h-screen"
-        style={{ backgroundImage: 'url("/home-bg.jpeg")' }}
-      >
-        <div className="flex flex-col items-center justify-center h-screen">
-          <div>
-            <h1 className="text-6xl font-extrabold mt-2 text-yellow-200">
-              Find Your Agent
-            </h1>
-          </div>
-
-          <div className="flex mt-4">
+    <div className={poppins.className}>
+      <Header />
+      <div>
+        <section className="py-52 shadow-md">
+          <h1 className="text-9xl font-bold text-center px-96">
+            Sell traditionally with an{" "}
+            <button className="bg-red-400 rounded-3xl px-10 py-6">agent</button>
+          </h1>
+          <div className="flex flex-col items-center justify-center mt-20">
             <input
               type="text"
-              placeholder="Enter Address, City or Zip"
-              className="border border-gray-300 px-6 py-2 w-3/4 rounded-l-md focus:outline-none focus:border-blue-500"
-              value={zipValue}
-              onChange={(e) => setZipValue(e.target.value)}
+              placeholder=" Enter a zip code ..."
+              className={`bottom-20 h-24 w-1/3 bg-gray-100 text rounded-3xl text-center text-3xl`}
+              value={zipVal}
+              onChange={handleChange}
             />
             <button
-              className="bg-blue-500 text-white px-3 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none"
-              onClick={handleAgentSearch}
+              className={` text-white bg-black rounded-2xl px-10 h-24 w-80 text-3xl font-bold uppercase mt-16`}
+              onClick={handleSubmit}
             >
-              Search
+              Find an agent
             </button>
           </div>
-        </div>
+          <div className="flex"></div>
+        </section>
       </div>
-      <Table>
-        <TableCaption>Broker List</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Name</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead className="text-right">Zip</TableHead>
-            <TableHead className="text-right">Connect</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {/* {resultList.length > 0 && ( */}
-          {resultList.map((agent: Agent) => (
-            <TableRow key={agent.name}>
-              <TableCell className="font-medium">{agent.name}</TableCell>
-              <TableCell>{agent.company}</TableCell>
-              <TableCell>{agent.address}</TableCell>
-              <TableCell className="text-right">{agent.zip}</TableCell>
-              <TableCell className="text-right"><a href="#" onClick={()=>pushNotifications(user?.email as string,agent.email,"CHAT")}><AiFillMessage /></a></TableCell>
-            </TableRow>
-          ))}
-          {/* )} */}
-        </TableBody> 
-      </Table>
+      <section>
+        {resultList.map((agent: Agent, index: number) => {
+          return (
+            <AgentProp
+              key={index}
+              photoUrl={agent.photoUrl}
+              name={agent.name}
+              stars={agent.stars}
+              phone={agent.phone}
+              usersReviews={agent.usersReviews}
+              company={agent.company}
+              license={agent.license}
+              address={agent.address}
+              email={agent.email}
+              zip={agent.zip}
+            />
+          );
+        })}
+      </section>
+      <Footer />
     </div>
   );
 }

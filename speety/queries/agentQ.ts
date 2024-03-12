@@ -9,13 +9,17 @@ import {
 
 import {db} from "@/firebase/config"
 
-interface Agent {
-  name: string;
+interface Agent{
+  photoUrl:string; 
+  name:string;
+  stars:number;
+  phone:string;
+  usersReviews:number;
   company: string;
-  address: string;
-  zip: string;
-  ratings:string;
-  email: string
+  license: string;
+  address:string;
+  email:string;
+  zip:string
 
 }
 
