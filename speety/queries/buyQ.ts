@@ -2,7 +2,7 @@ import { Firestore, collection, query, getDocs, where, QueryDocumentSnapshot, Do
 
 
 interface Property{
-  price:number;
+  price:string;
   beds:string;
   baths:string;
   houseType:string;
@@ -19,9 +19,17 @@ interface Property{
 
 async function buyQ(db: Firestore, zip: string,priceUpper: string, priceLower: string, searchType: string, bed: string, bath: string, homeType: string) {
   try {
+    const q = query(
+      collection(db, "propertyDetails"), 
+      where("zip", "==", zip), 
+      where("price", "<", Number(priceUpper)), 
+      where("price", ">", Number(priceLower)), 
+      where("searchType", "==", searchType), 
+      where("bed", "==", bed), 
+      where("bath", "==", bath), 
+      where("homeType", "==", homeType)
+    );
 
-    // Create a query to get documents where the "capital" field is equal to true
-    const q = query(collection(db, "propertyDetails"), where("zip", "==", zip) && where("price", "<", priceUpper) && where("price", ">", priceLower) && where("searchType", "==", searchType) && where("bed", "==", bed) && where("bath", "==", bath) && where("homeType", "==", homeType));
 
     // Execute the query and get the snapshot
     const buyResults = await getDocs(q);
@@ -34,8 +42,6 @@ async function buyQ(db: Firestore, zip: string,priceUpper: string, priceLower: s
       const buyData: Property = doc.data() as any;
       buyList.push(buyData);
     });
-    // Return the array of cities
-    console.log(buyList);
     return buyList;
   } catch (error) {
     console.error("Error fetching houses:", error);

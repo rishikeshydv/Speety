@@ -1,6 +1,6 @@
 import React from 'react'
 interface Property{
-  price:number;
+  price:string;
   beds:string;
   baths:string;
   houseType:string;
