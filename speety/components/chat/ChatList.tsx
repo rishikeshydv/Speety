@@ -79,7 +79,7 @@ export default function ChatList() {
   return (
     <div>
       {user1Messages.map((message, index) => (
-        <div key={message.id} className={`fixed flex bg-gray-200 rounded-3xl shadow-sm top-28 right-6 bottom-24 left-1/3`}>
+        <div key={message.id} className={`absolute flex bg-gray-200 rounded-3xl shadow-sm top-28 right-6 bottom-24 left-1/4`}>
         <div className="flex justify-center items-center bg-gray-100 mt-3 ml-3 w-80 h-20 rounded-2xl px-2">
           <MessageProp
             message={message.messageInfo["msg"]}

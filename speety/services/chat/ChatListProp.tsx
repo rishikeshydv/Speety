@@ -17,7 +17,7 @@ const ChatListProp: React.FC<ChatList> = ({
 }) => {
   if (newMsg === true) {
     return (
-      <div className="flex bg-blue-100 w-80 h-20 py-2">
+      <div className="flex bg-blue-100 w-96 h-20 py-2">
         <img src="/user.png" alt="user1" className="w-12 h-12" />
         <div className="flex flex-col ml-5">
         <h1 className="font-bold text-2xl">{userName}</h1>
@@ -28,7 +28,7 @@ const ChatListProp: React.FC<ChatList> = ({
     );
   } else {
     return (
-      <div style={{ backgroundColor: '#FFFFFF' }}  className="flex w-80 h-20 py-5">
+      <div style={{ backgroundColor: '#FFFFFF' }}  className="flex w-96 h-20 py-5">
         <img src="/user.png" alt="user1" className="w-12 h-12" />
         <div className="ml-5">
           <div className="flex flex-row mt-2">
