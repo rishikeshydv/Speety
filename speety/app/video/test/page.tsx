@@ -19,16 +19,18 @@ export default function Component() {
   //TODO: Video Call App Start
   //here, we will check if we have any incoming calls
   var getUserMedia = global.navigator.mediaDevices.getUserMedia;
+  const [user] = useAuthState(auth);
+  useEffect(() => {
   //grabs the frame onto which the receiver video will be shown
   const receiverVideo = document.getElementById("receiver") as HTMLVideoElement;
   const callerVideo = document.getElementById("caller") as HTMLVideoElement;
-  const [user] = useAuthState(auth);
-  useEffect(() => {
     import("peerjs").then(({ default: Peer }) => {
-      const peer = new Peer(user?.email || "");
+      const peer = new Peer(user?.email as string, {
+        host: "localhost",
+        port: 9000,
+        path: "/myapp",
+      });
       console.log("Peer Created " + user?.email);
-      console.log(peer);
-
 
         //here, we will be receiving calls from different peers
       peer.on("call", function (call) {
