@@ -10,10 +10,10 @@ import { useRouter } from "next/router";
 
 //the argument _stream will be used for receiving calls only
 export default function Video(_stream:MediaStream) {
+  const [user] = useAuthState(auth);
   useEffect(() => {
     import("peerjs").then(({ default: Peer }) => {
       //this is a function to start a call
-        const [user] = useAuthState(auth);
         if (user) {
           //this is the sender call id
           const _email = user.email as string;

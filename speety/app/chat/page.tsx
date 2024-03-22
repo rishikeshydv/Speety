@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import poppins from "@/font/font";
 import LeftmostBar from '@/components/chat/LeftmostBar';
 import TopLeft from '@/components/chat/TopLeft';
@@ -12,6 +12,7 @@ import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, addDoc, getDocs, where, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import Peer from "peerjs"
 
 //imports for location
 import GetLatLng from "@/services/location/addressConverter";
@@ -43,7 +44,71 @@ interface MessageData {
   message: string;
 }
 
-export default function page() {
+export default function Chat() {
+  const [user] = useAuthState(auth);
+
+  const [id, setId] = useState<string>("");
+  const [friendId, setFriendId] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+
+  const [clicked, setClicked] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [myPeer, setMyPeer] = useState<Peer | null>(null);
+  const [connection, setConnection] = useState({});
+
+  function userOnClick(clickedUser: string) {
+    setClicked(clickedUser);
+  }
+
+  function messageFunc(event: any) {
+    setMessage(event.target.value);
+  }
+
+  const send = () => {
+    const conn = myPeer?.connect(friendId);
+
+    conn?.on('open', () => {
+
+      const msgObj = {
+        sender: id,
+        message: message
+      };
+
+      conn.send(msgObj);
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessage('')
+
+    })}
+
+    useEffect(() => {
+      if (!myPeer && user && user.email){
+          const peer = new Peer(user.email, {
+              host: "localhost",
+              port: 9000,
+              path: "/myapp",
+            });
+        
+            peer.on('open', (id ) => {
+              setMyPeer(peer);
+              setId(id);
+            });
+        
+            peer.on('connection', (conn) => {
+              conn.on('data', (data:any) => {
+                setMessages((prevMessages) => [...prevMessages, data.message]);
+              });
+            });
+      }
+      return () => {
+          if (myPeer) {
+              myPeer.destroy();
+              setMyPeer(null);
+          }
+      };
+      }
+      , [myPeer]);
+  
   return (
     <div className={poppins.className}>
 <LeftmostBar />

@@ -28,8 +28,16 @@ export default function Header() {
              <button onClick={dashboardRedirect} className='font-bold text-blue-300 absolute top-6 right-20'>{user?.email}</button>
              <button onClick={logoutUser} className='ml-2'><AiOutlineLogout className='w-8 h-8 absolute top-5 right-6'/></button>
           </div>
- 
 )}
+        <div className='w-screen h-20 bg-gray-400'>
+            <ul className='font-bold flex items-center justify-center'>
+                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5'><a href='/buy'>BUY</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/rent'>RENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/sell'>SELL</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/agent'>AGENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/help'>HELP</a></li>
+            </ul>
+        </div>
     </div>
   )
 }
