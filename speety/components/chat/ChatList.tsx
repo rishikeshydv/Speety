@@ -15,7 +15,7 @@ interface messageType {
   id: string;
   messageInfo: _messageInfo;
 }
-export default function ChatList() {
+export default function ChatList({ chatHistory }: { chatHistory: messageType[]}) {
   //write a logic to retrieve the chatHistory or chatLists of sender and receiver
 
   // Custom comparison function to compare message times
@@ -78,16 +78,16 @@ export default function ChatList() {
   user2Messages.sort(compareMessages);
   return (
     <div>
-      {user1Messages.map((message, index) => (
-        <div key={message.id} className={`absolute flex bg-gray-200 rounded-3xl shadow-sm top-28 right-6 bottom-24 left-1/4`}>
+      {/* {user1Messages.map((message, index) => (
+        <div key={message.id} className={`absolute flex bg-gray-200 rounded-3xl shadow-sm top-28 right-6 bottom-24 left-1/3`}>
         <div className="flex justify-center items-center bg-gray-100 mt-3 ml-3 w-80 h-20 rounded-2xl px-2">
           <MessageProp
             message={message.messageInfo["msg"]}
             msgTime={message.messageInfo["_datetime"]}
           />
-          </div>
+          </div> */}
           {/* Check if there are more messages in user2Messages */}
-          {index < user2Messages.length && (
+          {/* {index < user2Messages.length && (
             <div className="flex justify-center items-center mt-20 ml-80 bg-blue-400 w-80 h-20 rounded-2xl">
               <MessageProp
                 message={user2Messages[index].messageInfo["msg"]}
@@ -96,6 +96,16 @@ export default function ChatList() {
             </div>
           )}
   </div>
+      ))} */}
+            {chatHistory.map((message, index) => (
+        <div key={message.id} className={`absolute flex bg-gray-200 rounded-3xl shadow-sm top-28 right-6 bottom-24 left-1/3`}>
+        <div className="flex justify-center items-center bg-gray-100 mt-3 ml-3 w-80 h-20 rounded-2xl px-2">
+          <MessageProp
+            message={message.messageInfo["msg"]}
+            msgTime={message.messageInfo["_datetime"]}
+          />
+    </div>
+    </div>
       ))}
     </div>
   );
