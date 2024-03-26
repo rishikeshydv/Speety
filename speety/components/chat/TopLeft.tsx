@@ -3,7 +3,7 @@ import React from 'react'
 export default function TopLeft() {
   return (
 //<div className={`fixed flex flex-col items-center bg-gray-200 rounded-3xl shadow-lg w-100 h-40 ml-60 top-10`}>
-<div  className={`absolute bg-gray-200 rounded-3xl shadow-lg w-96 h-20 mt-5 left-44`}>
+<div  className={`absolute bg-gray-200 rounded-3xl shadow-lg w-1/4 h-20 mt-5 left-44`}>
       <div className="flex items-center justify-center px-3 py-4">
       <h2 className="text-2xl font-semibold text-gray-800">Chat</h2>
       <input

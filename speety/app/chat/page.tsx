@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+
+"use client";
+
+import React, { use, useEffect, useState } from "react";
 import poppins from "@/font/font";
 import LeftmostBar from '@/components/chat/LeftmostBar';
 import TopLeft from '@/components/chat/TopLeft';
@@ -13,6 +16,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, addDoc, getDocs, where, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import Peer from "peerjs"
+
+//imports for sendbar
+//import React, { useState } from 'react'
+import { BiPaperclip } from "react-icons/bi";
+import { FaMicrophone } from "react-icons/fa6";
+import { FiSend } from "react-icons/fi";
 
 //imports for location
 import GetLatLng from "@/services/location/addressConverter";
@@ -44,46 +53,68 @@ interface MessageData {
   message: string;
 }
 
+//types for messages
+interface _messageInfo {
+  msg: string;
+  _datetime: string;
+}
+interface messageType {
+  id: string;
+  messageInfo: _messageInfo;
+}
+
 export default function Chat() {
   const [user] = useAuthState(auth);
-
   const [id, setId] = useState<string>("");
-  const [friendId, setFriendId] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
+
+// peerjs cannot make a peer with an email because of @ symbol
+//so we only set the id to the characters before the @ symbol
+//that slice of string is unique as it is the email id before the @ symbol
+  useEffect(() => {
+    if (user && user.email) {
+
+      setId(user.email.slice(0, user.email.indexOf('@')));
+    }
+  }, [user]);
+  console.log(user?.email);
+
+
+
 
   const [clicked, setClicked] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState("");
+  const [messages, setMessages] = useState<messageType[]>([]);
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
   const [connection, setConnection] = useState({});
+
 
   function userOnClick(clickedUser: string) {
     setClicked(clickedUser);
   }
 
-  function messageFunc(event: any) {
-    setMessage(event.target.value);
-  }
 
-  const send = () => {
-    const conn = myPeer?.connect(friendId);
+  const send = (message:string) => {
+    const conn = myPeer?.connect(clicked);
 
     conn?.on('open', () => {
 
-      const msgObj = {
-        sender: id,
-        message: message
+      const newMessage: messageType = {
+        id: "",
+        messageInfo: {
+          msg: message,
+          _datetime: ""
+        }
       };
 
-      conn.send(msgObj);
-      setMessages((prevMessages) => [...prevMessages, message]);
-      setMessage('')
+      conn.send(newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
 
     })}
 
     useEffect(() => {
-      if (!myPeer && user && user.email){
-          const peer = new Peer(user.email, {
+        if (!myPeer && id){
+      //    console.log("Hi",id);
+          const peer = new Peer(id, {
               host: "localhost",
               port: 9000,
               path: "/myapp",
@@ -96,7 +127,7 @@ export default function Chat() {
         
             peer.on('connection', (conn) => {
               conn.on('data', (data:any) => {
-                setMessages((prevMessages) => [...prevMessages, data.message]);
+                setMessages((prevMessages) => [...prevMessages, data]);
               });
             });
       }
@@ -107,16 +138,16 @@ export default function Chat() {
           }
       };
       }
-      , [myPeer]);
+      , [myPeer,id]);
   
   return (
     <div className={poppins.className}>
 <LeftmostBar />
 <TopLeft />
  <TopRight />
-<UserList />  
-<ChatList />
-<SendBar />
+<UserList onUserClick={userOnClick}/>  
+<ChatList chatHistory={messages}/>
+    <SendBar sendMessageFunction={send}/>
     </div>
   )
 }
