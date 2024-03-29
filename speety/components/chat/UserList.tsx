@@ -1,38 +1,50 @@
-import React, { useEffect } from "react";
+"use client"
+import React, { useEffect,useState } from "react";
 import ChatListProp from "@/services/chat/ChatListProp";
-//import all the packages and modules that would connect it to firebase
+import { useAuthState } from "react-firebase-hooks/auth";
+import { db,auth } from "@/firebase/config";
 
+//imports for queries
+import { getConnectedUsers } from "@/queries/chatSystem";
+
+interface User {
+  name: string;
+  role: string;
+}
 export default function UserList({ onUserClick }: { onUserClick: (clickedUsername:string) => void }) {
-  //use the following code to use document and access the element by Id
-  // useEffect(() => {
-  //   const userSpace = document.getElementById('all_users')
-  // },[]);
+  const [user] = useAuthState(auth);
+  const [usersConnected, setUsersConnected] = useState<string[][]>([]);
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const connectedUsers = await getConnectedUsers(user?.email as string);
+        setUsersConnected(connectedUsers);
+      } catch (error) {
+       console.error(error); // Log any errors
+      }
+    };
+  
+    fetchUsers();
+  }, [user]); // Add user to the dependency array to trigger useEffect when user changes
 
-  TODO: return (
+  return (
     <div className={`absolute bg-gray-200 rounded-3xl shadow-xs w-1/4 top-28 left-44 bottom-7`}>
-      {/* {inside these curly braces, write the logic for getting all the getDocs of the users
-        and then forEach, add a ChatListProp
-      } */}
-      {/* For now I will be haardcoding the users list UI */}
-
-      <ChatListProp
-        imgUrl="456.png"
-        userName="heroine"
-        lastMsg="Hello"
-        lastMsgTime="11:00PM"
-        newMsg={false}
-        onClick={() => onUserClick('heroine')}
-      />
-
-<ChatListProp
-        imgUrl="123.png"
-        userName="test"
-        lastMsg="Hi!"
-        lastMsgTime="10:30 AM"
-        newMsg={true}
-        onClick={() => onUserClick('test')}
-
-      />
-    </div>
+    {usersConnected.length > 0 ? (
+      usersConnected.map(([user,userEmail], index) => (
+        <ChatListProp
+          key={index}
+          imgUrl="" // replace with default avatar URL
+          userName={user}
+          lastMsg={user}
+          lastMsgTime="Just now" // replace with actual last message time
+          newMsg={false}
+          onClick={() => onUserClick(userEmail)}
+        />
+      ))
+    ) : (
+      <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
+    )}
+  </div>
   );
 }
