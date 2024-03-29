@@ -1,10 +1,9 @@
 import React from "react";
 
 //imports for video call
-import { Button } from "@/components/ui/button"
-import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
-import PopoverTriggerComponent from "../video/PopOverTriggerComponent";
+import PopoverTriggerComponent from "@/components/video/PopOverTriggerComponent";
 import PopOverComponent from "@/components/video/PopOverComponent";
+import LocationTrigger from "../location/formPop/LocationTrigger";
 
 interface TopRightProps {
 callerRef:any
@@ -37,7 +36,7 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick}) 
         <div className={` absolute flex flex-row right-6`}>
 
 <PopoverTriggerComponent src="/facetime.png" _className="w-24 h-12 rounded-full" content={<PopOverComponent callerVideoRef={callerRef} receiverVideoRef={receiverRef} callerUser="Mary" receiverUser="John"/>} videoOnClick={videoOnClick}/>
-<PopoverTriggerComponent src="/map.png" _className="w-12 h-12 rounded-full ml-3" content={<PopOverComponent callerVideoRef={null} receiverVideoRef={null} callerUser="Hnery" receiverUser="Mark"/>} videoOnClick={videoOnClick}/>
+<LocationTrigger src="/map.png" _className="w-12 h-12 rounded-full ml-3"/>
 
 <button>
 <img

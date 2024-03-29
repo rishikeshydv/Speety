@@ -4,7 +4,6 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import React from "react"
-import { Button } from "@/components/ui/button"
 import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
 interface PopOverComponentProps {
 src: string;
