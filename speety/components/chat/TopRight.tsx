@@ -1,7 +1,18 @@
 import React from "react";
 
+//imports for video call
+import { Button } from "@/components/ui/button"
+import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
+import PopoverTriggerComponent from "../video/PopOverTriggerComponent";
+import PopOverComponent from "@/components/video/PopOverComponent";
 
-export default function TopRight() {
+interface TopRightProps {
+callerRef:any
+receiverRef:any
+videoOnClick:any
+}
+
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick}) => {
   //use realtime firebase to get the status
   var onlineStatus = "•Online";
   //parse these personal information while clicking on them on the left side
@@ -24,20 +35,10 @@ export default function TopRight() {
         <h3 className="text-green-600 ml-5 font-bold text-xs">{onlineStatus}</h3>
         </div>
         <div className={` absolute flex flex-row right-6`}>
-          <button>
-        <img
-          src="/facetime.png"
-          alt="Image description"
-          className="w-24 h-12 rounded-full"
-        />
-</button>
-<button>
-<img
-          src="/map.png"
-          alt="Image description"
-          className="w-12 h-12 rounded-full ml-3"
-        />
-</button>
+
+<PopoverTriggerComponent src="/facetime.png" _className="w-24 h-12 rounded-full" content={<PopOverComponent callerVideoRef={callerRef} receiverVideoRef={receiverRef} callerUser="Mary" receiverUser="John"/>} videoOnClick={videoOnClick}/>
+<PopoverTriggerComponent src="/map.png" _className="w-12 h-12 rounded-full ml-3" content={<PopOverComponent callerVideoRef={null} receiverVideoRef={null} callerUser="Hnery" receiverUser="Mark"/>} videoOnClick={videoOnClick}/>
+
 <button>
 <img
           src="/about.png"
@@ -58,3 +59,6 @@ export default function TopRight() {
     </div>
   );
 }
+
+
+export default TopRight;
