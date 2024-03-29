@@ -3,40 +3,63 @@
  * @see https://v0.dev/t/VABe1FRBUSi
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
+"use state"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
-interface PopOverComponentProps {
-  callerVideoRef: any;
-  receiverVideoRef: any;
-  callerUser: string;
-  receiverUser: string;
-}
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { count } from "console"
 
-const LocationPopOver:React.FC<PopOverComponentProps> = ({callerVideoRef,receiverVideoRef,callerUser,receiverUser}) =>{
+const MapPopOver = () =>{
+  const [streetAddress, setStreetAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [state, setState] = useState("")
+  const [zip, setZip] = useState("")
+  const [country, setCountry] = useState("")
+  const [location, setLocation] = useState("")
+  const handleSubmit = (e:any) => {
+    e.preventDefault()
+    setLocation(`${streetAddress} ${city} ${state} ${zip} ${country}`)
+
+  }
   return (
-    <div className="flex w-full h-full flex-col">
-      <div className="flex-grow flex items-center justify-center">
-        <div className="flex flex-row items-center gap-60">
-          <div>
-          <video ref={callerVideoRef} style={{ width: "533px", height: "400px" }} className="w-100% bg-gray-100"/>
-          <h1 className="mt-2 text-xl font-semibold text-white">{callerUser}</h1>
+<div className="mx-auto max-w-sm space-y-6 flex flex-col items-center justify-center">
+  <h1 className="text-2xl font-semibold mt-20">Enter Destination Location</h1>
+      <div className="space-y-2">
+        <div className="space-y-2">
+          <Label htmlFor="street-address" className="text-xl">Street Address</Label>
+          <Input id="street-address" placeholder="123 Main St" required  className="text-xl" value={streetAddress} onChange={(e)=>{setStreetAddress(e.target.value)}}/>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="city" className="text-xl">City</Label>
+            <Input id="city" placeholder="City" required  className="text-xl" value={city} onChange={(e)=>{setCity(e.target.value)}}/>
           </div>
-          <div>
-          <video ref={receiverVideoRef} style={{ width: "533px", height: "400px" }} className=" bg-gray-100" />
-          <h1 className="mt-2 text-xl font-semibold text-white">{receiverUser}</h1>
+          <div className="space-y-2">
+            <Label htmlFor="state" className="text-xl">State/Province</Label>
+            <Input id="state" placeholder="State" required  className="text-xl" value={state} onChange={(e)=>{setState(e.target.value)}}/>
           </div>
         </div>
-      </div>
-      <div className="flex items-center justify-center mb-40 px-20">
-      <VideoOffIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <MicIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <ScreenShareIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <PhoneCallIcon className="mx-2 h-16 w-16 rounded-full bg-red-600 p-3 text-white" />
+        <div className="space-y-2">
+          <Label htmlFor="zip" className="text-xl">Postal/ZIP code</Label>
+          <Input id="zip" placeholder="90210" required  className="text-xl" value={zip} onChange={(e)=>{setZip(e.target.value)}}/>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="country" className="text-xl">Country</Label>
+          <Input id="country" placeholder="Country" required  className="text-xl" value={country} onChange={(e)=>{setCountry(e.target.value)}}/>
+        </div>
+        <div className="flex items-center justify-center">
+        <Button className="w-32 text-xl mt-4" type="submit">
+          Submit
+        </Button>
+        </div>
       </div>
     </div>
   )
 }
 
-export default LocationPopOver;
+export default MapPopOver;
 
 function MicIcon(props:any) {
   return (
