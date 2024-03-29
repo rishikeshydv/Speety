@@ -31,11 +31,6 @@ interface User {
   name: string;
 }
 
-interface Message {
-  id: string;
-  text: string;
-  senderId: string;
-}
 
 interface userLoc {
   email: string;
@@ -45,10 +40,6 @@ interface userLoc {
 interface LocationData {
   lat: number;
   lng: number;
-}
-
-interface MessageData {
-  message: string;
 }
 
 //types for messages
@@ -185,11 +176,33 @@ export default function Chat() {
 
       peer.on("connection", (conn) => {
         conn.on("data", (data: any) => {
-          setReceivedMessage({
-            msg: data.msg,
-            date: data.date,
-          });
-          setReceivedTime(String(data.date));
+          if (data === null) {
+            console.log("Nothing reeived on Receiver End");
+            return;
+          }
+//checking if the incoming data is a message
+
+if (typeof data === 'object' && 'msg' in data && 'date' in data) {
+  const incomingMessage: eachMessage = data;
+  setReceivedMessage({
+    msg: incomingMessage.msg,
+    date: incomingMessage.date,
+  });
+  setReceivedTime(String(incomingMessage.date));
+  return
+}
+
+//checking if the incoming data is a location
+if (
+  typeof data === "object" &&
+  'lat' in data && 'lng' in data
+) {
+  const incomingLocation: LocationData = data;
+  setPosition2({ lat: incomingLocation.lat, lng: incomingLocation.lng });
+  return;
+}
+
+
         });
       });
 
