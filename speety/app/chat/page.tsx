@@ -59,7 +59,6 @@ export default function Chat() {
   const handleShow = () => setShow(true);
   //location
   const [myGeocoder, setMyGeocoder] = useState<any>({});
-  const [ destinationLatLng, setDestinationLatLng] = useState<LocationData>({ lat: 0, lng: 0 });
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
 
@@ -70,9 +69,7 @@ const loader = new Loader({
   libraries: ["places"]
 });
 let map,infoWindow;
-async function initMap(senderUserLocation:LocationData, receiverUserLocation:LocationData, destination:LocationData) {
-  setPosition1(senderUserLocation);
-  setPosition2(receiverUserLocation);
+async function initMap(destination:LocationData) {
   const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
   const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
    map = new Map(document.getElementById("map") as HTMLElement,
@@ -109,7 +106,7 @@ async function initMap(senderUserLocation:LocationData, receiverUserLocation:Loc
             lat: results[0].geometry.location.lat(),
             lng: results[0].geometry.location.lng(),
           };
-          setDestinationLatLng(locationData);
+          return locationData;
         } else {
           console.error('Geocode was not successful for the following reason:', status);
         }
@@ -326,7 +323,10 @@ async function initMap(senderUserLocation:LocationData, receiverUserLocation:Loc
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
         videoOnClick={() => call("")}
-        
+        mapInitialiser={initMap}
+        addressConverter={fetchLatLng}
+        senderLoc={position1}
+        receiverLoc={position2}
       />
       <UserList onUserClick={userOnClick} /> 
 <ChatList
@@ -336,6 +336,7 @@ async function initMap(senderUserLocation:LocationData, receiverUserLocation:Loc
         receivedTime={receivedTime}
         senderEmail={user?.email as string}
         receiverEmail={clicked || "rishikeshadh4@gmail.com"}
+
       />
       {/*we will be loading the clicked one or the first one in the list  */}
 <SendBar sendMessageFunction={send} />

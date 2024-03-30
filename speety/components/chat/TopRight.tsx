@@ -9,9 +9,13 @@ interface TopRightProps {
 callerRef:any
 receiverRef:any
 videoOnClick:any
+mapInitialiser:any,
+addressConverter:any
+senderLoc:any
+receiverLoc:any
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,mapInitialiser,addressConverter,senderLoc,receiverLoc}) => {
   //use realtime firebase to get the status
   var onlineStatus = "•Online";
   //parse these personal information while clicking on them on the left side
@@ -36,7 +40,13 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick}) 
         <div className={` absolute flex flex-row right-6`}>
 
 <PopoverTriggerComponent src="/facetime.png" _className="w-24 h-12 rounded-full" content={<PopOverComponent callerVideoRef={callerRef} receiverVideoRef={receiverRef} callerUser="Mary" receiverUser="John"/>} videoOnClick={videoOnClick}/>
-<LocationTrigger src="/map.png" _className="w-12 h-12 rounded-full ml-3"/>
+<LocationTrigger 
+        src="/map.png" 
+        _className="w-12 h-12 rounded-full ml-3" 
+        mapInitialiser={mapInitialiser}
+        addressConverter={addressConverter}
+        senderLoc={senderLoc}
+        receiverLoc={receiverLoc}/>
 
 <button>
 <img
