@@ -9,10 +9,10 @@ import Mail from 'nodemailer/lib/mailer';
         auth: {
           type: 'OAuth2',
           user: "rishikeshadh4@gmail.com",
-          // pass: "Rishikesh@123",
-          clientId:"179667876609-11k4p22f9impcqqhllpit9nobeoina36.apps.googleusercontent.com",
-          clientSecret: "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",
-          refreshToken: "1//04yS9PX7rxNd5CgYIARAAGAQSNwF-L9IrUAVngalfqPSf6fj8c60Bd1Jin3yVE8tc6zTVPknDdRWEc4QFinFc4XuEtYPXHXkQ1zE"
+          // pass: "",
+          clientId:"",
+          clientSecret: "",
+          refreshToken: ""
           
         },
       });
