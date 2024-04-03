@@ -8,7 +8,7 @@ import Mail from 'nodemailer/lib/mailer';
         service: 'gmail',
         auth: {
           type: 'OAuth2',
-          user: "rishikeshadh4@gmail.com",
+          user: "",
           // pass: "",
           clientId:"",
           clientSecret: "",
@@ -19,8 +19,8 @@ import Mail from 'nodemailer/lib/mailer';
 
       const mailOptions: Mail.Options = {
         from: fromEmail,
-        to: "rishikeshadh4@gmail.com",
-        cc: "rishikeshadh4@gmail.com",
+        to: "",
+        cc: "",
         // cc: email, (uncomment this line if you want to send a copy to the sender)
         subject: ` from ${name} :  ${subject}`,
         text: message,
