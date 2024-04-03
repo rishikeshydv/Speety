@@ -12,6 +12,7 @@ import poppins from "@/font/font";
 import Footer from "@/components/Footer";
 import { useParams } from 'react-router-dom';
 import Image from 'next/image';
+import ListingCard from "@/services/agent/ListingCard";
 
 export default function Component() {
     const { email } = useParams();
@@ -44,8 +45,8 @@ export default function Component() {
                 />
             </div>
             <div className="grid gap-1.5">
-                <h2 className="font-bold text-lg md:text-2xl leading-none">Alice Smith</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Broker</p>
+                <div className="font-bold text-lg md:text-2xl leading-none">Alice Smith</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Broker</div>
             </div>
         </div>
         <div>
@@ -89,68 +90,71 @@ export default function Component() {
           </Button>
         </div>
       </CardContent>
-      <CardContent className="grid gap-6">
-        <h3 className="text-3xl font-semibold">Listed Properties</h3>
-        <ul className="grid gap-4 text-2xl">
-        <li className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-            <div className="flex flex-row">
-            <div>
-            <Image
-                alt="Profile picture"
-                className="rounded-full object-cover"
-                height={96}
-                src="/home.png"
-                layout="responsive"
-                objectFit="cover"
-                width={96}
-            />
-                </div>
-                <div className="mt-4 ml-6">
-                <h4 className="font-semibold">123 Main St</h4>
-                <p className="text-xl">Beds: 3, Baths: 2, Status: Sold</p>
-                </div>
-            </div>
-        </li>
-        <li className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-            <div className="flex flex-row">
-            <div>
-            <Image
-                alt="Profile picture"
-                className="rounded-full object-cover"
-                height={96}
-                src="/home.png"
-                layout="responsive"
-                objectFit="cover"
-                width={96}
-            />
-                </div>
-                <div className="mt-4 ml-6">
-                <h4 className="font-semibold">456 Main St</h4>
-                <p className="text-xl">Beds: 3, Baths: 2, Status: Sold</p>
-                </div>
-            </div>
-        </li>
-        <li className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-            <div className="flex flex-row">
-            <div>
-            <Image
-                alt="Profile picture"
-                className="rounded-full object-cover"
-                height={96}
-                src="/home.png"
-                layout="responsive"
-                objectFit="cover"
-                width={96}
-            />
-                </div>
-                <div className="mt-4 ml-6">
-                <h4 className="font-semibold">789 Main St</h4>
-                <p className="text-xl">Beds: 3, Baths: 2, Status: Sold</p>
-                </div>
-            </div>
-        </li>
-        </ul>
-      </CardContent>
+      <h3 className="text-3xl font-semibold px-10 py-5">Listed Properties</h3>
+      <div className="flex flex-wrap gap-6">
+<ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+         
+
+         <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+
+<ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+
+<ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+
+<ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+        
+
+  </div>
     </Card>
     </div>
     <Footer />

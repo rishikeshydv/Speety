@@ -62,7 +62,7 @@ export default function SignInPage() {
         }        
         for (const doc of docSnap.docs) {
           const userData = doc.data();
-          await Login(userData.email, userData.password);
+          await Login(userData.email, password);
           console.log(user?.email);
           router.push("/dashboard");
         }

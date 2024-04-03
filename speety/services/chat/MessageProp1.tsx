@@ -7,7 +7,7 @@ interface MsgProp {
 }
 const MessageProp1:React.FC<MsgProp> = ({message,msgTime}) => {
   return (
-            <div className="flex items-start justify-start ml-6 mt-10 w-28 h-20 rounded-2xl">
+            <div className="flex items-start justify-start ml-6 mt-10 w-40 h-20 rounded-2xl">
                   <Avatar className="w-16 h-16 p-0.5 border rounded-full mt-2">
       <AvatarImage alt="@jessica" src="/placeholder-user.jpg" />
       <AvatarFallback>J</AvatarFallback>
