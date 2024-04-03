@@ -27,7 +27,7 @@ const MapPopOver:React.FC<PopOverComponentProps> = ({destination,mapInitialiser,
 
 
   return (
-<div className="map">
+<div id="map">
       </div>
   )
 }

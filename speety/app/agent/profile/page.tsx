@@ -3,27 +3,66 @@
  * @see https://v0.dev/t/PU4BC928Dha
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
+"use client"
 import { Avatar } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { CardHeader, CardContent, Card } from "@/components/ui/card"
 import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { RealtorCard } from "@/components/agent/RealtorCard";
+import ListingCard from "@/services/agent/ListingCard";
+import Rating from '@mui/material/Rating';
+import { useParams } from 'react-router-dom';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import moment from "moment"; //use moment.js to get time/date in a good format
+import { useState,useEffect } from "react";
+import PushNotifications from "@/queries/PushNotifications";
+
 
 export default function Component() {
+  //we will be retrieving the agent email from te url
+  // the url will be in the format of /agent/profile/:email
+ // const { email } = useParams();
+ const email = "ryadav@caldwell.edu"
+  const [user] = useAuthState(auth);
+  const [buttonText, setButtonText] = useState("Connect with me");
+  const [buttonIcon, setButtonIcon] = useState("/imsg.webp");
+  const [buttonColor, setButtonColor] = useState("bg-gray-200");
+
+  const [currentTime, setCurrentTime] = useState(moment());
+  useEffect(() => {
+    // Function to update the current time every second
+    const updateCurrentTime = () => {
+      setCurrentTime(moment());
+    };
+
+    // Set up an interval to update the time every second
+    const intervalId = setInterval(updateCurrentTime, 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <div className={poppins.className}>
         <Header />
     <Card>
-      <CardHeader className="pb-0">
+      {/* User button */}
+      <CardHeader className="p-20 flex items-center">
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center  space-x-3">
             <Avatar className="w-24 h-24">
               <img
                 alt="Avatar"
                 className="rounded-full"
                 height="100"
-                src="/placeholder.svg"
+                src="/profile.png"
                 style={{
                   aspectRatio: "100/100",
                   objectFit: "cover",
@@ -32,137 +71,178 @@ export default function Component() {
               />
             </Avatar>
             <div className="space-y-1">
-              <h2 className="text-xl font-bold">Evelyn Adams</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Real Estate Broker</p>
+              <h2 className="text-3xl font-bold">Evelyn Adams</h2>
+              <p className="text-lg text-gray-500 dark:text-gray-400">Real Estate Broker</p>
+              <button 
+              className={`flex shadow-sm p-2 ${buttonColor} font-bold rounded-lg`}
+              onClick={()=>{
+                if (buttonText!="Requested") {
+                  PushNotifications(user?.email as string,email,"msg",currentTime.format("YYYY-MM-DD HH:mm:ss"))
+                  setButtonText("Requested")
+                  setButtonIcon("/check.png")
+                  setButtonColor("bg-green-200")
+                }
+                else{
+                  alert("User already requested!")
+                }
+              }}
+              > {buttonText}
+          <img src={buttonIcon} className="w-7 h-7 ml-2" />
+          </button>
             </div>
           </div>
-          <Button size="sm" variant="outline">
-            Message
-          </Button>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="grid gap-2">
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold tracking-wide uppercase text-gray-500 dark:text-gray-400">Phone</h3>
-            <p className="text-sm">+1 (123) 456-7890</p>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold tracking-wide uppercase text-gray-500 dark:text-gray-400">Email</h3>
-            <p className="text-sm">evelyn@example.com</p>
-          </div>
-        </div>
+
+      <div className="grid gap-40 lg:grid-cols-2 lg:px-6 lg:gap-40">
+
+        {/* Left Column */}
+
+        <CardContent className="pt-0">
         <div className="border-t border-gray-200 dark:border-gray-800" />
-        <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
-          <p>
+        <div className="mt-4 space-y-4 text-sm text-black dark:text-gray-400">
+          <h1 className="font-bold text-4xl">About Evelyn Adams</h1>
+          <p className="text-xl">
             Evelyn Adams is a dedicated real estate broker with over a decade of experience in helping clients find
             their perfect homes. Her commitment to excellence and in-depth knowledge of the housing market have made her
             a trusted advisor for both buyers and sellers.
           </p>
         </div>
-        <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
-          <h3 className="font-semibold">Recent Transactions</h3>
-          <div className="grid gap-2">
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="flex items-center gap-2">
-                <HomeIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">Sunnyvale Condo</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">June 12, 2023</div>
-                <div className="font-semibold">Buy</div>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Excellent service and expertise!</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">5 stars - June 23, 2023</p>
-            </div>
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="flex items-center gap-2">
-                <HomeIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">Parkside Villa</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">August 5, 2023</div>
-                <div className="font-semibold">Sell</div>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Highly recommended for first-time buyers</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">4 stars - August 10, 2023</p>
-            </div>
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="flex items-center gap-2">
-                <HomeIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">Tranquil Acres</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">March 21, 2023</div>
-                <div className="font-semibold">Buy</div>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Smooth selling process</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">5 stars - March 30, 2023</p>
-            </div>
+
+
+  <Accordion type="single" collapsible>
+  <AccordionItem value="item-1">
+    <AccordionTrigger className="text-3xl font-bold">Present Listing</AccordionTrigger>
+    <AccordionContent className="text-xl">
+   
+
+    <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-wrap gap-4">
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
           </div>
         </div>
-        <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
-          <h3 className="font-semibold">Customer Reviews</h3>
+    </AccordionContent>
+  </AccordionItem>
+
+  <AccordionItem value="item-2">
+    <AccordionTrigger className="text-3xl font-bold">Present Listing</AccordionTrigger>
+    <AccordionContent className="text-xl">
+   
+
+    <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-wrap gap-4">
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+        <ListingCard
+        address="123 Main St, Sunnyvale, CA"
+        price="$750,000"
+        bedrooms="3"
+        bathrooms="2"
+        transactionType="Buy"
+        date="June 12, 2023"
+        stars={3}
+        review="Excellent service and expertise!"
+        image="/home-bg.jpeg"
+        />
+          </div>
+        </div>
+    </AccordionContent>
+  </AccordionItem>
+
+  <AccordionItem value="item-3">
+    <AccordionTrigger className="text-3xl font-bold">Customer Reviews</AccordionTrigger>
+    <AccordionContent className="text-xl">
+    <div className="mt-4 space-y-4 text-sm text-black dark:text-gray-400">
           <div className="grid gap-4">
             <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
               <div className="flex items-center gap-2">
-                <StarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">Evelyn Adams</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">5 stars</div>
+                <img src="/seller.png" alt="" className="w-16 h-16"/>
+                <div className="font-semibold text-xl">Evelyn Adams</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400"> <Rating name="read-only" value={3} readOnly /></div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Excellent service and expertise!</p>
+              <p className="text-lg text-black dark:text-gray-400">Excellent service and expertise!</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">June 23, 2023</p>
             </div>
             <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
               <div className="flex items-center gap-2">
-                <StarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">John Doe</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">4 stars</div>
+                <img src="/seller.png" alt="" className="w-16 h-16"/>
+                <div className="font-semibold text-xl">Evelyn Adams</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400"> <Rating name="read-only" value={3} readOnly /></div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Highly recommended for first-time buyers</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">August 10, 2023</p>
+              <p className="text-lg text-black dark:text-gray-400">Excellent service and expertise!</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">June 23, 2023</p>
             </div>
             <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
               <div className="flex items-center gap-2">
-                <StarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <div className="font-semibold">Jane Smith</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">5 stars</div>
+                <img src="/seller.png" alt="" className="w-16 h-16"/>
+                <div className="font-semibold text-xl">Evelyn Adams</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400"> <Rating name="read-only" value={3} readOnly /></div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Smooth selling process</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">March 30, 2023</p>
+              <p className="text-lg text-black dark:text-gray-400">Excellent service and expertise!</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">June 23, 2023</p>
             </div>
           </div>
         </div>
-        <div className="mt-4 space-y-4 text-sm text-gray-500 dark:text-gray-400">
-          <h3 className="font-semibold">Present Listing</h3>
-          <div className="grid gap-4">
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="font-semibold">Property</div>
-                <div className="font-semibold">Status</div>
-                <div className="font-semibold">Price</div>
-                <div>Sunnyvale Condo</div>
-                <div>2 beds / 2 baths</div>
-                <div>$500,000</div>
-              </div>
-            </div>
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="font-semibold">Property</div>
-                <div className="font-semibold">Status</div>
-                <div className="font-semibold">Price</div>
-                <div>Parkside Villa</div>
-                <div>3 beds / 2 baths</div>
-                <div>$750,000</div>
-              </div>
-            </div>
-            <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="font-semibold">Property</div>
-                <div className="font-semibold">Status</div>
-                <div className="font-semibold">Price</div>
-                <div>Tranquil Acres</div>
-                <div>4 beds / 3 baths</div>
-                <div>$1,200,000</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+</CardContent>
+
+        {/* Right Column */}
+<RealtorCard />
+      </div>
     </Card>
     <Footer />
     </div>

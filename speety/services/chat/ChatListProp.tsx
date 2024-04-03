@@ -23,15 +23,9 @@ const ChatListProp: React.FC<ChatList> = ({
 }) => {
   if (newMsg === true) {
     return (
-      // <div className="flex bg-blue-100 w-96 h-20 py-2">
-      //   <button>
-      //   <img src="/user.png" alt="user1" className="w-12 h-12" />
-      //   <button><h1 className="font-bold text-2xl"></h1></button>
-      //   <h3>New Message</h3>
-      //   </button>
-      // </div>
+ 
 <div className="flex items-start justify-start w-full h-28" onClick={()=>onClick(userName)}>
-  <Button className="flex items-start justify-start w-full h-28 gap-2 bg-blue-100" variant="outline">
+  <Button className="flex items-start justify-start w-full h-28 bg-blue-100" variant="outline">
     <Avatar className="w-16 h-16 p-0.5 border rounded-full">
       <AvatarImage alt="@jessica" src="/placeholder-user.jpg" />
       <AvatarFallback>J</AvatarFallback>

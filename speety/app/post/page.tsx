@@ -14,6 +14,13 @@ import { db } from "@/firebase/config";
 import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import getImageUrl from '@/queries/getImageUrl';
+import getVideoUrl from '@/queries/getVideoUrl';
+import { setDoc,getDoc,doc} from "firebase/firestore"; 
+import { auth} from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { uuidv4 } from "@firebase/util";  
+
 
 export default function PropertyPost() {
   const [price, setPrice] = useState('');
@@ -28,11 +35,58 @@ export default function PropertyPost() {
   const [zip, setZip] = useState('');
   const [listing, setListing] = useState('');
   const [brokerId, setBrokerId] = useState("");
-  var [imgList,setImgList]=useState<string[]>([])
-  var [vidList,setImgList]=useState<string[]>([])
+  const [imgList,setImgList]=useState<any>()
+  const [imgUrlList,setImgUrlList]=useState<any>()
+ const [vidList,setVidList]=useState<any>()
+ const [vidUrlList,setVidUrlList]=useState<any>()
 
+ const [user] = useAuthState(auth);
+ const _uniqueId = uuidv4()
+
+ 
+ async function imageUrlListCreator(imageList:any){
+  if (imageList) {
+    for (let i = 0; i < imageList.length; i++) {
+        const imageUrl = await getImageUrl(imageList[i]);
+        imgUrlList.push(imageUrl);
+    }
+  }
+ }
+ async function videoUrlListCreator(videoList:any){
+  if (videoList) {
+    for (let i = 0; i < videoList.length; i++) {
+        const vidUrl = await getVideoUrl(videoList[i]);
+        vidUrlList.push(vidUrl);
+    }
+  }
+ }
     async function postDB() {
-        await addDoc(collection(db, "propertyDetails"), {
+        // await addDoc(collection(db, "propertyDetails",user?.email as string), {
+        //   [`${_uniqueId}`]: {
+        //     price: price,
+        //     beds: beds,
+        //     baths: baths,
+        //     houseType: houseType,
+        //     transactionType: transaction,
+        //     address: address,
+        //     apartment: apartment,
+        //     city: city,
+        //     state: state,
+        //     zip: zip,
+        //     listedBy: listing,
+        //     brokerId:brokerId,
+        //     imageUrl: imgList,
+        //     videoUrl:vidList
+        //   }
+        //  }); 
+
+        const receiverRef = collection(db, "propertyDetails");
+        const receiverDocRef =  doc(receiverRef, user?.email as string);
+        const receiverSnapshot = await getDoc(receiverDocRef);
+        if(!receiverSnapshot.exists()){
+          await setDoc( receiverDocRef, {
+              // If the document doesn't exist, create a new one
+            [`${_uniqueId}`]: {
             price: price,
             beds: beds,
             baths: baths,
@@ -47,10 +101,9 @@ export default function PropertyPost() {
             brokerId:brokerId,
             imageUrl: imgList,
             videoUrl:vidList
- //           imageUrl:["https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage1.jpg?alt=media&token=3e3e7",[ "https://firebasestorage.googleapis.com/v0/b/speety-1e3e7.appspot.com/o/propertyImages%2Fimage2.jpg?alt=media&token=3e3e7"]],
-
-
-         }); 
+            }
+            });
+        }
     }
 
   return (
@@ -134,22 +187,28 @@ export default function PropertyPost() {
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="listing">Broker ID</Label>
-          <Input id="listing" placeholder="Agent or Broker ID" value={listing} onChange={(e) => setListing(e.target.value)}/>
+          <Input id="listing" placeholder="Agent or Broker ID" value={brokerId} onChange={(e) => setBrokerId(e.target.value)}/>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="images">Upload Images</Label>
-            <Input accept="image/*" id="images" type="file" value={brokerId} onChange={(e) => setBrokerId(e.target.value)}/>
+            <Input accept="image/*" id="images" type="file" multiple 
+            onChange={(e) => 
+              setImgList(e.target.files)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="videos">Upload Videos</Label>
-            <Input accept="video/*" id="videos" type="file" multiple />
+            <Input accept="video/*" id="videos" type="file" multiple 
+            onChange={(e) => 
+              setVidList(e.target.files)}/>
           </div>
         </div>
       </CardContent>
       <CardFooter>
-        <Button size="sm" onClick={postDB}>Save</Button>
+        <Button size="sm" onClick={()=>{imageUrlListCreator(imgList)
+        .then(()=>videoUrlListCreator(vidList))
+        .then(()=>postDB)}}>Save</Button>
       </CardFooter>
     </Card>
     <Footer />

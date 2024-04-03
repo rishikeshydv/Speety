@@ -6,7 +6,6 @@ import TopLeft from "@/components/chat/TopLeft";
 import TopRight from "@/components/chat/TopRight";
 import UserList from "@/components/chat/UserList";
 import ChatList from "@/components/chat/ChatList";
-import SendBar from "@/components/chat/SendBar";
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Peer from "peerjs";
@@ -66,36 +65,47 @@ export default function Chat() {
 const loader = new Loader({
   apiKey: process.env.GOOGLE_MAPS_API_KEY as string,
   version: "weekly",
-  libraries: ["places"]
+  libraries: ["places","maps","marker"]
 });
-let map,infoWindow;
-async function initMap(destination:LocationData) {
-  const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
-   map = new Map(document.getElementById("map") as HTMLElement,
-    {
-    center: position1,
-     zoom: 8,
-    }) ;
-    infoWindow = new google.maps.InfoWindow();
-    const geocoder = new google.maps.Geocoder();
-    setMyGeocoder(geocoder);
+//defining the infoWindow and the map types
+let infoWindow: google.maps.InfoWindow;
+let map: google.maps.Map;
 
-    const destinationMarker = new AdvancedMarkerElement({
-      map: map,
-      position: destination,
-      title: 'Destination'
-    });
+function initMap(destination:LocationData) {
 
-    //setting the marker for the sender
-    infoWindow.setPosition(position1);
-    infoWindow.setContent("Your current location");
-    infoWindow.open(map);
+loader.
+importLibrary("maps")
+.then(async({Map})=>{
+  map = new Map(document.getElementById("map") as HTMLElement,
+  {
+  center: position1,
+   zoom: 8,
+  }) ;
 
-    //setting the marker for the receiver
-    infoWindow.setPosition(position2);
-    infoWindow.setContent("Receiver's current location");
-    infoWindow.open(map);
+  const {AdvancedMarkerElement} = await google.maps.marker;
+  
+  infoWindow = new google.maps.InfoWindow();
+  const geocoder = new google.maps.Geocoder();
+  setMyGeocoder(geocoder);
+
+  const destinationMarker = new AdvancedMarkerElement({
+    map: map,
+    position: destination,
+    title: 'Destination'
+  });
+
+  //setting the marker for the sender
+  infoWindow.setPosition(position1);
+  infoWindow.setContent("Your current location");
+  infoWindow.open(map);
+
+  //setting the marker for the receiver
+  infoWindow.setPosition(position2);
+  infoWindow.setContent("Receiver's current location");
+  infoWindow.open(map);
+  
+
+})
 }
 
     const fetchLatLng = async (address:string) => {
@@ -316,9 +326,15 @@ async function initMap(destination:LocationData) {
       };
     }, [myPeer, id]);
   return (
-    <div className={poppins.className}>
+    <div className={`flex h-screen bg-white ${poppins.className}`}>
       <LeftmostBar />
+      <main className="flex-1">
+        <div className="flex h-[calc(103%-64px)]">
+          <div className="flex flex-col h-full">
       <TopLeft />
+      <UserList onUserClick={userOnClick} /> 
+      </div>
+      <div className="flex-1 px-5 py-4">
       <TopRight
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
@@ -328,19 +344,19 @@ async function initMap(destination:LocationData) {
         senderLoc={position1}
         receiverLoc={position2}
       />
-      <UserList onUserClick={userOnClick} /> 
-<ChatList
+    <ChatList
         sentMessage={sentMessage}
         sentTime={sentTime}
         receivedMessage={receivedMessage}
         receivedTime={receivedTime}
         senderEmail={user?.email as string}
         receiverEmail={clicked || "rishikeshadh4@gmail.com"}
-
+        sendMessageFunction={send} 
       />
       {/*we will be loading the clicked one or the first one in the list  */}
-<SendBar sendMessageFunction={send} />
-    
+      </div>
+          </div>
+      </main>
     </div>
   );
 }

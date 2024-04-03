@@ -38,25 +38,28 @@ const Dashboard = () => {
     });
   }
 
+
+  //              ******** LOGIC FOR REALTIME DATABASE ********
+  
   //function statusChat(_senderEmail: string, _receiverEmail: string) {
-  const notificationReference = ref(
-    realtimeDatabase,
-    //here, the notification will only be shown to the receiver end
-    //therefore, we will use user?.email as the 2nd argument
-    `notifications/${sender}${user?.email}`
-  );
-  const valueLookup = onValue(notificationReference, (snapshot) => {
-    const chatStat = snapshot.val().status;
-    if (chatStat === "PENDING") {
-      //write a function to make a change to the notification icon
-      //what can you do is, if there is anything 'pending', just change the
-      //notification
-      //also if user is still in session, make a popup UI
-      notificationLogo.src = "speety/public/active.png";
-    } else {
-      notificationLogo.src = "speety/public/active.png";
-    }
-  });
+  // const notificationReference = ref(
+  //   realtimeDatabase,
+  //   //here, the notification will only be shown to the receiver end
+  //   //therefore, we will use user?.email as the 2nd argument
+  //   `notifications/${sender}${user?.email}`
+  // );
+  // const valueLookup = onValue(notificationReference, (snapshot) => {
+  //   const chatStat = snapshot.val().status;
+  //   if (chatStat === "PENDING") {
+  //     //write a function to make a change to the notification icon
+  //     //what can you do is, if there is anything 'pending', just change the
+  //     //notification
+  //     //also if user is still in session, make a popup UI
+  //     notificationLogo.src = "speety/public/active.png";
+  //   } else {
+  //     notificationLogo.src = "speety/public/active.png";
+  //   }
+  // });
   //  }
 
   const [showNotifications, setShowNotifications] = useState(false);

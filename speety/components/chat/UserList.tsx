@@ -29,22 +29,41 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
   }, [user]); // Add user to the dependency array to trigger useEffect when user changes
 
   return (
-    <div className={`absolute bg-gray-200 rounded-3xl shadow-xs w-1/4 top-28 left-44 bottom-7`}>
-    {usersConnected.length > 0 ? (
-      usersConnected.map(([user,userEmail], index) => (
-        <ChatListProp
-          key={index}
-          imgUrl="" // replace with default avatar URL
-          userName={user}
-          lastMsg={user}
-          lastMsgTime="Just now" // replace with actual last message time
-          newMsg={false}
-          onClick={() => onUserClick(userEmail)}
-        />
-      ))
-    ) : (
-      <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
-    )}
+  //   <div className={`absolute bg-gray-200 rounded-3xl shadow-xs w-1/4 top-28 left-44 bottom-7`}>
+  //   {usersConnected.length > 0 ? (
+  //     usersConnected.map(([user,userEmail], index) => (
+  //       <ChatListProp
+  //         key={index}
+  //         imgUrl="" // replace with default avatar URL
+  //         userName={user}
+  //         lastMsg={user}
+  //         lastMsgTime="Just now" // replace with actual last message time
+  //         newMsg={false}
+  //         onClick={() => onUserClick(userEmail)}
+  //       />
+  //     ))
+  //   ) : (
+  //     <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
+  //   )}
+  // </div>
+  <div className="w-full h-full rounded-2xl shadow-xs mt-2 bg-gray-200">
+  <div className="flex items-center">
+  {usersConnected.length > 0 ? (
+  usersConnected.map(([user,userEmail], index) => (
+    <ChatListProp
+      key={index}
+      imgUrl="" // replace with default avatar URL
+      userName="Rishikesh"
+      lastMsg="Hello"
+      lastMsgTime="Just now" // replace with actual last message time
+      newMsg={false}
+      onClick={() => {}}
+    />
+  ))
+  ):(
+    <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
+  )}  
   </div>
+</div>
   );
 }

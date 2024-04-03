@@ -7,6 +7,7 @@ import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AgentProp from "@/services/agent/AgentProp";
+import { Loader } from "@googlemaps/js-api-loader"
 
 interface Agent{
   photoUrl:string; 
@@ -26,16 +27,29 @@ export default function Buy() {
   const [zipVal, setZipVal] = useState<string>("");
   const [resultList, setResultList] = useState<Agent[]>([]);
 
-  async function handleSubmit() {
-    //write a logic to retrieve the entries from database based on the form data
-
-    const res = await agentQ(zipVal);
-    setResultList(res);
-    console.log(resultList);
-  }
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setZipVal(event.target.value);
   };
+
+  //setting up Google Map API
+const loader = new Loader({
+  apiKey: process.env.GOOGLE_MAPS_API_KEY as string,
+  version: "weekly",
+  libraries: ["places"]
+});
+
+//the function below does not work
+//needs some work
+//follow the documentation: https://developers.google.com/maps/documentation/javascript/place-autocomplete-new#example-maps
+function zipHint() {
+loader.importLibrary("places").then(async() => {
+// Create the input HTML element, and append it.
+//@ts-ignore
+const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
+//@ts-ignore
+document.body.appendChild(placeAutocomplete);
+}
+)};
 
   return (
     <div className={poppins.className}>
@@ -56,7 +70,7 @@ export default function Buy() {
             />
             <button
               className={` text-white bg-black rounded-2xl px-10 h-24 w-80 text-3xl font-bold uppercase mt-16`}
-              onClick={handleSubmit}
+              onClick={zipHint}
             >
               Find an agent
             </button>
