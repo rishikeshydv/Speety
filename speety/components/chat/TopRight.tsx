@@ -9,13 +9,12 @@ interface TopRightProps {
 callerRef:any
 receiverRef:any
 videoOnClick:any
-mapInitialiser:any,
 addressConverter:any
 senderLoc:any
 receiverLoc:any
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,mapInitialiser,addressConverter,senderLoc,receiverLoc}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,addressConverter,senderLoc,receiverLoc}) => {
   //use realtime firebase to get the status
   var onlineStatus = "•Online";
   //parse these personal information while clicking on them on the left side
@@ -45,8 +44,6 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,ma
 <LocationTrigger 
 src="/map.png" 
 _className="w-12 h-12 rounded-full ml-3" 
-mapInitialiser={mapInitialiser}
-addressConverter={addressConverter}
 senderLoc={senderLoc}
 receiverLoc={receiverLoc}/>
 

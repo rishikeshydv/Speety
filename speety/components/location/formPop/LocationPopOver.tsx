@@ -4,24 +4,21 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 "use state"
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { count } from "console"
-import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
-import MapPopOver from "../mapPop/MapPopOver"
+import { useRouter } from "next/navigation";
+import { set } from "firebase/database"
 
 interface PopOverComponentProps {
-  mapInitialiser:any,
-  addressConverter:any
   senderLoc:any
   receiverLoc:any
   }
   
 
-const LocationPopOver:React.FC<PopOverComponentProps> = ({mapInitialiser,addressConverter,senderLoc,receiverLoc}) =>{
+const LocationPopOver:React.FC<PopOverComponentProps> = ({senderLoc,receiverLoc}) =>{
+  const router = useRouter();
   const [streetAddress, setStreetAddress] = useState("")
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
@@ -31,20 +28,13 @@ const LocationPopOver:React.FC<PopOverComponentProps> = ({mapInitialiser,address
   const handleSubmit = (e:any) => {
     e.preventDefault()
     setLocation(`${streetAddress}, ${city}, ${state}, ${zip}, ${country}`)
-    if (location == ""){
-      alert("Please enter a location")
-    }
-    if (location != ""){
-      console.log(location)
-    }
+    setButtonText("Confirmed"),
+    setButtonColor("bg-green-500")
   }
-  const handleSubmit2 = (e:any) => {
-    e.preventDefault()
-    setLocation(`${streetAddress}, ${city}, ${state}, ${zip}, ${country}`)
-    if (location == ""){
-      alert("Please enter a location")
-    }
-  }
+
+
+  const [buttonText, setButtonText] = useState("Confirm");
+  const [buttonColor, setButtonColor] = useState("bg-black");
   return (
 <div className="mx-auto max-w-sm space-y-6 flex flex-col items-center justify-center">
   <h1 className="text-2xl font-semibold mt-20">Enter Destination Location</h1>
@@ -71,25 +61,19 @@ const LocationPopOver:React.FC<PopOverComponentProps> = ({mapInitialiser,address
           <Label htmlFor="country" className="text-xl">Country</Label>
           <Input id="country" placeholder="Country" required  className="text-xl" value={country} onChange={(e)=>{setCountry(e.target.value)}}/>
         </div>
-        <div className="flex items-center justify-center">
+        
+        <div className="flex items-center justify-center gap-5">
         {/* The following Submit button works to trigger the MapPopOver */}
-        <Popover>
-    <PopoverTrigger asChild>
-    <Button className="w-32 text-xl mt-4" type="submit" onClick={handleSubmit}>
+        <Button className={`w-32 text-xl ${buttonColor} mt-4`} onClick={handleSubmit}>
+          {buttonText}
+        </Button>
+    <Button className="w-32 text-xl mt-4" type="submit" onClick={()=>{
+          if (location !== ""){
+            router.push(`/map/${location}`)
+          }
+    }}>
           Submit
         </Button>
-{/* Popover for video-call */}
-    </PopoverTrigger>
-    <PopoverContent align="end" style={{ width: "800px", height: "600px" }} className="flex-col border-0 p-0 bg-gray-400 rounded-3xl" side="top">
-      <MapPopOver
-      destination={location}
-      mapInitialiser={mapInitialiser}
-      addressConverter={addressConverter}
-      senderLoc={senderLoc}
-      receiverLoc={receiverLoc}
-      />
-    </PopoverContent>
-  </Popover>
         </div>
       </div>
     </div>

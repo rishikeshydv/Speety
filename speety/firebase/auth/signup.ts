@@ -3,7 +3,7 @@ import { app } from '../config'
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 const auth = getAuth(app);
-export default async function signup(email: string, password: string) {
+export default async function Signup(email: string, password: string) {
     let userCredential, error;
   
     try {

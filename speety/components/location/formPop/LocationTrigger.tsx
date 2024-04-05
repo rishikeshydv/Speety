@@ -11,13 +11,11 @@ import poppins from "@/font/font";
 interface PopOverComponentProps {
 src: string;
 _className: string;
-mapInitialiser:any,
-addressConverter:any
 senderLoc:any
 receiverLoc:any
 }
 
-const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,mapInitialiser,addressConverter,senderLoc,receiverLoc}) => {
+const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,senderLoc,receiverLoc}) => {
   return (
     <div className={poppins.className}>
     <Popover>
@@ -32,8 +30,6 @@ const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,mapInit
     </PopoverTrigger>
     <PopoverContent align="end" style={{ width: "800px", height: "600px" }} className="flex-col border-0 p-0 bg-gray-400 rounded-3xl" side="top">
       <LocationPopOver
-        mapInitialiser={mapInitialiser}
-        addressConverter={addressConverter}
         senderLoc={senderLoc}
         receiverLoc={receiverLoc}/>
     </PopoverContent>

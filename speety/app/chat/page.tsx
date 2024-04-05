@@ -61,67 +61,22 @@ export default function Chat() {
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
 
-//setting up Google Map API
-const loader = new Loader({
-  apiKey: process.env.GOOGLE_MAPS_API_KEY as string,
-  version: "weekly",
-  libraries: ["places","maps","marker"]
-});
-//defining the infoWindow and the map types
-let infoWindow: google.maps.InfoWindow;
-let map: google.maps.Map;
 
-function initMap(destination:LocationData) {
 
-loader.
-importLibrary("maps")
-.then(async({Map})=>{
-  map = new Map(document.getElementById("map") as HTMLElement,
-  {
-  center: position1,
-   zoom: 8,
-  }) ;
-
-  const {AdvancedMarkerElement} = await google.maps.marker;
-  
-  infoWindow = new google.maps.InfoWindow();
-  const geocoder = new google.maps.Geocoder();
-  setMyGeocoder(geocoder);
-
-  const destinationMarker = new AdvancedMarkerElement({
-    map: map,
-    position: destination,
-    title: 'Destination'
-  });
-
-  //setting the marker for the sender
-  infoWindow.setPosition(position1);
-  infoWindow.setContent("Your current location");
-  infoWindow.open(map);
-
-  //setting the marker for the receiver
-  infoWindow.setPosition(position2);
-  infoWindow.setContent("Receiver's current location");
-  infoWindow.open(map);
-  
-
-})
-}
-
-    const fetchLatLng = async (address:string) => {
-      myGeocoder.geocode({ address }, (results:any, status:any) => {
-        if (status === 'OK' && results) {
-          console.log(results);
-          const locationData: LocationData = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          };
-          return locationData;
-        } else {
-          console.error('Geocode was not successful for the following reason:', status);
-        }
-      });
-    }
+    // const fetchLatLng = async (address:string) => {
+    //   myGeocoder.geocode({ address }, (results:any, status:any) => {
+    //     if (status === 'OK' && results) {
+    //       console.log(results);
+    //       const locationData: LocationData = {
+    //         lat: results[0].geometry.location.lat(),
+    //         lng: results[0].geometry.location.lng(),
+    //       };
+    //       return locationData;
+    //     } else {
+    //       console.error('Geocode was not successful for the following reason:', status);
+    //     }
+    //   });
+    // }
     //function to get the location of the user
     function locationUpdate() {
       //on clicking the location share button, there should be a popup
@@ -339,8 +294,7 @@ importLibrary("maps")
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
         videoOnClick={() => call("")}
-        mapInitialiser={initMap}
-        addressConverter={fetchLatLng}
+        addressConverter={()=>{}}
         senderLoc={position1}
         receiverLoc={position2}
       />

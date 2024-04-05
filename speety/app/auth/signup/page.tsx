@@ -1,8 +1,7 @@
 "use client";
-import signup from "@/firebase/auth/signup";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm,SubmitHandler } from "react-hook-form";
 import { setDoc, doc } from "firebase/firestore";
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -11,12 +10,19 @@ import poppins from "@/font/font";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
 import { FaMicrosoft } from "react-icons/fa6";
-
 import Image from "next/image";
+import Signup from "@/firebase/auth/Signup";
+
+interface SignupData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export default function SignupPage() {
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<SignupData>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const router = useRouter();
   const [user] = useAuthState(auth);
@@ -38,26 +44,24 @@ export default function SignupPage() {
       console.log(error);
     }
   };
-  const onSubmit = useCallback(async (data: any) => {
+  const onSubmit:SubmitHandler<SignupData> = async (data) => {
     try {
-      const { email,name, password, confirmedPassword } =
+      const { email,name, password, confirmPassword } =
         data;
 
-      if (password !== confirmedPassword) {
+      if (password !== confirmPassword) {
         // show message to user that passwords do not match
         setErrorMsg("Passwords do not match");
         return;
       }
 
       //const { userCredential, error } = await signup(email, password);
-      signup(email, password).then
+      Signup(email, password).then
       (() => {
        createUserInDB(name, email,"client");
       }).then(() => {
         router.push(`/dashboard/${email}`);
       })
-
-
       // if (!userCredential) {
       //   setErrorMsg("Something went wrong. Please try again later.");
       // }
@@ -67,7 +71,7 @@ export default function SignupPage() {
       console.log(error);
       setErrorMsg("Something went wrong. Please try again later.");
     }
-  }, []);
+  }
   return (
     <div className={poppins.className}>
         <div className={`fixed bottom-32 top-32 left-1/3 right-1/3 flex flex-col items-center justify-center bg-gray-100 shadow-sm rounded-2xl`}>{/* This div is for the right side of the page */}
@@ -106,7 +110,6 @@ export default function SignupPage() {
         <input type="password" required {...register("confirmPassword")} className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4" />
         {errors.confirmPassword && <p className="text-red-500">Please confirm your password.</p>}
 
-        <p id="login_status" className="py-3"></p>
         <p className="text-gray-500">Password must be 8 characters in length. </p>
         <p className="text-gray-500">Must contain an uppercase letter, a lowercase </p>
         <p className="text-gray-500">letter, one number and one special character.</p>
