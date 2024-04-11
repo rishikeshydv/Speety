@@ -21,6 +21,7 @@ const ListingCard:React.FC<ListingProp>=({ address,price,bedrooms,bathrooms,tran
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="p-4">
+        <p className="italic text-xs text-red-100">ID: 123XCV</p>
         <CardTitle className="text-2xl">{address}</CardTitle>
         <hr className="border-gray-200 dark:border-gray-800 border-2" />
         <CardDescription className="text-lg flex flex-col">

@@ -57,6 +57,7 @@
     "react-resizable-panels": "^2.0.8",
     "react-router-dom": "^6.22.3",
     "react-typist-component": "^1.0.6",
+    "react-webcam": "^7.2.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "uuidv4": "^6.2.13"
