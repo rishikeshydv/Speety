@@ -4338,6 +4338,11 @@ react-typist-component@^1.0.6:
   resolved "https://registry.npmjs.org/react-typist-component/-/react-typist-component-1.0.6.tgz"
   integrity sha512-DOcMvPyqsB2dgh/DtfaDrrNSoZAFarToPXn82WN56vF9DJBeS5ss5voLI1x+nntXiWpWCUJkLL/rDS4/W0YTSQ==
 
+react-webcam@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/react-webcam/-/react-webcam-7.2.0.tgz#64141c4c7bdd3e956620500187fa3fcc77e1fd49"
+  integrity sha512-xkrzYPqa1ag2DP+2Q/kLKBmCIfEx49bVdgCCCcZf88oF+0NPEbkwYk3/s/C7Zy0mhM8k+hpdNkBLzxg8H0aWcg==
+
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
