@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 //import NavbarLeft from "@/components/navbarLeft";
 import { agentQ } from "@/queries/agentQ";
 import { db } from "@/firebase/config";
@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AgentProp from "@/services/agent/AgentProp";
 import { Loader } from "@googlemaps/js-api-loader"
+import { types } from "util";
 
 interface Agent{
   photoUrl:string; 
@@ -31,25 +32,30 @@ export default function Buy() {
     setZipVal(event.target.value);
   };
 
-  //setting up Google Map API
-const loader = new Loader({
-  apiKey: process.env.GOOGLE_MAPS_API_KEY as string,
-  version: "weekly",
-  libraries: ["places"]
-});
 
-//the function below does not work
-//needs some work
-//follow the documentation: https://developers.google.com/maps/documentation/javascript/place-autocomplete-new#example-maps
-function zipHint() {
-loader.importLibrary("places").then(async() => {
-// Create the input HTML element, and append it.
-//@ts-ignore
-const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
-//@ts-ignore
-document.body.appendChild(placeAutocomplete);
-}
-)};
+  useEffect(() => {
+    const initializeMap = () => {
+      const _autocomplete = new window.google.maps.places.Autocomplete(
+        document.getElementById('autocomplete') as HTMLInputElement
+        );
+};
+    const loadGoogleMapsScript = () => {
+      const googleMapsScript = document.createElement('script');
+      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+      googleMapsScript.async = true;
+      googleMapsScript.defer = true;
+      googleMapsScript.addEventListener('load', initializeMap);
+      document.body.appendChild(googleMapsScript);
+    };
+
+    // Check if the Google Maps script has already been loaded
+    if (!window.google) {
+      loadGoogleMapsScript();
+    }
+  }, []);
+
+
+
 
   return (
     <div className={poppins.className}>
@@ -62,6 +68,7 @@ document.body.appendChild(placeAutocomplete);
           </h1>
           <div className="flex flex-col items-center justify-center mt-20">
             <input
+              id="autocomplete"
               type="text"
               placeholder=" Enter a zip code ..."
               className={`bottom-20 h-24 w-1/3 bg-gray-100 text rounded-3xl text-center text-3xl`}
@@ -70,7 +77,7 @@ document.body.appendChild(placeAutocomplete);
             />
             <button
               className={` text-white bg-black rounded-2xl px-10 h-24 w-80 text-3xl font-bold uppercase mt-16`}
-              onClick={zipHint}
+              onClick={() => {}}
             >
               Find an agent
             </button>

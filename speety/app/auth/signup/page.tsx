@@ -20,13 +20,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { set } from "firebase/database";
 
 interface SignupData {
   name: string;
   email: string;
   role: string;
   id: string;
-  faceCapture: File;
   driverLicense: File;
   password: string;
   confirmPassword: string;
@@ -48,19 +48,40 @@ export default function SignupPage() {
 
   //to capture the photo
   const webcamRef = useRef<Webcam>(null);
-  const [photo, setPhoto] = useState(null);
-  const capturePhoto = () => {
-    if (!webcamRef.current) return;
-    const imageSrc = webcamRef.current.getScreenshot();
-    setPhoto(imageSrc);
-  };
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(true);
+  const [captureText,setCaptureText]=useState<string>("Add a profile picture");
+  const capturePhoto = useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setImgSrc(imageSrc);
+      setShowCamera(false); // Hide camera after capturing photo
+    }
+  }, [webcamRef]);
 
-  const createUserInDB = async (name: string, email: string, role: string) => {
+  //to retake photo
+  const retakePhoto = useCallback(() => {
+    setImgSrc(null);
+    setShowCamera(true); 
+  }, []);
+
+  //to confirm the photo
+  const confirmPhoto = useCallback(() => {
+    setCaptureText("Profile Picture Added");
+    alert("Photo added successfully");
+  }, []);
+
+
+  const createUserInDB = async (name: string, email: string, role: string,driverLicense:File,imgSrc:string,id:string) => {
     try {
       const userDocRef = doc(db, "User_Info", email); // Use email as the document ID
       await setDoc(userDocRef, {
+        email: email,
         name: name,
         role: role,
+        driverLicense: driverLicense,
+        id:id,
+        imgSrc:imgSrc
       });
     } catch (error) {
       console.log(error);
@@ -68,27 +89,29 @@ export default function SignupPage() {
   };
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
-      const {
+      var {
         email,
         name,
         role,
         id,
-        faceCapture,
         driverLicense,
         password,
         confirmPassword,
       } = data;
+
 
       if (password !== confirmPassword) {
         // show message to user that passwords do not match
         setErrorMsg("Passwords do not match");
         return;
       }
+      console.log(data);
+      console.log(imgSrc);
 
       //const { userCredential, error } = await signup(email, password);
       Signup(email, password)
         .then(() => {
-          createUserInDB(name, email, "client");
+          createUserInDB(name, email, role,driverLicense,imgSrc as string,id);
         })
         .then(() => {
           router.push(`/dashboard/${email}`);
@@ -205,7 +228,7 @@ export default function SignupPage() {
                       className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4"
                     />
                     {errors.id && (
-                      <p className="text-red-500">Name is required.</p>
+                      <p className="text-red-500">Broker ID is required.</p>
                     )}
                   </div>
                 </>
@@ -218,10 +241,9 @@ export default function SignupPage() {
                   Capture Face
                 </label>
                 <input
-                  placeholder="Add a profile picture"
+                  placeholder={captureText}
                   type="text"
                   readOnly
-                  {...register("name")}
                   className="rounded-md bg-gray-200 h-16 w-96 text-lg px-4"
                 />
               </div>
@@ -231,17 +253,34 @@ export default function SignupPage() {
                     <MdCamera className="h-10 w-10" />
                   </PopoverTrigger>
                   <PopoverContent
-                    style={{ width: 600, height: 500 }}
+                    style={{ width: 600, height: 550 }}
                     className="mr-10 mt-6 bg-gray-300 rounded-3xl"
                   >
-                    <Webcam
+                     {showCamera ? (
+                      <div className="flex flex-col items-center justify-center gap-1">
+                      <Webcam
                       audio={false}
                       ref={webcamRef}
                       screenshotFormat="image/jpeg"
-                      width={320}
-                      height={240}
+                      width={600}
+                      height={450}
+                      className="rounded-3xl"
                     />
-                    <button onClick={capturePhoto}>Capture Photo</button>
+                    <button onClick={capturePhoto} className="bg-gray-400 p-6 rounded-full"><MdCamera className="h-10 w-10"/></button>
+                      </div>
+
+                    ):(
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <img src={imgSrc as string} alt="Captured Image" className="rounded-3xl"/>
+                        <div className="flex gap-6">
+                        <button onClick={confirmPhoto} className="bg-gray-100 p-6 rounded-3xl font-bold text-xl"><img className="w-10 h-10" src="/confirm.png" alt="confirm" /></button>
+             
+                        <button onClick={retakePhoto} className="bg-gray-100 p-6 rounded-3xl font-bold text-xl"><img className="w-10 h-10" src="/retake.webp" alt="retake" /></button>
+                        </div>
+                      </div>
+                    
+                    )}
+                    
                   </PopoverContent>
                 </Popover>
               </div>
@@ -254,7 +293,7 @@ export default function SignupPage() {
                 type="file"
                 accept="image/*"
                 required
-                {...register("name")}
+                {...register("driverLicense")}
                 className="rounded-md text-xl font-semibold h-16 w-96 py-4"
               />
               {errors.driverLicense && (
