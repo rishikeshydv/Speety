@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import poppins from "@/font/font";
 import Footer from "@/components/Footer";
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import ListingCard from "@/services/agent/ListingCard";
 
