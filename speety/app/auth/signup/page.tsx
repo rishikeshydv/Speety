@@ -2,25 +2,20 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { setDoc, doc } from "firebase/firestore";
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { db } from "@/firebase/config";
 import poppins from "@/font/font";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
-import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 import Signup from "@/firebase/auth/Signup";
 import Webcam from "react-webcam";
 import { MdCamera } from "react-icons/md";
-import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { set } from "firebase/database";
 
 interface SignupData {
   name: string;
@@ -72,18 +67,6 @@ export default function SignupPage() {
   }, []);
 
 
-  const createUserInDB = async (name: string, email: string, role: string) => {
-    try {
-      const userDocRef = doc(db, "User_Info", email); // Use email as the document ID
-      await setDoc(userDocRef, {
-        email: email,
-        name: name,
-        role: role,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
       var {
@@ -103,12 +86,7 @@ export default function SignupPage() {
         return;
       }
       console.log(data);
-
-      //const { userCredential, error } = await signup(email, password);
-      Signup(email, password)
-        .then(() => {
-          createUserInDB(name, email, role);
-        })
+        Signup(email, password, name, role)
         .then(() => {
           router.push(`/dashboard/${email}`);
         });
@@ -326,6 +304,7 @@ export default function SignupPage() {
                 )}
               </div>
             </div>
+            <p className="px-1 py-2"> • Password must be atleast 6 characters.</p>
             <div className="flex items-center justify-center py-8">
             <button
               type="submit"

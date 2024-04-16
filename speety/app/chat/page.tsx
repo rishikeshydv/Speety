@@ -279,7 +279,6 @@ export default function Chat() {
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
         videoOnClick={() => call("")}
-        addressConverter={()=>{}}
         senderLoc={position1}
         receiverLoc={position2}
         clickedUser={clicked}

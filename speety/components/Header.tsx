@@ -25,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
+import updateStatus from "@/queries/changeLoginStatus";
 
 
 
@@ -37,10 +37,12 @@ export default function Header() {
   const dashboardRedirect = () => {
     router.push(`/dashboard/${user?.email}`)
   }
-  const logoutUser = () => {
+  const logoutUser = async() => {
+    updateStatus(user?.email as string,"Offline").then(() => {
     logout();
     router.push('/auth/login');
   }
+  )}
   const [notificationIcon, setNotificationIcon] = useState("/notify.png");
   const [meetingIcon, setMeetingIcon] = useState("/calendar-icon.webp");
   const [notificationList, setNotificationList] = useState<any>([]);
