@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "@/services/homepage/Image";
 import Prompts from "@/services/homepage/prompts";
+import Typist from "react-typist-component";
 
 export default function Sec4() {
   return (
@@ -15,20 +16,13 @@ export default function Sec4() {
             </button>
           </h1>
         </div>
+        <div className="text-center text-2xl flex items-center justify-center">
+        <img src="/pin.png" alt="" className="w-10 h-10 mr-4"/>
+        <Typist>Speety gives Real Estate a new face by providing a digital platform for business.</Typist>
+        </div>
         {/* The slogan is used to add an image at the center vertically */}
         <div>
-          <Image src="/imgSample.png" alt="animation" />
-        </div>
-        <div className="flex flex-col items-center justify-center">
-          {" "}
-          <Prompts
-            title="Ask Speety to buy for you"
-            promptUrl="/write-with-ai.webp"
-          />
-          <Prompts
-            title="Ask Speety to buy for you"
-            promptUrl="/write-with-ai.webp"
-          />
+          <Image src="/techBroker.png" alt="animation" />
         </div>
       </section>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 //import NavbarLeft from "@/components/navbarLeft";
-import { agentQ } from "@/queries/agentQ";
+import { agentQ } from "@/queries/Transactions/agentQ";
 import { db } from "@/firebase/config";
 import poppins from "@/font/font";
 import Header from "@/components/Header";

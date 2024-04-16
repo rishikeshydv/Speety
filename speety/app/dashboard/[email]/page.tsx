@@ -13,6 +13,8 @@ import Footer from "@/components/Footer";
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import ListingCard from "@/services/agent/ListingCard";
+import Header from "@/components/Header"
+
 
 export default function Component() {
     const { email } = useParams();
@@ -22,9 +24,7 @@ export default function Component() {
 
   return (
     <div className={`${poppins.className}`}>
-            <div className='flex items-center justify-center shadow-sm'>
-                <img src="/speety_logo.png" alt="logo" />
-            </div>
+<Header/>
         <div className="flex flex-col items-center bg-gray-200">
     <Card className="w-full max-w-7xl mt-8 mb-8 shadow-md">
       <CardHeader>

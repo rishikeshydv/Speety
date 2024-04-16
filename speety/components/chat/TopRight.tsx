@@ -16,6 +16,12 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDateTimePicker } from '@mui/x-date-pickers/StaticDateTimePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import dayjs, { Dayjs } from 'dayjs';
+
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import PushMeetings from "@/queries/Meetings/PushMeetings";
 
 interface TopRightProps {
 callerRef:any
@@ -24,9 +30,11 @@ videoOnClick:any
 addressConverter:any
 senderLoc:any
 receiverLoc:any
+clickedUser:string
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,addressConverter,senderLoc,receiverLoc}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,addressConverter, clickedUser, senderLoc,receiverLoc}) => {
+  const [_user] = useAuthState(auth);
   //use realtime firebase to get the status
   var onlineStatus = "•Online";
   //parse these personal information while clicking on them on the left side
@@ -34,8 +42,11 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick,ad
   var user = "Mary";
   var imageUrl = "/old-woman.png";
 
+  const [datetime, setDatetime] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
+  const [show, setShow] = useState(false);
 
-  const [currentDate, setCurrentData] = useState(new Date());
+  //PushNotifications(user?.email as string,email,"msg",currentTime.format("YYYY-MM-DD HH:mm:ss"))
+
   return (
     <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-20 px-6">
     <div className="flex items-center space-x-2">
@@ -64,18 +75,34 @@ receiverLoc={receiverLoc}/>
 
 {/* Calender Element */}
 <Popover>
-  <PopoverTrigger>
+  <PopoverTrigger onClick={()=>setShow(true)}>
   <img
           src="/calendar-icon.webp"
           alt="Image description"
           className="w-26 h-14 rounded-full"
         />
   </PopoverTrigger>
-  <PopoverContent style={{width:600,height:500}} className="mr-10 mt-6 bg-gray-300 rounded-3xl">
-  <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StaticDateTimePicker orientation="landscape" className="w-full h-full bg-gray-300 rounded-3xl py-4 px-4"/>
-    </LocalizationProvider>
+
+{show && (
+    <PopoverContent style={{width:600,height:600}} className="mr-10 mt-6 bg-gray-300 rounded-3xl">
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+       <StaticDateTimePicker 
+       className="w-full h-full bg-gray-300 rounded-3xl p-4"
+       value={datetime}
+       onChange={(newValue) => setDatetime(newValue)}
+       onAccept={()=>{
+        setShow(false);
+      console.log(datetime?.toString());
+      alert("Appointment Scheduled for "+datetime?.toString());
+      //we need to push this meeting to both sender and receiver database
+      PushMeetings(_user?.email as string,clickedUser,datetime?.toString() as string);
+      PushMeetings(clickedUser, _user?.email as string,datetime?.toString() as string);
+    }} 
+       />
+           </LocalizationProvider>
   </PopoverContent>
+ )}
+
 </Popover>
 
 {/* 

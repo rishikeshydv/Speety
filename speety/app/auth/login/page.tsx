@@ -14,6 +14,7 @@ import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 import Login from "@/firebase/auth/Login";
 import { set } from "firebase/database";
+import { useKeyPress } from "@react-typed-hooks/use-key-press";
 
 interface SignInData {
   email: string;
@@ -25,6 +26,9 @@ export default function SignInPage() {
   const [user] = useAuthState(auth);
   const [err, setErr] = useState<string>("");
 
+  //logic for onkeypress enter
+  const isEnterPressed = useKeyPress({ targetKey: "Enter" });
+  
   const { register, handleSubmit,formState: { errors } } = useForm<SignInData>();
 
   const onSubmit:SubmitHandler<SignInData> = async (data) => {
@@ -117,6 +121,7 @@ export default function SignInPage() {
                 {...register("password")}
                 className="rounded-md bg-gray-200 h-16 w-96 px-4 text-2xl"
               />
+
               {errors.password && <p className="text-red-500">Password is required.</p>}
               <a href="#" className="mt-1 text-blue-700">
                 Forgot Password?

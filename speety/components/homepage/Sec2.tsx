@@ -24,7 +24,7 @@ export default function Sec2() {
       />
     </div>
 
-    <div>
+    <div className='p-6'>
       <Image src="/imgSample.png" alt="Your Image" />
     </div>
 

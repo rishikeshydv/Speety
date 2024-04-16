@@ -50,5 +50,5 @@ async function sellQ(db: Firestore, zip: string,priceUpper: string, priceLower: 
   }
 }
 
-export { buyQ };
+export { sellQ };
 

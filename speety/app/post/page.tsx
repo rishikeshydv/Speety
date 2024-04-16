@@ -14,8 +14,8 @@ import { db } from "@/firebase/config";
 import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import getImageUrl from '@/queries/getImageUrl';
-import getVideoUrl from '@/queries/getVideoUrl';
+import getImageUrl from '@/queries/ImgVidUrls/getImageUrl';
+import getVideoUrl from '@/queries/ImgVidUrls/getVideoUrl';
 import { setDoc,getDoc,doc} from "firebase/firestore"; 
 import { auth} from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -61,31 +61,17 @@ export default function PropertyPost() {
   }
  }
     async function postDB() {
-        // await addDoc(collection(db, "propertyDetails",user?.email as string), {
-        //   [`${_uniqueId}`]: {
-        //     price: price,
-        //     beds: beds,
-        //     baths: baths,
-        //     houseType: houseType,
-        //     transactionType: transaction,
-        //     address: address,
-        //     apartment: apartment,
-        //     city: city,
-        //     state: state,
-        //     zip: zip,
-        //     listedBy: listing,
-        //     brokerId:brokerId,
-        //     imageUrl: imgList,
-        //     videoUrl:vidList
-        //   }
-        //  }); 
 
-        const receiverRef = collection(db, "propertyDetails");
+        const receiverRef = collection(db, "presentListings");
         const receiverDocRef =  doc(receiverRef, user?.email as string);
         const receiverSnapshot = await getDoc(receiverDocRef);
         if(!receiverSnapshot.exists()){
           await setDoc( receiverDocRef, {
               // If the document doesn't exist, create a new one
+              //each property to have a unique id
+              //so when we have to assign a property to an agent, we can just assign him the unique id
+              //instead of the whole property details
+              //this makes it easy while querying
             [`${_uniqueId}`]: {
             price: price,
             beds: beds,
@@ -109,30 +95,30 @@ export default function PropertyPost() {
   return (
     <div className={poppins.className}>
       <Header />
-    <Card className={`py-10 px-20 text-3xl`}>
+    <Card className={`py-10 px-40`}>
       <CardHeader>
-        <CardTitle>Property information</CardTitle>
+        <CardTitle className='text-4xl'>Property information</CardTitle>
         <CardDescription className="text-xl">Enter the details of the property you&apos;re listing.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="price">Price</Label>
-            <Input id="price" placeholder="$" type="number" value={price} onChange={(e) => setPrice(e.target.value)}/>
+            <Label htmlFor="price" className='text-2xl'>Price</Label>
+            <Input id="price" className='text-2xl border-2' placeholder="$" type="number" value={price} onChange={(e) => setPrice(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="beds">Beds</Label>
-            <Input id="beds" placeholder="Beds" type="number" value={beds} onChange={(e) => setBeds(e.target.value)}/>
+            <Label htmlFor="beds" className='text-2xl'>Beds</Label>
+            <Input id="beds" className='text-2xl border-2' placeholder="Beds" type="number" value={beds} onChange={(e) => setBeds(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="baths">Baths</Label>
-            <Input id="baths" placeholder="Baths" type="number" value={baths} onChange={(e) => setBaths(e.target.value)}/>
+            <Label htmlFor="baths" className='text-2xl'>Baths</Label>
+            <Input id="baths" placeholder="Baths" className='text-2xl border-2' type="number" value={baths} onChange={(e) => setBaths(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="type">Type</Label>
+            <Label htmlFor="type" className='text-2xl'>Type</Label>
             <Select>
-              <SelectTrigger id="type">
-                <SelectValue placeholder="Select" />
+              <SelectTrigger id="type" className='text-2xl border-2'>
+                <SelectValue placeholder="Select"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Houses" onClick={() => setHouseType("Houses")}>Houses</SelectItem>
@@ -146,9 +132,9 @@ export default function PropertyPost() {
             </Select>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="transaction">Transaction</Label>
+            <Label htmlFor="transaction" className='text-2xl'>Transaction</Label>
             <Select>
-              <SelectTrigger id="transaction">
+              <SelectTrigger id="transaction" className='text-2xl border-2'>
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
@@ -160,53 +146,55 @@ export default function PropertyPost() {
           </div>
         </div>
         <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="address">Address</Label>
-          <Input id="address" placeholder="123 Main St" value={address} onChange={(e) => setAddress(e.target.value)}/>
+          <Label htmlFor="address" className='text-2xl'>Address</Label>
+          <Input id="address" placeholder="123 Main St" className='text-2xl border-2' value={address} onChange={(e) => setAddress(e.target.value)}/>
         </div>
         <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="apartment">Apartment, suite, etc.</Label>
-          <Input id="apartment" placeholder="Apartment, suite, etc." value={apartment} onChange={(e) => setApartment(e.target.value)}/>
+          <Label htmlFor="apartment" className='text-2xl'>Apartment, suite, etc.</Label>
+          <Input id="apartment" className='text-2xl border-2' placeholder="Apartment, suite, etc." value={apartment} onChange={(e) => setApartment(e.target.value)}/>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="city">City</Label>
-            <Input id="city" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)}/>
+            <Label htmlFor="city" className='text-2xl'>City</Label>
+            <Input id="city" className='text-2xl border-2' placeholder="City" value={city} onChange={(e) => setCity(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="state">State</Label>
-            <Input id="state" placeholder="State" value={state} onChange={(e) => setState(e.target.value)}/>
+            <Label htmlFor="state" className='text-2xl'>State</Label>
+            <Input id="state" className='text-2xl border-2' placeholder="State" value={state} onChange={(e) => setState(e.target.value)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="zip">ZIP code</Label>
-            <Input id="zip" placeholder="ZIP code" value={zip} onChange={(e) => setZip(e.target.value)}/>
+            <Label htmlFor="zip"className='text-2xl'>ZIP code</Label>
+            <Input id="zip" className='text-2xl border-2' placeholder="ZIP code" value={zip} onChange={(e) => setZip(e.target.value)}/>
           </div>
         </div>
         <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="listing">Listed by</Label>
-          <Input id="listing" placeholder="Person or agency listing the property" value={listing} onChange={(e) => setListing(e.target.value)}/>
+          <Label htmlFor="listing" className='text-2xl'>Listed by</Label>
+          <Input id="listing" className='text-2xl border-2' placeholder="Person or agency listing the property" value={listing} onChange={(e) => setListing(e.target.value)}/>
         </div>
         <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="listing">Broker ID</Label>
-          <Input id="listing" placeholder="Agent or Broker ID" value={brokerId} onChange={(e) => setBrokerId(e.target.value)}/>
+          <Label htmlFor="listing" className='text-2xl'>Broker ID</Label>
+          <Input id="listing" className='text-2xl border-2' placeholder="Agent or Broker ID" value={brokerId} onChange={(e) => setBrokerId(e.target.value)}/>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="images">Upload Images</Label>
-            <Input accept="image/*" id="images" type="file" multiple 
+            <Label htmlFor="images" className='text-2xl'>Upload Images</Label>
+            <Input accept="image/*" className='text-lg border-2' id="images" type="file" multiple 
             onChange={(e) => 
               setImgList(e.target.files)}/>
           </div>
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="videos">Upload Videos</Label>
-            <Input accept="video/*" id="videos" type="file" multiple 
+            <Label htmlFor="videos" className='text-2xl'>Upload Videos</Label>
+            <Input accept="video/*" className='text-lg border-2' id="videos" type="file" multiple 
             onChange={(e) => 
               setVidList(e.target.files)}/>
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button size="sm" onClick={()=>{imageUrlListCreator(imgList)
+      <CardFooter className='flex items-center justify-center'>
+        <Button size="lg" className='text-2xl' onClick={
+          ()=>{
+        imageUrlListCreator(imgList)
         .then(()=>videoUrlListCreator(vidList))
         .then(()=>postDB)}}>Save</Button>
       </CardFooter>

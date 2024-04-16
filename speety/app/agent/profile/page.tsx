@@ -23,7 +23,7 @@ import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment"; //use moment.js to get time/date in a good format
 import { useState,useEffect } from "react";
-import PushNotifications from "@/queries/PushNotifications";
+import PushNotifications from "@/queries/Notifications/PushNotifications";
 
 
 export default function Component() {
@@ -77,7 +77,7 @@ export default function Component() {
               className={`flex shadow-sm p-2 ${buttonColor} font-bold rounded-lg`}
               onClick={()=>{
                 if (buttonText!="Requested") {
-                  PushNotifications(user?.email as string,email,"msg",currentTime.format("YYYY-MM-DD HH:mm:ss"))
+                  PushNotifications(user?.email as string,email,currentTime.format("YYYY-MM-DD HH:mm:ss"))
                   setButtonText("Requested")
                   setButtonIcon("/check.png")
                   setButtonColor("bg-green-200")

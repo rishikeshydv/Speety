@@ -7,7 +7,7 @@ import {db} from "@/firebase/config";
 
 
 
-export default async function PushNotifications(senderEmail:string,receiverEmail:string,notificationType:string,date:string){
+export default async function PushNotifications(senderEmail:string,receiverEmail:string,date:string){
   const _uniqueId = uuidv4()
   //add to the realtime database
   // set(ref(realtimeDatabase, 'notifications'), {
@@ -27,7 +27,6 @@ export default async function PushNotifications(senderEmail:string,receiverEmail
         // If the document doesn't exist, create a new one
       [`${_uniqueId}`]: {
         age:"new",
-        type:notificationType,
         from:senderEmail,
         status:"PENDING",
         date:date
@@ -39,7 +38,6 @@ export default async function PushNotifications(senderEmail:string,receiverEmail
   await updateDoc(receiverDocRef, {
     [`${_uniqueId}`]: {
       age:"new",
-      type:"chat",
       from:senderEmail,
       status:"PENDING",
       date:date
