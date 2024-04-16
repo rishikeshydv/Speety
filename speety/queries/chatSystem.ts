@@ -16,29 +16,34 @@ interface _messageInfo {
 
 // get all the users
 const getConnectedUsers = async (senderUser: string) => {
-  const usersCollection = collection(db, "connectedHistory");
-  const usersSnapshot = await getDocs(usersCollection);
+
+  const usersRef = collection(db, "connectedHistory");
+  const userDocRef = doc(usersRef, senderUser);
+  const userSnapshot = await getDoc(userDocRef);
   let usersConnected: string[][] = [];
+  let tempEmails: string[] = [];
 
-  const getUserInfo = async (userId: string) => {
-    const usersInfo = collection(db, "User_Info");
-    const _usersSnapshot = await getDocs(usersInfo);
-    _usersSnapshot.forEach((doc) => {
-      if (doc.id === userId) {
-        usersConnected.push([doc.data().name,doc.id]);
-      }
-    });
-  };
-
-  usersSnapshot.forEach(async (doc) => {
-    if (doc.id === senderUser) {
-        const data = doc.data();
-        const firstKey = Object.keys(data)[0];
-          await getUserInfo(data[firstKey].anotherUserEmail);
+  if (userSnapshot.exists()) {
+    const retrievedData = await userSnapshot.data();
+    const allKeys = Object.keys(retrievedData);
+    for (let i=0;i<allKeys.length;i++){
+      const newKey = allKeys[i];
+      tempEmails.push(newKey)
     }
-  });
+}
 
+   const _usersRef = collection(db, "User_Info");
+   for (let i=0;i<tempEmails.length;i++){
+    const _userDocRef = doc(_usersRef, tempEmails[i]);
+    const _userSnapshot = await getDoc(_userDocRef);
+    if (_userSnapshot.exists()){
+      const _retrievedData = await _userSnapshot.data();
+      usersConnected.push([tempEmails[i],_retrievedData["name"],_retrievedData["profilePic"]]);
+    }
+
+   }
   return usersConnected;
+
 };
 
 

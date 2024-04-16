@@ -674,15 +674,7 @@
   dependencies:
     fast-deep-equal "^3.1.3"
 
-"@googlemaps/markerclusterer@2.5.3":
-  version "2.5.3"
-  resolved "https://registry.npmjs.org/@googlemaps/markerclusterer/-/markerclusterer-2.5.3.tgz"
-  integrity sha512-x7lX0R5yYOoiNectr10wLgCBasNcXFHiADIBdmn7jQllF2B5ENQw5XtZK+hIw4xnV0Df0xhN4LN98XqA5jaiOw==
-  dependencies:
-    fast-deep-equal "^3.1.3"
-    supercluster "^8.0.1"
-
-"@googlemaps/markerclusterer@^2.5.3":
+"@googlemaps/markerclusterer@2.5.3", "@googlemaps/markerclusterer@^2.5.3":
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/@googlemaps/markerclusterer/-/markerclusterer-2.5.3.tgz#9f891ce7e8e161775f3a3e2c9f66956810284591"
   integrity sha512-x7lX0R5yYOoiNectr10wLgCBasNcXFHiADIBdmn7jQllF2B5ENQw5XtZK+hIw4xnV0Df0xhN4LN98XqA5jaiOw==
@@ -1653,6 +1645,18 @@
   version "2.19.2"
   resolved "https://registry.npmjs.org/@react-google-maps/marker-clusterer/-/marker-clusterer-2.19.2.tgz"
   integrity sha512-x9ibmsP0ZVqzyCo1Pitbw+4b6iEXRw/r1TCy3vOUR3eKrzWLnHYZMR325BkZW2r8fnuWE/V3Fp4QZOP9qYORCw==
+
+"@react-typed-hooks/use-key-press@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@react-typed-hooks/use-key-press/-/use-key-press-1.0.5.tgz#86143f8fe313de292c4451a6fcfa05e136bbd981"
+  integrity sha512-2z3atiQBNDNlEXHQFoojoGiJuukX6IxfqqLicQBTqOqmgmC6MVjTcyWu9fBadua991ah8+yUbSpAWqBB66q4fA==
+  dependencies:
+    "@react-typed-hooks/utils" "^1.0.5"
+
+"@react-typed-hooks/utils@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@react-typed-hooks/utils/-/utils-1.0.5.tgz#800a96528ffb1131bd93ed850d8cdbfc71a17a20"
+  integrity sha512-6mZXz2Roj6MBORq3CXox9nFp52wETDSthIlWHr5lXAJ7POUYC/uk03aJQyUcY8u1dZxwtw0e9TlA0tU9zIdB8A==
 
 "@remix-run/router@1.15.3":
   version "1.15.3"
@@ -4360,6 +4364,13 @@ react-typist-component@^1.0.6:
   resolved "https://registry.npmjs.org/react-typist-component/-/react-typist-component-1.0.6.tgz"
   integrity sha512-DOcMvPyqsB2dgh/DtfaDrrNSoZAFarToPXn82WN56vF9DJBeS5ss5voLI1x+nntXiWpWCUJkLL/rDS4/W0YTSQ==
 
+react-use-keypress@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/react-use-keypress/-/react-use-keypress-1.3.1.tgz#9e0cc433214ae33631995b6f56c8e1cca4c98ba9"
+  integrity sha512-fo+LQrxviMcZt7efCFPc6CX9/oNEPD+MJ/qSs4nK3/lyRNtquhG9f1J8GQq2VFfIYUVDUdPKz8fGIwErO1Pcuw==
+  dependencies:
+    tiny-invariant "^1.2.0"
+
 react-webcam@^7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/react-webcam/-/react-webcam-7.2.0.tgz#64141c4c7bdd3e956620500187fa3fcc77e1fd49"
@@ -4831,6 +4842,11 @@ thenify-all@^1.0.0:
   integrity sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==
   dependencies:
     any-promise "^1.0.0"
+
+tiny-invariant@^1.2.0:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.3.3.tgz#46680b7a873a0d5d10005995eb90a70d74d60127"
+  integrity sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"

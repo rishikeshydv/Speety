@@ -62,21 +62,6 @@ export default function Chat() {
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
 
 
-
-    // const fetchLatLng = async (address:string) => {
-    //   myGeocoder.geocode({ address }, (results:any, status:any) => {
-    //     if (status === 'OK' && results) {
-    //       console.log(results);
-    //       const locationData: LocationData = {
-    //         lat: results[0].geometry.location.lat(),
-    //         lng: results[0].geometry.location.lng(),
-    //       };
-    //       return locationData;
-    //     } else {
-    //       console.error('Geocode was not successful for the following reason:', status);
-    //     }
-    //   });
-    // }
     //function to get the location of the user
     function locationUpdate() {
       //on clicking the location share button, there should be a popup
@@ -282,7 +267,7 @@ export default function Chat() {
     }, [myPeer, id]);
   return (
     <div className={`flex h-screen bg-white ${poppins.className}`}>
-      <LeftmostBar />
+      <LeftmostBar userEmail={user?.email as string}/>
       <main className="flex-1">
         <div className="flex h-[calc(103%-64px)]">
           <div className="flex flex-col h-full">
@@ -297,6 +282,7 @@ export default function Chat() {
         addressConverter={()=>{}}
         senderLoc={position1}
         receiverLoc={position2}
+        clickedUser={clicked}
       />
     <ChatList
         sentMessage={sentMessage}

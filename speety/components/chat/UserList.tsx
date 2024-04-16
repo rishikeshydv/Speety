@@ -21,7 +21,7 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
         const connectedUsers = await getConnectedUsers(user?.email as string);
         setUsersConnected(connectedUsers);
       } catch (error) {
-       console.error(error); // Log any errors
+       console.error(error); 
       }
     };
   
@@ -29,39 +29,23 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
   }, [user]); // Add user to the dependency array to trigger useEffect when user changes
 
   return (
-  //   <div className={`absolute bg-gray-200 rounded-3xl shadow-xs w-1/4 top-28 left-44 bottom-7`}>
-  //   {usersConnected.length > 0 ? (
-  //     usersConnected.map(([user,userEmail], index) => (
-  //       <ChatListProp
-  //         key={index}
-  //         imgUrl="" // replace with default avatar URL
-  //         userName={user}
-  //         lastMsg={user}
-  //         lastMsgTime="Just now" // replace with actual last message time
-  //         newMsg={false}
-  //         onClick={() => onUserClick(userEmail)}
-  //       />
-  //     ))
-  //   ) : (
-  //     <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
-  //   )}
-  // </div>
   <div className="w-full h-full rounded-2xl shadow-xs mt-2 bg-gray-200">
-  <div className="flex items-center">
+  <div className="flex flex-col items-center">
   {usersConnected.length > 0 ? (
-  usersConnected.map(([user,userEmail], index) => (
+  usersConnected.map(([_email,_name,_profilePic], index) => (
     <ChatListProp
       key={index}
-      imgUrl="" // replace with default avatar URL
-      userName="Rishikesh"
+      imgUrl={_profilePic} // replace with default avatar URL
+      userName={_name}
+      email={_email}
       lastMsg="Hello"
       lastMsgTime="Just now" // replace with actual last message time
       newMsg={false}
-      onClick={() => {}}
+      onClick={onUserClick}
     />
   ))
   ):(
-    <h1 className="text-xl font-italic text-center mt-10">Loading users...</h1>
+    <h1 className="text-xl font-italic text-center mt-10" onClick={() => onUserClick("heroine")}>Loading users...</h1>
   )}  
   </div>
 </div>

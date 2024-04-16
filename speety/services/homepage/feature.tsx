@@ -8,10 +8,10 @@ interface FeatProps {
 
 const Feature: React.FC<FeatProps> = ({ imageSrc, title, description }) => {
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card}`}>
       <img src={imageSrc} alt={title} className={styles.image} />
       <h3 className={styles.title}>{title}</h3>
-      <p className={styles.description}>{description}</p>
+      <p className={`${styles.description}`}>{description}</p>
     </div>
   );
 };

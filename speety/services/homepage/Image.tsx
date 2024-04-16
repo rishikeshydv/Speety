@@ -11,7 +11,7 @@ interface Props {
 const Image: React.FC<Props> = ({ src, alt }) => {
     return (
       <div className={styles.container}>
-        <img src={src} alt={alt} className={styles.image} />
+        <img src={src} alt={alt} className={`${styles.image}`} />
       </div>
     );
   };

@@ -13,7 +13,7 @@ interface VerticalBoxProps {
 
 const VerticalBox: React.FC<VerticalBoxProps> = ({ title, promptUrl, point1, point2, point3 }) => {
     return (
-        <div className={styles.verticalBox}>
+        <div className={`${styles.verticalBox}`}>
             <img className={styles.image} src={promptUrl} alt={title} />
             <h1 className={styles.title}>{title}</h1>
             <ul className={styles.points}>

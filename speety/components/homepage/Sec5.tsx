@@ -13,19 +13,19 @@ export default function Sec5() {
             </button>
           </h1>
           <h2 className="text-2xl px-20 py-10">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco
           </h2>
         </div>
         {/* This DIV tag will add 4 vertical boxes */}
-        <div className="flex flex-row px-40">
+        <div className="flex flex-row items-center justify-center gap-10">
           <VerticalBox 
           promptUrl="/broker.svg" 
           title="Brokers" 
-          point1="◘ Encrypted communication protects data from breaches and leaks." 
+          point1="◘ Encrypted communication protects data from breaches." 
           point2="◘ Intuitive platform simplifies property management and communication." 
-          point3="◘ Privacy-focused approach attracts clients concerned about online security." />
+          point3="◘ Privacy attracts clients concerned about online security." />
 
           <VerticalBox 
           promptUrl="/buyer.png" 
@@ -44,7 +44,7 @@ export default function Sec5() {
           <VerticalBox 
           promptUrl="/renter.png" 
           title="Renters" 
-          point1="◘ Verified listings and secure platform minimize risk of scams." 
+          point1="◘ Verified listings and secure platform minimize risk of scams and fraud actions." 
           point2="◘ Advanced search filters and personalized recommendations."
           point3="◘ Access to community information and reviews for informed choices." />
         </div>

@@ -72,16 +72,13 @@ export default function SignupPage() {
   }, []);
 
 
-  const createUserInDB = async (name: string, email: string, role: string,driverLicense:File,imgSrc:string,id:string) => {
+  const createUserInDB = async (name: string, email: string, role: string) => {
     try {
       const userDocRef = doc(db, "User_Info", email); // Use email as the document ID
       await setDoc(userDocRef, {
         email: email,
         name: name,
         role: role,
-        driverLicense: driverLicense,
-        id:id,
-        imgSrc:imgSrc
       });
     } catch (error) {
       console.log(error);
@@ -106,21 +103,15 @@ export default function SignupPage() {
         return;
       }
       console.log(data);
-      console.log(imgSrc);
 
       //const { userCredential, error } = await signup(email, password);
       Signup(email, password)
         .then(() => {
-          createUserInDB(name, email, role,driverLicense,imgSrc as string,id);
+          createUserInDB(name, email, role);
         })
         .then(() => {
           router.push(`/dashboard/${email}`);
         });
-      // if (!userCredential) {
-      //   setErrorMsg("Something went wrong. Please try again later.");
-      // }
-      console.log(user);
-      // Store user in database
     } catch (error) {
       console.log(error);
       setErrorMsg("Something went wrong. Please try again later.");
@@ -347,8 +338,8 @@ export default function SignupPage() {
 
           </form>
           <h3 className="mt-2 text-center text-xl">
-            Already have an account{" "}
-            <a href="#" className="text-blue-600">
+            Already have an account?{" "}
+            <a href="#" className="text-blue-600 font-bold">
               Login!
             </a>
           </h3>

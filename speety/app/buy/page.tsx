@@ -1,7 +1,7 @@
 'use client';
 import React,{ useEffect, useState }  from 'react';
 //import NavbarLeft from "@/components/navbarLeft";
-import { buyQ } from '@/queries/buyQ';
+import { buyQ } from '@/queries/Transactions/buyQ';
 import poppins from "@/font/font";
 import PropertyProp from '@/services/property/PropertyProp';
 import Header from "@/components/Header";
@@ -47,8 +47,8 @@ export default function Buy() {
   return (
     <div className={poppins.className}>
       <Header />
-         <div>
-         <div className='flex items-center justify-center ml-10 mt-6 mb-6'>
+         <div className='bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]'>
+         <div className='flex items-center justify-center ml-10 py-4'>
             {/* This div tag is for search bar  */}
         <form onSubmit={handleSubmit}>
         <input type="text" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>

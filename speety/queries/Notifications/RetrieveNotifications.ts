@@ -7,7 +7,7 @@ import {
   } from "firebase/firestore";
   import { db } from "@/firebase/config";
   
-  export default async function retrieveNotifications(receiverEmail: string) {
+  export default async function RetrieveNotifications(receiverEmail: string) {
     //algorithm to sort the notifications in descending order of time
     const compareTimeDescending = (a: any, b: any) => {
       const timeA: any = new Date(a.time);

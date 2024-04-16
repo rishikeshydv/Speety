@@ -1,7 +1,7 @@
 'use client';
 import React,{ useState }  from 'react';
 //import NavbarLeft from "@/components/navbarLeft";
-import { rentQ } from '@/queries/rentQ';
+import { rentQ } from '@/queries/Transactions/rentQ';
 import { db } from '@/firebase/config';
 import poppins from "@/font/font";
 import PropertyProp from '@/services/property/PropertyProp';

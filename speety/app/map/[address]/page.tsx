@@ -12,13 +12,8 @@ interface LocationData {
 const LocationMap = () => {
   const params = useParams()
   const destination = decodeURIComponent(params["address"] as string)
-  const [destinationLngLat, setDestinationLngLat] = useState<LocationData>({ lat: 0, lng: 0 });
 
   const initializeMap = () => {
-    // const { AdvancedMarkerElement } =
-    // (await google.maps.importLibrary(
-    //   "marker"
-    // )) as google.maps.MarkerLibrary;
     const myGeocoder = new google.maps.Geocoder();
      function codeAddress() {
        myGeocoder.geocode( { 'address': destination}, function(results, status) {
