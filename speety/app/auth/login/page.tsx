@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useForm,SubmitHandler } from "react-hook-form";
 import { auth, db } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { collection, query, where, getDoc,doc } from "firebase/firestore";
+import { collection, getDoc,doc, updateDoc } from "firebase/firestore";
 import poppins from "@/font/font";
 import Typist from "react-typist-component";
 import { AiFillGoogleCircle } from "react-icons/ai";
@@ -15,6 +15,7 @@ import Image from "next/image";
 import Login from "@/firebase/auth/Login";
 import { set } from "firebase/database";
 import { useKeyPress } from "@react-typed-hooks/use-key-press";
+import updateStatus from "@/queries/changeLoginStatus";
 
 interface SignInData {
   email: string;
@@ -50,7 +51,13 @@ export default function SignInPage() {
         throw new Error("User does not exist");
       }
         Login(email,password).then(() => {
-          router.push(`/dashboard/${email}`);
+        if (email){
+            updateStatus(email,"Online");
+        }
+        router.push(`/dashboard/${email}`);
+
+          
+
         });
     } catch (error) {
       console.error("Error signing in:", error);

@@ -1,5 +1,5 @@
 import React from 'react'
-import { app } from '../config'
+import { app } from '../config' 
 import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
 
 const auth = getAuth(app)
