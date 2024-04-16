@@ -88,7 +88,7 @@ export default function SignupPage() {
       console.log(data);
         Signup(email, password, name, role)
         .then(() => {
-          router.push(`/dashboard/${email}`);
+          router.push(`/auth/verify?email=${email}`);
         });
     } catch (error) {
       console.log(error);
