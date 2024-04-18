@@ -1,12 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import poppins from "@/font/font";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
 import Image from "next/image";
-import Signup from "@/firebase/auth/Signup";
 import Webcam from "react-webcam";
 import { MdCamera } from "react-icons/md";
 import {
@@ -14,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import AddTicket from "@/queries/AddTicket";
+import AddTicket from "@/queries/UserVerification/AddTicket";
 import { uuidv4 } from "@firebase/util";  
 import getImageUrl from "@/queries/ImgVidUrls/getImageUrl";
 import GetBlobUrl from "@/queries/ImgVidUrls/GetBlobUrl";
@@ -32,7 +31,6 @@ interface SignupData {
 export default function SignupPage() {
   const {
     register,
-    watch,
     handleSubmit,
     formState: { errors },
   } = useForm<SignupData>();
@@ -61,7 +59,8 @@ export default function SignupPage() {
 
   //the following is the firebase storage URL for the captured image
   const [faceCaptureUrl, setFaceCaptureUrl] = useState<string | null>(null);
-  const [driver, setDriver] = useState<string | null>(null);
+  const [driverLicense, setDriverLicense] = useState<File | null>(null); //this is the file of the driver's license [image
+  const [driver, setDriver] = useState<string>("");
   const [tempId, setTempId] = useState<string>("NA"); //buyer/renter does not have brokerId, so we use this to deal with the brokerId
 
   const capturePhoto = useCallback(() => {
@@ -96,15 +95,36 @@ export default function SignupPage() {
     ); 
   }
 
+  //to confirm the driver's license
+  useEffect(() => {
+    if (!driverLicense) {
+      return;
+    }
 
-  const onSubmit: SubmitHandler<SignupData> = async (data) => {
+  const confirmDriver = () => {    
+    return new Promise((resolve, reject) => {
+      getImageUrl(driverLicense as File)
+      .then((driverUrl) => {
+        setDriver(driverUrl);
+        resolve(driverUrl);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    }
+    ); 
+  }
+  confirmDriver();
+    }, [driverLicense]);
+
+
+  const onSubmit: SubmitHandler<SignupData> =  async (data) => {
     try {
       var {
         email,
         name,
         role,
         id,
-        driverLicense,
         password,
         confirmPassword,
       } = data;
@@ -118,34 +138,17 @@ export default function SignupPage() {
         setErrorMsg("Passwords do not match");
         return;
       }
-    //  console.log(data);
-   //     Signup(email, password, name, role)
-   const confirmDriver = () => {    
-      return new Promise((resolve, reject) => {
-        getImageUrl(driverLicense)
-        .then((driverUrl) => {
-          setDriver(driverUrl);
-          resolve(driverUrl);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-      }
-      ); 
-    }
+        await AddTicket(email, name, password, confirmPassword, id, driver, faceCaptureUrl as string, role,currentDate);
+        router.push(`/auth/verify/${email}`);
 
-    confirmDriver();
-
-        AddTicket(email, name, password, confirmPassword, id, driver, faceCaptureUrl, role,currentDate)
-        .then(() => {
-          router.push(`/auth/verify/${email}`);
-        });
     } catch (error) {
       console.log(error);
 
       setErrorMsg("Something went wrong. Please try again later.");
     }
-  };
+
+}
+
   return (
     <div className={poppins.className}>
       <div
@@ -244,6 +247,7 @@ export default function SignupPage() {
                     <input
                       type="text"
                       required
+                      defaultValue="NA"
                       {...register("id")}
                       className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4"
                     />
@@ -313,14 +317,9 @@ export default function SignupPage() {
                 type="file"
                 accept="image/*"
                 required
-                {...register("driverLicense")}
+                onChange={(e) => {setDriverLicense(e.target.files![0])}}
                 className="rounded-md text-xl font-semibold h-16 w-96 py-4"
               />
-              {errors.driverLicense && (
-                <p className="text-red-500">
-                  Driver&apos;s License is required.
-                </p>
-              )}
             </div>
             </div>
 

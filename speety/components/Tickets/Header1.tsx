@@ -71,26 +71,6 @@ export default function Header1() {
           <div className='absolute flex items-center justify-between text-xl shadow-sm px-4 top-5 right-5'>
              <button onClick={dashboardRedirect} className='font-bold  text-black-300  top-8 right-80 hover:text-2xl hover:underline'>{user?.email}</button>
              <button onClick={()=>{}} className='ml-2'><img src="/speech-balloon.png" className='w-16 h-16 right-52'/></button>
-
-
-
-            <DropdownMenu>
-            <DropdownMenuTrigger>
-              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className='w-11 h-11 right-32 mt-1'/>
-              </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className=''>
-    <DropdownMenuSeparator />
-    {notificationList.map((notification: any, index: number) => (
-      <DropdownMenuItem key={index} onClick={()=>{NotificationSettle(notification.id,"OLD",notification.type,user?.email as string,notification.from,"completed",notification.date)}}>
-        <NotificationProp from={notification.from} type={notification.type} date={notification.date}/>
-      </DropdownMenuItem>
-    ))}
-  </DropdownMenuContent>
-          </DropdownMenu>
-
-
-
              <button onClick={logoutUser} className='ml-4'><img src="/logout.webp" className="w-11 h-11 right-10"/></button>
           </div>
 )}

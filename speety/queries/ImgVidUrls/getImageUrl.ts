@@ -1,10 +1,10 @@
 import { getStorage, ref, uploadBytes,getDownloadURL } from "firebase/storage";
-import { db } from "@/firebase/config";
+import { app } from "@/firebase/config";
 //getting URL using a file
 const getImageUrl = async(file:File)=> { 
     
 // Create a root reference
-const storage = getStorage();
+const storage = getStorage(app);
 
 // Create a reference to a particular folder
 const storageRef = ref(storage, 'DriverLicenses/'+file.name);
