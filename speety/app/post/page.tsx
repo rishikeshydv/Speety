@@ -3,13 +3,13 @@
  * @see https://v0.dev/t/B2aerZGlup6
  */
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, updateDoc } from "firebase/firestore"; 
 import { db } from "@/firebase/config";
 import poppins from "@/font/font";
 import Header from "@/components/Header";
@@ -20,9 +20,11 @@ import { setDoc,getDoc,doc} from "firebase/firestore";
 import { auth} from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { uuidv4 } from "@firebase/util";  
+import { useRouter } from 'next/navigation';
 
 
 export default function PropertyPost() {
+  const router = useRouter();
   const [price, setPrice] = useState('');
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
@@ -35,33 +37,82 @@ export default function PropertyPost() {
   const [zip, setZip] = useState('');
   const [listing, setListing] = useState('');
   const [brokerId, setBrokerId] = useState("");
-  const [imgList,setImgList]=useState<any>()
-  const [imgUrlList,setImgUrlList]=useState<any>()
- const [vidList,setVidList]=useState<any>()
- const [vidUrlList,setVidUrlList]=useState<any>()
+  const [imgList,setImgList]=useState<File[]>([])
+  const [imgUrlList,setImgUrlList]=useState<string []>([])
+ const [vidList,setVidList]=useState<File[]>([])
+ const [vidUrlList,setVidUrlList]=useState<string []>([])
 
  const [user] = useAuthState(auth);
  const _uniqueId = uuidv4()
 
- 
- async function imageUrlListCreator(imageList:any){
-  if (imageList) {
-    for (let i = 0; i < imageList.length; i++) {
-        const imageUrl = await getImageUrl(imageList[i]);
-        imgUrlList.push(imageUrl);
+//storing all the image files
+  const handleImageChange = (event:any) => {
+    const files = event.target.files; // Get the selected files
+    if (!files) return;
+    // Loop through the selected files and add them to the newFiles array
+    for (let i = 0; i < files.length; i++) {
+      imgList.push(files[i]);
     }
-  }
- }
- async function videoUrlListCreator(videoList:any){
-  if (videoList) {
-    for (let i = 0; i < videoList.length; i++) {
-        const vidUrl = await getVideoUrl(videoList[i]);
-        vidUrlList.push(vidUrl);
-    }
-  }
- }
-    async function postDB() {
+    // Update the state with the newFiles array
+    setImgList(imgList);
+  };
 
+  //storing all the video files
+  const handleVideoChange = (event:any) => { 
+    const files = event.target.files; // Get the selected files
+    if (!files) return;
+    // Loop through the selected files and add them to the newFiles array
+    for (let i = 0; i < files.length; i++) {
+      vidList.push(files[i]);
+    }
+    // Update the state with the newFiles array
+    setVidList(vidList);
+  }
+
+  //create image URL list
+
+  const imageUrlListCreator = (imageList:any) => {    
+    if (!imageList){
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < imageList.length; i++) {
+        getImageUrl(imageList[i])
+          .then((downloadURL) => {
+            imgUrlList.push(downloadURL.toString());
+            resolve(downloadURL);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }
+   }
+    ); 
+  }
+
+//create video URL list
+
+  const videoUrlListCreator = (videoList:any) => {
+    if (!videoList){
+      return;
+    }
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < videoList.length; i++) {
+        getVideoUrl(videoList[i])
+          .then((downloadURL) => {
+            vidUrlList.push(downloadURL.toString());
+            resolve(downloadURL);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }
+    }
+  )}
+
+
+  async function postDB() {
         const receiverRef = collection(db, "presentListings");
         const receiverDocRef =  doc(receiverRef, user?.email as string);
         const receiverSnapshot = await getDoc(receiverDocRef);
@@ -85,11 +136,35 @@ export default function PropertyPost() {
             zip: zip,
             listedBy: listing,
             brokerId:brokerId,
-            imageUrl: imgList,
-            videoUrl:vidList
+            imageUrl: imgUrlList,
+            videoUrl:vidUrlList
+            } 
+            });
+          router.push('/post/successful');
+        }
+        else{
+          await updateDoc( receiverDocRef, {
+            // If the document already exists, update it
+            [`${_uniqueId}`]: {
+            price: price,
+            beds: beds,
+            baths: baths,
+            houseType: houseType,
+            transactionType: transaction,
+            address: address,
+            apartment: apartment,
+            city: city,
+            state: state,
+            zip: zip,
+            listedBy: listing,
+            brokerId:brokerId,
+            imageUrl: imgUrlList,
+            videoUrl:vidUrlList
             }
             });
+            router.push('/post/successful');
         }
+        console.log("Document written with ID: ", receiverDocRef.id);
     }
 
   return (
@@ -116,31 +191,32 @@ export default function PropertyPost() {
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="type" className='text-2xl'>Type</Label>
-            <Select>
+            <Select  onValueChange={(value) => setHouseType(value)}>
               <SelectTrigger id="type" className='text-2xl border-2'>
                 <SelectValue placeholder="Select"/>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Houses" onClick={() => setHouseType("Houses")}>Houses</SelectItem>
-                <SelectItem value="Apartments" onClick={() => setHouseType("Apartments")}>Apartments</SelectItem>
-                <SelectItem value="Townhouses" onClick={() => setHouseType("Townhomes")}>Townhomes</SelectItem>
-                <SelectItem value="Condos/Co-ops" onClick={() => setHouseType("Condos/Co-ops")}>Condos/Co-ops</SelectItem>
-                <SelectItem value="Multi-family" onClick={() => setHouseType("Multi-family")}>Multi-family</SelectItem>
-                <SelectItem value="Lots/Land" onClick={() => setHouseType("Lots/Land")}>Lots/Land</SelectItem>
-                <SelectItem value="Manufactured" onClick={() => setHouseType("Manufactured")}>Manufactured</SelectItem>
+                <SelectItem value="Houses" >Houses</SelectItem>
+                <SelectItem value="Apartments" >Apartments</SelectItem>
+                <SelectItem value="Townhouses" >Townhomes</SelectItem>
+                <SelectItem value="Condos/Co-ops" >Condos/Co-ops</SelectItem>
+                <SelectItem value="Multi-family" >Multi-family</SelectItem>
+                <SelectItem value="Lots/Land" >Lots/Land</SelectItem>
+                <SelectItem value="Manufactured" >Manufactured</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="transaction" className='text-2xl'>Transaction</Label>
-            <Select>
+            <Select onValueChange={(value) => setTransaction(value)}
+            >
               <SelectTrigger id="transaction" className='text-2xl border-2'>
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-              <SelectItem value="Buy" onClick={() => setTransaction("Buy")}>For Buy</SelectItem>
-                <SelectItem value="Rent" onClick={() => setTransaction("Rent")}>For Rent</SelectItem>
-                <SelectItem value="Sell" onClick={() => setTransaction("Sale")}>For Sale</SelectItem>
+              <SelectItem value="Buy">For Buy</SelectItem>
+                <SelectItem value="Rent">For Rent</SelectItem>
+                <SelectItem value="Sell">For Sale</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -180,23 +256,32 @@ export default function PropertyPost() {
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="images" className='text-2xl'>Upload Images</Label>
             <Input accept="image/*" className='text-lg border-2' id="images" type="file" multiple 
-            onChange={(e) => 
-              setImgList(e.target.files)}/>
+            onChange={(e)=>
+              {
+                handleImageChange(e);
+                imageUrlListCreator(imgList);
+                }}/>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="videos" className='text-2xl'>Upload Videos</Label>
             <Input accept="video/*" className='text-lg border-2' id="videos" type="file" multiple 
-            onChange={(e) => 
-              setVidList(e.target.files)}/>
+            onChange={(e)=>
+            {
+              handleVideoChange(e);
+              videoUrlListCreator(vidList);
+              }}/>
           </div>
         </div>
       </CardContent>
       <CardFooter className='flex items-center justify-center'>
-        <Button size="lg" className='text-2xl' onClick={
-          ()=>{
-        imageUrlListCreator(imgList)
-        .then(()=>videoUrlListCreator(vidList))
-        .then(()=>postDB)}}>Save</Button>
+        <Button size="lg" className='text-2xl'
+         onClick={()=>{ 
+          postDB();
+    }
+      }
+        >
+  
+          Save</Button>
       </CardFooter>
     </Card>
     <Footer />

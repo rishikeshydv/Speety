@@ -6,7 +6,15 @@ import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card }
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export function RealtorCard() {
+interface RealtorCardProps {
+  name: string
+  phone: string
+  email: string
+  website: string
+  address: string
+}
+
+const RealtorCard:React.FC<RealtorCardProps> = ({name,phone,email,website,address}) => {
   return (
     <Card className="p-20 shadow-md">
       <CardHeader>
@@ -16,25 +24,25 @@ export function RealtorCard() {
       <div className="grid gap-1">
           <p className="text-xl py-4">
             <PhoneIcon className="w-7 h-7 mr-1.5 inline-block" />
-            <strong>Phone:</strong>
+            <strong>Phone: </strong>
             (555) 123-4567{"\n                  "}
           </p>
           <hr className="border-gray-200 dark:border-gray-800" />
           <p className="text-xl py-4">
             <MailIcon className="w-7 h-7 mr-1.5 inline-block" />
-            <strong>Email:</strong>
+            <strong>Email: </strong>
             emma@example.com{"\n                  "}
           </p> 
           <hr className="border-gray-200 dark:border-gray-800" />
           <p className="text-xl py-4">
             <LinkIcon className="w-7 h-7 mr-1.5 inline-block" />
-            <strong>Website:</strong>
+            <strong>Website: </strong>
             <Link href="#">example.com</Link>
           </p>
           <hr className="border-gray-200 dark:border-gray-800" />
           <p className="text-xl py-4">
             <MapPinIcon className="w-7 h-7 mr-1.5 inline-block" />
-            <strong>Address:</strong>
+            <strong>Address: </strong>
             1234 Elm Street, Pleasantville, CO, 80202{"\n                  "}
           </p>
 
@@ -50,6 +58,7 @@ export function RealtorCard() {
   )
 }
 
+export default RealtorCard;
 
 function PhoneIcon(props:any) {
   return (

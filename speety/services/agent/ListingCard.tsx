@@ -19,22 +19,23 @@ interface ListingProp {
 
 const ListingCard:React.FC<ListingProp>=({ address,price,bedrooms,bathrooms,transactionType,date,stars,review,image})=> {
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader className="p-4">
-        <p className="italic text-xs text-red-100">ID: 123XCV</p>
+    <Card className="w-full max-w-sm bg-gray-100">
+      <CardHeader className="p-4 text-xs text-red-100">
         <CardTitle className="text-2xl">{address}</CardTitle>
         <hr className="border-gray-200 dark:border-gray-800 border-2" />
-        <CardDescription className="text-lg flex flex-col">
-          <div className="flex items-start justify-between">
+        </CardHeader>
+        <CardContent className="text-lg">
+          <div className="flex items-center justify-between">
             <h1>{bedrooms} Beds, {bathrooms} Baths</h1>
-            <h1 className="text-xl font-bold">{price}</h1>
+            <h1 className="text-xl font-bold">${price}</h1>
             </div>
-            <h1>{date}</h1></CardDescription>
-        <div className="flex items-center gap-2 text-lg font-medium">
+            <div className="flex gap-2"><p>Listed On: </p><p className="font-bold">{date}</p></div>
+
+            <div className="flex items-center gap-2 text-lg font-medium">
           <HomeIcon className="w-4 h-4" />
-          <h1>{transactionType}</h1>
+          <h1 className="py-2">For {transactionType}</h1>
         </div>
-      </CardHeader>
+              
       <img
         alt="Property image"
         height={225}
@@ -44,7 +45,10 @@ const ListingCard:React.FC<ListingProp>=({ address,price,bedrooms,bathrooms,tran
           objectFit: "cover",
         }}
         width={400}
+        className="rounded-md shadow-lg"
       />
+        </CardContent>
+        <hr className="border-gray-200 dark:border-gray-800 border-2" />
       <CardFooter className="flex flex-col p-4">
         <div className='ml-2'><Rating name="read-only" value={stars} readOnly /></div>
         <div className="text-lg font-medium">{review}</div>
