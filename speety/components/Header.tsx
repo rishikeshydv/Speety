@@ -88,7 +88,6 @@ export default function Header() {
     };
   }, [user?.email]);
 
-  console.log(notificationList)
 
 
   return (

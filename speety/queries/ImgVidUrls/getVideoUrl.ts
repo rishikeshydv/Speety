@@ -1,7 +1,7 @@
 import { getStorage, ref, uploadBytes,getDownloadURL } from "firebase/storage";
 import { db } from "@/firebase/config";
 
-const getVideoUrl = (file:File)=> {
+const getVideoUrl = async (file:File)=> {
     
 // Create a root reference
 const storage = getStorage();
@@ -10,13 +10,13 @@ const storage = getStorage();
 const storageRef = ref(storage, 'propertyPostedVideos/'+file.name);
 
 // 'file' comes from the Blob or File API
-uploadBytes(storageRef, file).then((snapshot) => {
-    getDownloadURL(snapshot.ref).then((downloadURL) => {
-        console.log('File available at', downloadURL);
-        return downloadURL;
-    })
-  }
-  );
+    // Upload the Blob to Firebase Storage
+    const uploadTaskSnapshot = await uploadBytes(storageRef, file);
+
+    // Get the download URL of the uploaded image
+    const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
+    return downloadURL;
+    
 }
 
 export default getVideoUrl;

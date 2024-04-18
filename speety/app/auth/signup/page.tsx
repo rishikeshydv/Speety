@@ -2,8 +2,6 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { auth } from "@/firebase/config";
-import { useAuthState } from "react-firebase-hooks/auth";
 import poppins from "@/font/font";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
@@ -16,6 +14,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import AddTicket from "@/queries/AddTicket";
+import { uuidv4 } from "@firebase/util";  
+import getImageUrl from "@/queries/ImgVidUrls/getImageUrl";
+import GetBlobUrl from "@/queries/ImgVidUrls/GetBlobUrl";
 
 interface SignupData {
   name: string;
@@ -36,20 +38,37 @@ export default function SignupPage() {
   } = useForm<SignupData>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const router = useRouter();
-  const [user] = useAuthState(auth);
+
+  //uuidv4
+  var uniqueId = uuidv4()
+
+  //today's date
+  const today = new Date();
+  const month = today.getMonth()+1;
+  const year = today.getFullYear();
+  const date = today. getDate();
+  const currentDate = month + "/" + date + "/" + year;
+
 
   //to watch the value of the USER role
   const [role_, setRole_] = useState<string>("");
 
   //to capture the photo
   const webcamRef = useRef<Webcam>(null);
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
+  const [imgSrc, setImgSrc] = useState<string | null>(null);  //this is the BLOB URL of the captured image
   const [showCamera, setShowCamera] = useState(true);
   const [captureText,setCaptureText]=useState<string>("Add a profile picture");
+
+  //the following is the firebase storage URL for the captured image
+  const [faceCaptureUrl, setFaceCaptureUrl] = useState<string | null>(null);
+  const [driver, setDriver] = useState<string | null>(null);
+  const [tempId, setTempId] = useState<string>("NA"); //buyer/renter does not have brokerId, so we use this to deal with the brokerId
+
   const capturePhoto = useCallback(() => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       setImgSrc(imageSrc);
+
       setShowCamera(false); // Hide camera after capturing photo
     }
   }, [webcamRef]);
@@ -61,10 +80,21 @@ export default function SignupPage() {
   }, []);
 
   //to confirm the photo
-  const confirmPhoto = useCallback(() => {
-    setCaptureText("Profile Picture Added");
-    alert("Photo added successfully");
-  }, []);
+  const confirmPhoto = () => {    
+  setCaptureText("Profile Picture Added");
+  alert("Photo added successfully");
+    return new Promise((resolve, reject) => {
+      GetBlobUrl(uniqueId,imgSrc as string)
+      .then((faceUrl) => {
+        setFaceCaptureUrl(faceUrl);
+        resolve(faceUrl);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    }
+    ); 
+  }
 
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
@@ -79,19 +109,40 @@ export default function SignupPage() {
         confirmPassword,
       } = data;
 
+        if (!id){
+          id=tempId;
+        }
 
       if (password !== confirmPassword) {
         // show message to user that passwords do not match
         setErrorMsg("Passwords do not match");
         return;
       }
-      console.log(data);
-        Signup(email, password, name, role)
+    //  console.log(data);
+   //     Signup(email, password, name, role)
+   const confirmDriver = () => {    
+      return new Promise((resolve, reject) => {
+        getImageUrl(driverLicense)
+        .then((driverUrl) => {
+          setDriver(driverUrl);
+          resolve(driverUrl);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      }
+      ); 
+    }
+
+    confirmDriver();
+
+        AddTicket(email, name, password, confirmPassword, id, driver, faceCaptureUrl, role,currentDate)
         .then(() => {
-          router.push(`/auth/verify?email=${email}`);
+          router.push(`/auth/verify/${email}`);
         });
     } catch (error) {
       console.log(error);
+
       setErrorMsg("Something went wrong. Please try again later.");
     }
   };
@@ -318,7 +369,7 @@ export default function SignupPage() {
           </form>
           <h3 className="mt-2 text-center text-xl">
             Already have an account?{" "}
-            <a href="#" className="text-blue-600 font-bold">
+            <a href="/auth/login" className="text-blue-600 font-bold">
               Login!
             </a>
           </h3>
