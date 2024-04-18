@@ -15,6 +15,8 @@ import moment from "moment"; //use moment.js to get time/date in a good format
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { Loader } from "@googlemaps/js-api-loader"
 import { Locator } from "@/services/location/currentLocation";
+import DummyChatList from "@/components/chat/DummyChatList";
+import DummyTopRight from "@/components/chat/DummyTopRight";
 
 interface userLoc {
   email: string;
@@ -274,8 +276,10 @@ export default function Chat() {
       <TopLeft />
       <UserList onUserClick={userOnClick} /> 
       </div>
-      <div className="flex-1 px-5 py-4">
-      <TopRight
+      
+ {clicked ? (
+  <div className="flex-1 px-5 py-4">
+         <TopRight
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
         videoOnClick={() => call("")}
@@ -292,8 +296,17 @@ export default function Chat() {
         receiverEmail={clicked || "rishikeshadh4@gmail.com"}
         sendMessageFunction={send} 
       />
+  </div>
+  ) : (
+    <div className="flex-1 px-5 py-4">
+    <DummyTopRight />
+      <DummyChatList />
+
+    </div>
+    
+  )}
+ 
       {/*we will be loading the clicked one or the first one in the list  */}
-      </div>
           </div>
       </main>
     </div>

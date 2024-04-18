@@ -1,11 +1,11 @@
 import { getStorage, ref, uploadBytes,getDownloadURL } from "firebase/storage";
-import { db } from "@/firebase/config";
+import { app } from "@/firebase/config";
 
 //getting URL using a Blob Url/Src
 const GetBlobUrl = async (id:string,imgSrc:string)=> {
    
     // Create a root reference
-    const storage = getStorage();
+    const storage = getStorage(app);
     
     // Create a reference to a particular folder
     const storageRef = ref(storage, 'faceCaptures/'+id+'.png');
@@ -20,6 +20,6 @@ const GetBlobUrl = async (id:string,imgSrc:string)=> {
     // Get the download URL of the uploaded image
     const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
     return downloadURL;
-          }
+}
 
 export default GetBlobUrl;

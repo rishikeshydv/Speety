@@ -3,6 +3,7 @@
  * @see https://v0.dev/t/OvdVgVOvtr3
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
+"use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
@@ -10,12 +11,39 @@ import TicketProp from "@/services/tickets/TicketProp"
 import Link from "next/link"
 import Footer from '@/components/Footer';
 import Header1 from "@/components/Tickets/Header1"
-
+import { useEffect, useState } from "react"
+import {collection, query, getDocs} from "firebase/firestore"; 
+import { db } from "@/firebase/config";
+interface userVerify{
+  brokerId: string;
+  confirmPassword: string;
+  date:string;
+  driverLicense: string;
+  email: string;
+  faceCapture: string;
+  name: string;
+  password: string;
+  role: string;
+  status: string;
+}
 
 export default function Component() {
-  //write a function that will redirect to /info/ticketNumber
-  //so that we can retrieve the ticket number from the url
-  //and then fetch the ticket details from the database using the ticket number
+  //setting up state variables
+  const [userVerificationList, setUserVerificationList] = useState<userVerify[]>([])
+
+  async function getTickets() {
+    const receiverRef = query(collection(db, "user_verifications"));
+    const receiverSnapshot = await getDocs(receiverRef);
+    const receiverList: userVerify[] = [];
+    receiverSnapshot.forEach((doc) => {
+      receiverList.push(doc.data() as userVerify);
+    });
+    setUserVerificationList(receiverList);
+  }
+
+  useEffect(() => {
+    getTickets();
+  }, []);
   
   return (
     <div className="w-full overflow-hidden bg-gradient-to-r from-[#ebf4f5] to-[#b5c6e0]">
@@ -44,49 +72,29 @@ export default function Component() {
         <Table className="text-slate-300">
           <TableHeader className="font-bold">
             <TableRow>
-              <TableHead className="text-white font-bold text-lg">Ticket Number</TableHead>
-              <TableHead className="text-white font-bold text-lg">Username</TableHead>
+              <TableHead className="text-white font-bold text-lg">Email</TableHead>
+              <TableHead className="text-white font-bold text-lg">Name</TableHead>
               <TableHead className="text-white font-bold text-lg">Subject</TableHead>
               <TableHead className="text-white font-bold text-lg">Status</TableHead>
               <TableHead className="text-white font-bold text-lg">Date Created</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TicketProp 
-                ticketNumber="T001"
-                username="JaneDoe"
-                subject="Issue with account login"
-                status="Open"
-                date="Mar 16, 2024"
-            />
-            <TicketProp 
-                ticketNumber="T002"
-                username="JohnSmith"
-                subject="Issue with account login"
-                status="Open"
-                date="Mar 16, 2024" 
-            />
-                        <TicketProp 
-                ticketNumber="T003"
-                username="JaneSmith"
-                subject="Issue with account login"
-                status="Open"
-                date="Mar 16, 2024"
-                />
-                                        <TicketProp 
-                ticketNumber="T004"
-                username="JaneSmith"
-                subject="Issue with account login"
-                status="Open"
-                date="Mar 16, 2024"
-                />
-                                                        <TicketProp 
-                ticketNumber="T004"
-                username="JaneSmith"
-                subject="Issue with account login"
-                status="Open"
-                date="Mar 16, 2024"
-                />
+            {userVerificationList.map((ticket,index) => (
+              <TicketProp
+              key={index}
+              brokerId={ticket.brokerId}
+              confirmPassword={ticket.confirmPassword}
+              date={ticket.date}
+              driverLicense={ticket.driverLicense}
+              email={ticket.email}
+              faceCapture={ticket.faceCapture}
+              name={ticket.name}
+              password={ticket.password}
+              role={ticket.role}
+              ticketStatus={ticket.status}
+              />
+            ))}
 
           </TableBody>
         </Table>

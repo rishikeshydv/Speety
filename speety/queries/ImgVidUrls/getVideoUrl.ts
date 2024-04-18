@@ -1,10 +1,10 @@
 import { getStorage, ref, uploadBytes,getDownloadURL } from "firebase/storage";
-import { db } from "@/firebase/config";
+import {app } from "@/firebase/config";
 
 const getVideoUrl = async (file:File)=> {
     
 // Create a root reference
-const storage = getStorage();
+const storage = getStorage(app);
 
 // Create a reference to a particular folder
 const storageRef = ref(storage, 'propertyPostedVideos/'+file.name);
