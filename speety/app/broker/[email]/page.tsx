@@ -23,42 +23,65 @@ import { AvatarImage, Avatar } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import React, { useEffect, useRef, useState } from "react";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { collection, doc, query,getDocs, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import { set } from "firebase/database";
 
 interface LocationData {
   lat: number;
   lng: number;
 }
 
+interface AgentInfo {
+  [email: string]: [string, string, LocationData];
+}
+
 export default function Component() {
-  const { email } = useParams();
+  const params = useParams();
+  const emailParams = decodeURIComponent(params.email as string);
   const mapRef = useRef(null);
   const router = useRouter();
 
-  const agentLocations: LocationData[] = [
-    { lat: -31.56391, lng: 147.154312 },
-    { lat: -33.718234, lng: 150.363181 },
-    { lat: -33.727111, lng: 150.371124 },
-    { lat: -33.848588, lng: 151.209834 },
-    { lat: -33.851702, lng: 151.216968 },
-    { lat: -34.671264, lng: 150.863657 },
-    { lat: -35.304724, lng: 148.662905 },
-    { lat: -36.817685, lng: 175.699196 },
-    { lat: -36.828611, lng: 175.790222 },
-    { lat: -37.75, lng: 145.116667 },
-    { lat: -37.759859, lng: 145.128708 },
-    { lat: -37.765015, lng: 145.133858 },
-    { lat: -37.770104, lng: 145.143299 },
-    { lat: -37.7737, lng: 145.145187 },
-    { lat: -37.774785, lng: 145.137978 },
-    { lat: -37.819616, lng: 144.968119 },
-    { lat: -38.330766, lng: 144.695692 },
-    { lat: -39.927193, lng: 175.053218 },
-    { lat: -41.330162, lng: 174.865694 },
-    { lat: -42.734358, lng: 147.439506 },
-    { lat: -42.734358, lng: 147.501315 },
-    { lat: -42.735258, lng: 147.438 },
-    { lat: -43.999792, lng: 170.463352 },
-  ]
+  const [agentEmails, setAgentEmails] = useState<string[]>([]);
+  const [agentInfo, setAgentInfo] = useState<any>({});
+  
+
+  const getAgentLocation = async (email:string) => {
+    const userRef = collection(db, "agentList");
+    const userDocRef = doc(userRef, email);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+        return [userDoc.data().name,userDoc.data().profilePic,userDoc.data().lastLocation];
+    } else {
+        return null;
+    }
+}
+
+const getAgentEmails = async (brokerId:string) => {
+  const agentRef = query(collection(db, brokerId));
+  const agentSnapshot = await getDocs(agentRef);
+  const agentEmails:string[] = [];
+  agentSnapshot.forEach((doc) => {
+      agentEmails.push(doc.id);
+  });
+  setAgentEmails(agentEmails);
+}
+
+useEffect(() => {
+  getAgentEmails(emailParams);
+}, []);
+
+useEffect(() => {
+  let _agentLocations: any = {};
+  for (let i = 0; i < agentEmails.length; i++) {
+    getAgentLocation(agentEmails[i]).then((userInfo) => {
+      _agentLocations[(agentEmails[i]).toString()] = userInfo;
+  });
+}
+setAgentInfo(_agentLocations);
+}
+, [agentEmails]);
+
 
   useEffect(() => {
     const loadGoogleMapsScript = () => {
@@ -95,7 +118,7 @@ export default function Component() {
           document.getElementById("map") as HTMLElement,
           {
             zoom: 3,
-            center: { lat: -28.024, lng: 140.887 },
+            center: { lat: 40.713, lng: -74.006 },
             mapId: "DEMO_MAP_ID",
           }
         );
@@ -105,25 +128,22 @@ export default function Component() {
           disableAutoPan: true,
         });
 
-        // Create an array of alphabetical characters used to label the markers.
-        const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
         // Add some markers to the map.
-        const markers = agentLocations.map((position, i) => {
-          const label = labels[i % labels.length];
+        const markers = Object.keys(agentInfo).map((email) => {
+          const label = agentInfo[email][0];
           const pinGlyph = new google.maps.marker.PinElement({
             glyph: label,
             glyphColor: "white",
           });
           const marker = new google.maps.marker.AdvancedMarkerElement({
-            position,
+            position: {lat: parseFloat(agentInfo[email][2][0]), lng: parseFloat(agentInfo[email][2][1])},
             content: pinGlyph.element,
           });
 
           // markers can only be keyboard focusable when they have click listeners
           // open info window when marker is clicked
           marker.addListener("click", () => {
-            infoWindow.setContent(position.lat + ", " + position.lng);
+            infoWindow.setContent(parseFloat(agentInfo[email][2][0]) + ", " + parseFloat(agentInfo[email][2][1]));
             infoWindow.open(map, marker);
           });
           return marker;
@@ -145,7 +165,7 @@ export default function Component() {
     if (!window.google) {
       loadGoogleMapsScript();
     }
-  }, []);
+  }, [agentInfo]);
 
   return (
     <div className={`${poppins.className}`}>
@@ -246,73 +266,36 @@ export default function Component() {
             Track Your Agents
           </h3>
           <div className="grid grid-cols-2 gap-6 px-4">
-            <div className="flex flex-col gap-4 p-4">
-              <div
-                className="flex items-center space-x-6 bg-gray-200 px-6 rounded-3xl h-28"
-                onClick={() => {
-                  router.push("/agent/profile");
-                }}
-              >
-                <Avatar className="w-20 h-16">
-                  <AvatarImage
-                    alt=""
-                    src="/agent.jpeg"
-                    className="w-full h-full"
-                  />
-                </Avatar>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold">Alice Davis</h3>
-                  <p className="text-lg text-gray-500 dark:text-gray-400">
-                    Real State Agent
-                  </p>
+            {agentInfo &&
+              Object.keys(agentInfo).map((email) => {
+                return (
+                  <div className="flex flex-col gap-4 p-4" key={email}>
+                  <div
+                    className="flex items-center space-x-6 bg-gray-200 px-6 rounded-3xl h-28"
+                    onClick={() => {
+                      router.push(`/agent/profile/${email}`);
+                    }}
+                  >
+                    <Avatar className="w-16 h-18">
+                      <AvatarImage
+                        alt=""
+                        src={agentInfo[email][1]}
+                        className="w-full h-full"
+                      />
+                    </Avatar>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold">{agentInfo[email][0]}</h3>
+                      <p className="text-lg text-gray-500 dark:text-gray-400">
+                        Real State Agent
+                      </p>
+                    </div>
+                    <Switch defaultChecked id="user-1" />
+                  </div>
                 </div>
-                <Switch defaultChecked id="user-1" />
-              </div>
 
-              <div
-                className="flex items-center space-x-6 bg-gray-200 px-6 rounded-3xl h-28"
-                onClick={() => {
-                  router.push("/agent/profile");
-                }}
-              >
-                <Avatar className="w-20 h-16">
-                  <AvatarImage
-                    alt=""
-                    src="/agent.jpeg"
-                    className="w-ful,,.; h-full"
-                  />
-                </Avatar>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold">Alice Davis</h3>
-                  <p className="text-lg text-gray-500 dark:text-gray-400">
-                    Real State Agent
-                  </p>
-                </div>
-                <Switch defaultChecked id="user-1" />
-              </div>
+                )
+              })}
 
-              <div
-                className="flex items-center space-x-6 bg-gray-200 px-6 rounded-3xl h-28"
-                onClick={() => {
-                  router.push("/agent/profile");
-                }}
-              >
-                <Avatar className="w-20 h-16">
-                  <AvatarImage
-                    alt=""
-                    src="/agent.jpeg"
-                    className="w-full h-full"
-                  />
-                </Avatar>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold">Alice Davis</h3>
-                  <p className="text-lg text-gray-500 dark:text-gray-400">
-                    Real State Agent
-                  </p>
-                </div>
-                <Switch defaultChecked id="user-1" />
-              </div>
-            </div>
             <div className="grid gap-6 p-4">
               <Card>
                 <CardHeader className="p-4">
