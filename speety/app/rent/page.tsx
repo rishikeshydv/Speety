@@ -1,5 +1,5 @@
 'use client';
-import React,{ useState }  from 'react';
+import React,{ useState, useEffect }  from 'react';
 //import NavbarLeft from "@/components/navbarLeft";
 import { rentQ } from '@/queries/Transactions/rentQ';
 import { db } from '@/firebase/config';
@@ -43,14 +43,36 @@ export default function Rent() {
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     };
 
+        //zip auto-complete
+        useEffect(() => {
+          const initializeMap = () => {
+            const _autocomplete = new window.google.maps.places.Autocomplete(
+              document.getElementById('autocomplete') as HTMLInputElement
+              );
+      };
+          const loadGoogleMapsScript = () => {
+            const googleMapsScript = document.createElement('script');
+            googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+            googleMapsScript.async = true;
+            googleMapsScript.defer = true;
+            googleMapsScript.addEventListener('load', initializeMap);
+            document.body.appendChild(googleMapsScript);
+          };
+      
+          // Check if the Google Maps script has already been loaded
+          if (!window.google) {
+            loadGoogleMapsScript();
+          }
+        }, []);
+
   return (
     <div className={poppins.className}>
       <Header />
-         <div>
-         <div className='flex items-center justify-center ml-10 mt-6 mb-6'>
+         <div className='bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]'>
+         <div className='flex items-center justify-center ml-10 py-4'>
             {/* This div tag is for search bar  */}
         <form onSubmit={handleSubmit}>
-        <input type="text" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>
+        <input type="text" id="autocomplete" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>
 
         <select  value={formData.searchType} onChange={handleChange} name="searchType" className='ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400'>
         <option  value="Rent">For Rent</option>

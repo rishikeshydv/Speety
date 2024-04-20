@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/accordion"
 
 import ListingCard from "@/services/agent/ListingCard";
-import Rating from '@mui/material/Rating';
 import { useParams } from 'next/navigation';
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
