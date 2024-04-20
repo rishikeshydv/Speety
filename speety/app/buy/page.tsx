@@ -7,9 +7,8 @@ import PropertyProp from '@/services/property/PropertyProp';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Typist from "react-typist-component";
-import { useNavigate } from "react-router-dom";
-import { auth, db } from "@/firebase/config";
-import { useAuthState } from "react-firebase-hooks/auth";
+import ListingCard from "@/services/agent/ListingCard";
+import { db } from "@/firebase/config";
 
 interface Property{
   price:string;
@@ -44,6 +43,27 @@ export default function Buy() {
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     };
 
+    //zip auto-complete
+    useEffect(() => {
+      const initializeMap = () => {
+        const _autocomplete = new window.google.maps.places.Autocomplete(
+          document.getElementById('autocomplete') as HTMLInputElement
+          );
+  };
+      const loadGoogleMapsScript = () => {
+        const googleMapsScript = document.createElement('script');
+        googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+        googleMapsScript.async = true;
+        googleMapsScript.defer = true;
+        googleMapsScript.addEventListener('load', initializeMap);
+        document.body.appendChild(googleMapsScript);
+      };
+  
+      // Check if the Google Maps script has already been loaded
+      if (!window.google) {
+        loadGoogleMapsScript();
+      }
+    }, []);
   return (
     <div className={poppins.className}>
       <Header />
@@ -51,7 +71,7 @@ export default function Buy() {
          <div className='flex items-center justify-center ml-10 py-4'>
             {/* This div tag is for search bar  */}
         <form onSubmit={handleSubmit}>
-        <input type="text" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>
+        <input type="text" id="autocomplete" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>
 
         <select  value={formData.searchType} onChange={handleChange} name="searchType" className='ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400'>
         <option  value="Buy">For Buy</option>
