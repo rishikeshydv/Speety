@@ -3,9 +3,9 @@ import React, { useEffect,useState } from "react";
 import ChatListProp from "@/services/chat/ChatListProp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { db,auth } from "@/firebase/config";
-
 //imports for queries
 import { getConnectedUsers } from "@/queries/chatSystem";
+import { Loading } from "@/app/Loading";
 
 interface User {
   name: string;
@@ -45,7 +45,7 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
     />
   ))
   ):(
-    <h1 className="text-xl font-italic text-center mt-10" onClick={() => onUserClick("heroine")}>Loading users...</h1>
+    <Loading />
   )}  
   </div>
 </div>

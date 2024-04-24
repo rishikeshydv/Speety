@@ -1,47 +1,34 @@
-import { Firestore, collection, query, getDocs, where, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
-
+import { collection, query,getDocs, where } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 interface Property{
-  price:string;
-  beds:string;
-  baths:string;
-  houseType:string;
-  transactionType:string;
-  address: string;
-  apartment:string;
-  city:string;
-  state:string;
-  zip:string;
-  listedBy: string;
-  imageUrl:string[];
-  videoUrl:string[]
+[ key: string ]: {address:string,apartment:string,city:string,state:string,zip:string,price:string,beds:string,baths:string,houseType:string,transactionType:string,listedBy:string,brokerId:string,imageUrl:string[],videoUrl:string[],date:string};
 }
-
-async function buyQ(db: Firestore, zip: string,priceUpper: string, priceLower: string, searchType: string, bed: string, bath: string, homeType: string) {
+async function buyQ( zip: string,priceUpper: string, priceLower: string, searchType: string, bed: string, bath: string, homeType: string) {
   try {
-    const q = query(
-      collection(db, "propertyDetails"), 
-      where("zip", "==", zip), 
-      where("price", "<", Number(priceUpper)), 
-      where("price", ">", Number(priceLower)), 
-      where("searchType", "==", searchType), 
-      where("bed", "==", bed), 
-      where("bath", "==", bath), 
-      where("homeType", "==", homeType)
-    );
 
+//create a dictionary buyList of type Property
+    const buyList: Property = {};
+
+    const q = query(
+      collection(db, "presentListings")
+    );
 
     // Execute the query and get the snapshot
     const buyResults = await getDocs(q);
 
-    // Create an array to store the cities
-    const buyList: Property[] = [];
-
     // Iterate through the snapshot and push each city to the array
-    buyResults.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-      const buyData: Property = doc.data() as any;
-      buyList.push(buyData);
+    buyResults.forEach((doc) => {
+      const data = doc.data();
+      const keys = Object.keys(data);
+      keys.map((key) => {
+        buyList[key] = data[key];
+      }
+      );
+ //     console.log("Buy list is",buyList);
+
     });
+
     return buyList;
   } catch (error) {
     console.error("Error fetching houses:", error);

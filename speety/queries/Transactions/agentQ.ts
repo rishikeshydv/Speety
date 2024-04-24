@@ -2,45 +2,39 @@ import {
   collection,
   query,
   getDocs,
-  where,
-  QueryDocumentSnapshot,
-  DocumentData,
 } from "firebase/firestore";
 
 import {db} from "@/firebase/config"
 
-interface Agent{
-  photoUrl:string; 
-  name:string;
-  stars:number;
-  phone:string;
-  usersReviews:number;
-  company: string;
-  license: string;
-  address:string;
-  email:string;
-  zip:string
-
-}
-
 async function agentQ(zip: string){
+  // Regular expression to match a 5-digit zip code
+  const zipCodePattern = /\b\d{5}\b/;
+
   try {
     // Create a query to get documents where the "capital" field is equal to true
-    const q = query(collection(db, "agentList"), where("zip", "==", zip));
+    const q = query(collection(db, "agentList"));
+    // Create an array to store the cities
+    const agentList: any[] = [];
 
     // Execute the query and get the snapshot
     const agentResults = await getDocs(q);
-
-    // Create an array to store the cities
-    const agentList: Agent[] = [];
-
-    // Iterate through the snapshot and push each city to the array
-    agentResults.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-      const agentData: Agent = doc.data() as any;
-      agentList.push(agentData);
+    if (agentResults.empty) {
+      console.log("No matching documents.");
+      return [];
+    }
+    else
+    {
+          // Iterate through the snapshot and push each city to the array
+    agentResults.forEach(
+      (doc) => {
+      const agentData = doc.data() as any;
+      if (((agentData.address).match(zipCodePattern))[0]==zip){
+        agentList.push(agentData);
+      }
+      console.log(agentList);
     });
+    }
     // Return the array of cities
-    console.log(agentList);
     return agentList;
   } catch (error) {
     console.error("Error fetching agents:", error);

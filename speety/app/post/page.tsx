@@ -22,7 +22,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { uuidv4 } from "@firebase/util";  
 import { useRouter } from 'next/navigation';
 
-
 export default function PropertyPost() {
   const router = useRouter();
   const [price, setPrice] = useState('');
@@ -41,6 +40,7 @@ export default function PropertyPost() {
   const [imgUrlList,setImgUrlList]=useState<string []>([])
  const [vidList,setVidList]=useState<File[]>([])
  const [vidUrlList,setVidUrlList]=useState<string []>([])
+ const [date, setDate] = useState("");
 
  const [user] = useAuthState(auth);
  const _uniqueId = uuidv4()
@@ -137,7 +137,8 @@ export default function PropertyPost() {
             listedBy: listing,
             brokerId:brokerId,
             imageUrl: imgUrlList,
-            videoUrl:vidUrlList
+            videoUrl:vidUrlList,
+            date:date
             } 
             });
           router.push('/post/successful');
@@ -241,6 +242,10 @@ export default function PropertyPost() {
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="zip"className='text-2xl'>ZIP code</Label>
             <Input id="zip" className='text-2xl border-2' placeholder="ZIP code" value={zip} onChange={(e) => setZip(e.target.value)}/>
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="date"className='text-2xl'>Date</Label>
+            <Input id="date" className='text-2xl border-2' placeholder="YYYY-MM-DD" value={date} onChange={(e) => setDate(e.target.value)}/>
           </div>
         </div>
         <div className="flex flex-col space-y-1.5">
