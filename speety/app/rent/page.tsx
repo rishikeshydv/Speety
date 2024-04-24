@@ -1,70 +1,86 @@
 'use client';
-import React,{ useState, useEffect }  from 'react';
-//import NavbarLeft from "@/components/navbarLeft";
+import React,{ useEffect, useState }  from 'react';
 import { rentQ } from '@/queries/Transactions/rentQ';
-import { db } from '@/firebase/config';
 import poppins from "@/font/font";
-import PropertyProp from '@/services/property/PropertyProp';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Typist from "react-typist-component";
+import ListingCard from "@/services/agent/ListingCard";
+
 
 interface Property{
-  price:string;
-  beds:string;
-  baths:string;
-  houseType:string;
-  transactionType:string;
-  address: string;
-  apartment:string;
-  city:string;
-  state:string;
-  zip:string;
-  listedBy: string;
-  imageUrl:string[];
-  videoUrl:string[]
+  [ key: string ]: {address:string,apartment:string,city:string,state:string,zip:string,price:string,beds:string,baths:string,houseType:string,transactionType:string,listedBy:string,brokerId:string,imageUrl:string[],videoUrl:string[],date:string}
 }
 
-export default function Rent() {
-
-  const [formData,setFormData] = useState({zip:"",searchType:"Rent",priceLower:"",priceUpper:"",beds:"",baths:"",homeType:""});
-  const [resultList,setResultList] = useState<Property[]>([]);
+export default function Buy() {
+  const [formData,setFormData] = useState({zip:"",searchType:"Buy",priceLower:"",priceUpper:"",beds:"",baths:"",homeType:""});
+  const [refinedList,setRefinedList] = useState<Property>({});
+  const [resultList,setResultList] = useState<Property>({});
+  const [resultText,setResultText] = useState<string>("");
+  let _refinedList:Property = {};
   
   async function handleSubmit(event:React.FormEvent<HTMLFormElement> ) {
       event.preventDefault();
       //write a logic to retrieve the entries from database based on the form data
-      console.log(formData.zip,formData.priceLower,formData.priceUpper,formData.searchType,formData.beds,formData.baths,formData.homeType)
-        const res = await rentQ(db,formData.zip,formData.priceLower,formData.priceUpper,formData.searchType,formData.beds,formData.baths,formData.homeType );
-        setResultList(res);
-        console.log(resultList)
+      return new Promise((resolve, reject) => {
+        rentQ(formData.zip,formData.priceLower,formData.priceUpper,formData.searchType,formData.beds,formData.baths,formData.homeType)
+          .then((rentList) => {
+            setResultList(rentList as Property);
+            if (Object.keys(resultList).length === 0){
+              setResultText("No results found!")
+            }
+            else{
+              setResultText("Results:")
+            }
+            resolve(rentList);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }); 
+        // setResultList(res);
+        // console.log(resultList)
   }
+
+  //refine list
+  useEffect(() => {
+    const keys = Object.keys(resultList);
+    keys.map((key) => {
+      if(resultList[key]["zip"] == formData.zip && parseInt(resultList[key]["price"]) >= parseInt(formData.priceLower )&& parseInt(resultList[key]["price"]) <= parseInt(formData.priceUpper) && resultList[key]["transactionType"] == formData.searchType && resultList[key]["beds"] == formData.beds && resultList[key]["baths"] == formData.baths && resultList[key]["houseType"] == formData.homeType){
+        _refinedList[key] = resultList[key];
+      }
+    });
+    setRefinedList(_refinedList);
+  }, [resultList]);
+console.log("_Refined: ",_refinedList)
+console.log("Refined: ",refinedList)
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = event.target;
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     };
 
-        //zip auto-complete
-        useEffect(() => {
-          const initializeMap = () => {
-            const _autocomplete = new window.google.maps.places.Autocomplete(
-              document.getElementById('autocomplete') as HTMLInputElement
-              );
+    //zip auto-complete
+    useEffect(() => {
+      const initializeMap = () => {
+        const _autocomplete = new window.google.maps.places.Autocomplete(
+          document.getElementById('autocomplete') as HTMLInputElement
+          );
+  };
+      const loadGoogleMapsScript = () => {
+        const googleMapsScript = document.createElement('script');
+        googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+        googleMapsScript.async = true;
+        googleMapsScript.defer = true;
+        googleMapsScript.addEventListener('load', initializeMap);
+        document.body.appendChild(googleMapsScript);
       };
-          const loadGoogleMapsScript = () => {
-            const googleMapsScript = document.createElement('script');
-            googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
-            googleMapsScript.async = true;
-            googleMapsScript.defer = true;
-            googleMapsScript.addEventListener('load', initializeMap);
-            document.body.appendChild(googleMapsScript);
-          };
-      
-          // Check if the Google Maps script has already been loaded
-          if (!window.google) {
-            loadGoogleMapsScript();
-          }
-        }, []);
-
+  
+      // Check if the Google Maps script has already been loaded
+      if (!window.google) {
+        loadGoogleMapsScript();
+      }
+    }, []);
   return (
     <div className={poppins.className}>
       <Header />
@@ -75,8 +91,8 @@ export default function Rent() {
         <input type="text" id="autocomplete" placeholder='Enter your zip ...' name="zip" value={formData.zip} onChange={handleChange} className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"/>
 
         <select  value={formData.searchType} onChange={handleChange} name="searchType" className='ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400'>
-        <option  value="Rent">For Rent</option>
         <option  value="Buy">For Buy</option>
+        <option  value="Rent">For Rent</option>
         <option  value="Agents">For Agents</option>
         </select>
 
@@ -143,35 +159,42 @@ export default function Rent() {
       alt="Home"
     />
   </h1>
-        <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-2xl mb-10">
-    <Typist>Speety is making it simpler to rent your home and settle.</Typist>
-  </button>
+        <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-2xl mb-10">
+    <Typist>Speety is making it simpler to buy your home and settle.</Typist>
+  </div>
         </section>
     </div>
+    {
+      refinedList && (
+        <section className='p-10'>
+        <div id='propertyLists' className='mt-4 ml-4 flex flex-col overflow-scroll'>
+        <h1 className='text-3xl font-bold tracking-tight text-gray-700 p-4'>
+         {resultText}
+        </h1>
 
-        <div id='propertyLists' className='mt-4 ml-4'>
-
-      {resultList.map((property:Property, index:number) => {
-        return (
-          <PropertyProp 
-            key={index}
-            price={property.price}
-            beds={property.beds}
-            baths={property.baths}
-            houseType={property.houseType}
-            transactionType={property.transactionType} // Add transactionType property
-            apartment={property.apartment} // Add apartment property
-            address={property.address}
-            city={property.city}
-            state={property.state}
-            zip={property.zip}
-            listedBy={property.listedBy}
-            imageUrl={property.imageUrl[0]} 
-            videoUrl={property.videoUrl[0]} // Add videoUrl property
-          />
-        )
-      })}
+        {Object.keys(refinedList).map((key) => {
+          return (
+            <ListingCard
+            key={key}
+              address={refinedList[key]["address"]+", "+refinedList[key]["city"]}
+              price={refinedList[key]["price"]}
+              bedrooms={refinedList[key]["beds"]}
+              bathrooms={refinedList[key]["baths"]}
+              transactionType={refinedList[key]["transactionType"]}
+              date={refinedList[key]["date"]}
+              stars={5}
+              review='Excellent'
+              image={refinedList[key]["imageUrl"][0]}
+            />
+          );
+        }
+        )}
         </div>
-    </div>    </div>
+        </section>
+      )
+    }
+
+    </div> 
+    <Footer />   </div>
   )
 }

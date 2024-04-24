@@ -151,14 +151,12 @@ async function updateProfile(){
       <CardContent className="grid gap-6">
         <div className="flex items-center gap-6">
             <div className="relative w-20 h-20">
-                <Image
+                <img
                     alt="Profile picture"
                     className="rounded-full object-cover"
-                    height={96}
-                    src="/agent.jpeg"
-                    layout="responsive"
-                    objectFit="cover"
-                    width={96}
+                    height={80}
+                    src={profilePic}
+                    width={80}
                 />
             </div>
             <div className="grid gap-1.5">

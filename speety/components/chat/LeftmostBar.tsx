@@ -6,11 +6,15 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import React, { useEffect, useState } from 'react';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { main } from "@/services/faceDetection/FaceDetector";
 
 interface LeftmostBarProps {
   userEmail: string;
 }
 const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
+  const [user] = useAuthState(auth);
   const [userPic,setUserPic] = useState<string|null>("");
   useEffect(() => {
   const getUserInfo = async (_userEmail:string) => {
@@ -29,7 +33,7 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
   return (
 <aside className="w-40 bg-black text-white rounded-3xl m-6">
         <div className="flex items-center justify-center h-40 border-b border-gray-800">
-          <a href="/buy">
+          <a href={`${user?.email}`}>
             <img
               src="/speety_logo_revert.png"
               alt="Speety Logo"
@@ -40,7 +44,7 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
           </a>
         </div>
         <nav className="flex flex-col p-2">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center" onClick={main}>
             <img
               src={userPic as string}
               alt="user_profile"
