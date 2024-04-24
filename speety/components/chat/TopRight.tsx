@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 
 //imports for video call
 import PopoverTriggerComponent from "@/components/video/PopOverTriggerComponent";
-import PopOverComponent from "@/components/video/PopOverComponent";
 import LocationTrigger from "../location/formPop/LocationTrigger";
 
 //imports for calendar
@@ -35,9 +34,10 @@ videoOnClick:any
 senderLoc:any
 receiverLoc:any
 clickedUser:string
+endCall:any
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, senderLoc,receiverLoc, clickedUser}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, senderLoc,receiverLoc, clickedUser,endCall}) => {
   const [_user] = useAuthState(auth);
 
   const [datetime, setDatetime] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
@@ -91,8 +91,11 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, s
       </div>
     </div>
 
+{/* Video Call Component */}
     <div className="flex items-center">
-    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" content={<PopOverComponent callerVideoRef={callerRef} receiverVideoRef={receiverRef} callerUser="Mary" receiverUser="John"/>} videoOnClick={videoOnClick}/>
+    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall}/>
+
+    {/* Location Component */}
 <LocationTrigger 
 src="/map.png" 
 _className="w-18 h-20 rounded-full" 
