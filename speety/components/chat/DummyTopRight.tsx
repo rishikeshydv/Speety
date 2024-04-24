@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 
 //imports for video call
 import PopoverTriggerComponent from "@/components/video/PopOverTriggerComponent";
-import PopOverComponent from "@/components/video/PopOverComponent";
 
 //imports for calendar
 import { auth } from "@/firebase/config";
@@ -18,7 +17,7 @@ const DummyTopRight = () => {
   return (
     <div className="flex items-end justify-end bg-gray-200 rounded-2xl mt-2 h-20 px-6">
     <div className="flex items-end justify-end">
-    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" content={<PopOverComponent callerVideoRef={''} receiverVideoRef={''} callerUser="Mary" receiverUser="John"/>} videoOnClick={''}/>
+      <img src="/facetime.png" alt="dummy" className="w-16 h-20 rounded-full"/>
     <img src="/map.png" alt="" className="w-18 h-20 "/>
 
 {/* Calender Element */}

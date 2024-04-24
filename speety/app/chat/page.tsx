@@ -17,6 +17,7 @@ import { Loader } from "@googlemaps/js-api-loader"
 import { Locator } from "@/services/location/currentLocation";
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
+import { set } from "firebase/database";
 
 interface userLoc {
   email: string;
@@ -59,8 +60,8 @@ export default function Chat() {
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [callerMediaStream_, setCallerMediaStream_] = useState<MediaStream | null>(null);
+  const [receiverMediaStream_, setReceiverMediaStream_] = useState<MediaStream | null>(null);
   //location
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
@@ -159,16 +160,21 @@ export default function Chat() {
     }}
 
     //function to make a call to the remote peer
-    const call = (remotePeerId: string) => {
+    const call = () => {
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error("getUserMedia is not supported in this browser");
+        return;
+      }
+      if (!clicked) {
+        console.error("No user selected to send message to");
         return;
       }
       // Use navigator.mediaDevices.getUserMedia for modern browsers
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((mediaStream) => {
+          setCallerMediaStream_(mediaStream);
           // Play local video stream
           if (currentUserVideoRef.current) {
             (currentUserVideoRef.current as HTMLVideoElement).srcObject =
@@ -177,7 +183,18 @@ export default function Chat() {
           }
 
           // Call the remote peer
-          const call = myPeer?.call(remotePeerId, mediaStream);
+          const call = myPeer?.call(clicked.slice(0, clicked.indexOf("@")), mediaStream);
+
+          // Handle incoming stream from the receiver
+          call?.on("stream", (remoteStream) => {
+            setReceiverMediaStream_(remoteStream);
+            // Play remote video stream
+            if (remoteVideoRef.current) {
+              (remoteVideoRef.current as HTMLVideoElement).srcObject = remoteStream;
+              (remoteVideoRef.current as HTMLVideoElement).play();
+            }
+          });
+
           // Handle call errors
           call?.on("error", (error: any) => {
             console.error("Call error:", error);
@@ -186,6 +203,31 @@ export default function Chat() {
         .catch((error) => {
           console.error("getUserMedia error:", error);
         });
+    };
+
+    //the following function is to end the call
+    const endCall = () => {
+        if (callerMediaStream_) {
+          callerMediaStream_.getTracks().forEach((track) => {
+            track.stop();
+          });
+        }
+        if (receiverMediaStream_) {
+          receiverMediaStream_.getTracks().forEach((track) => {
+            track.stop();
+          });
+        }
+
+        setCallerMediaStream_(null);
+        setReceiverMediaStream_(null);
+
+        if (currentUserVideoRef.current) {
+          (currentUserVideoRef.current as HTMLVideoElement).srcObject = null;
+        }
+
+        if (remoteVideoRef.current) {
+          (remoteVideoRef.current as HTMLVideoElement).srcObject = null;
+        }
     };
 
     //useEffect to make a peer connection
@@ -248,10 +290,12 @@ export default function Chat() {
           navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
             .then((mediaStream) => {
+              if (mediaStream) {
+              setCallerMediaStream_(mediaStream);
+              }
               // Play local video stream
               if (currentUserVideoRef.current) {
-                (currentUserVideoRef.current as HTMLVideoElement).srcObject =
-                  mediaStream;
+                (currentUserVideoRef.current as HTMLVideoElement).srcObject = mediaStream;
                 (currentUserVideoRef.current as HTMLVideoElement).play();
               }
 
@@ -260,10 +304,12 @@ export default function Chat() {
 
               // Handle incoming stream from the caller
               call.on("stream", (remoteStream) => {
+                if (remoteStream) {
+                setReceiverMediaStream_(remoteStream);
+                }
                 // Play remote video stream
                 if (remoteVideoRef.current) {
-                  (remoteVideoRef.current as HTMLVideoElement).srcObject =
-                    remoteStream;
+                  (remoteVideoRef.current as HTMLVideoElement).srcObject = remoteStream;
                   (remoteVideoRef.current as HTMLVideoElement).play();
                 }
               });
@@ -301,10 +347,11 @@ export default function Chat() {
          <TopRight
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
-        videoOnClick={() => call("")}
+        videoOnClick={call}
         senderLoc={position1}
         receiverLoc={position2}
         clickedUser={clicked}
+        endCall={endCall}
       />
     <ChatList
         sentMessage={sentMessage}
