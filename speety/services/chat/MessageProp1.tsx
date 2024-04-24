@@ -15,8 +15,8 @@ const MessageProp1:React.FC<MsgProp> = ({message,msgTime,profilePic}) => {
     </Avatar>
   <Button className="flex items-start justify-start w-28 h-20 gap-2 bg-blue-100 ml-2 shadow-md" variant="outline">
     <div className="grid text-left ml-4">
-      <div className="font-semibold text-lg">{message}</div>
-      <div className="text-sm line-clamp-1"><h3>{msgTime}</h3></div>
+      <div className="font-semibold text-lg mt-2">{message}</div>
+      <div className="text-xs line-clamp-1 mt-4 ml-4 italic"><h3>{msgTime}</h3></div>
     </div>
   </Button>
 </div>
