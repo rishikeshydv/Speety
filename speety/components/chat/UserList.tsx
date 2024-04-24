@@ -17,16 +17,23 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
   
   useEffect(() => {
     const fetchUsers = async () => {
-      try {
-        const connectedUsers = await getConnectedUsers(user?.email as string);
-        setUsersConnected(connectedUsers);
-      } catch (error) {
-       console.error(error); 
-      }
+      return new Promise((resolve, reject) => {
+        getConnectedUsers(user?.email as string)
+          .then((connectedUsers) => {
+            setUsersConnected(connectedUsers as string[][]);
+            resolve(connectedUsers);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });       
     };
-  
+  if (user && user?.email){
     fetchUsers();
+  }
+    
   }, [user]); // Add user to the dependency array to trigger useEffect when user changes
+
 
   return (
   <div className="w-full h-full rounded-2xl shadow-xs mt-2 bg-gray-200">
@@ -41,7 +48,7 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
       lastMsg="Hello"
       lastMsgTime="Just now" // replace with actual last message time
       newMsg={false}
-      onClick={onUserClick}
+      onUserClick={onUserClick}
     />
   ))
   ):(

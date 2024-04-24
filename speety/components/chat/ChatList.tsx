@@ -1,11 +1,18 @@
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import MessageProp1 from "@/services/chat/MessageProp1";
 import MessageProp2 from "@/services/chat/MessageProp2";
 import { getChats,updateChats } from "@/queries/chatSystem";
 import { Button } from "@/components/ui/button";
+import {
+  collection,
+  getDoc,
+  doc
+} from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 interface eachMessage {
+      type: string;
       msg: string;
       date: string;
 }
@@ -25,54 +32,76 @@ interface ChatListProps {
 const ChatList:React.FC<ChatListProps>=({sentMessage,sentTime, receivedMessage,receivedTime, senderEmail, receiverEmail,sendMessageFunction }) => {
   //write a logic to retrieve the chatHistory or chatLists of sender and receiver
   //these are retrieved from the database
-  const [senderMsgs,setSenderMsgs] = useState<eachMessage[]>([]);
-  const [receiverMsgs,setReceiverMsgs] = useState<eachMessage[]>([]);
+  const [messagesExhanged,setMessagesExhanged] = useState<eachMessage[]>([]);
+  const [senderPic,setSenderPic] = useState<string>("");
+  const [receiverPic,setReceiverPic] = useState<string>("");
+
+  const setupSender = async (_userEmail:string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, _userEmail);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setSenderPic(userSnapshot.data().profilePic);
+    }
+  }
+
+  const setupReceiver = async (_userEmail:string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, _userEmail);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setReceiverPic(userSnapshot.data().profilePic);
+    }
+  }
+
 
   useEffect(() => {
-    const fetchMsgs = async () => {
-      const response = await getChats(senderEmail,receiverEmail);
-      setSenderMsgs(response.sentMessages)
-      setReceiverMsgs(response.receivedMessages)
-    }
-    fetchMsgs();
-  }, [senderEmail,receiverEmail]);
+    setupSender(senderEmail);
+  }, [senderEmail]);
 
-    // Update senderMsgs when a new message is sent
+
+
+  useEffect(() => {
+    setupReceiver(receiverEmail);
+  }, [receiverEmail]);
+
+
+
+  // useEffect(() => {
+  //   const fetchMsgs = async () => {
+  //     const response = await getChats(senderEmail,receiverEmail);
+  //     setSenderMsgs(response.sentMessages)
+  //     setReceiverMsgs(response.receivedMessages)
+  //   }
+  //   fetchMsgs();
+  // }, [senderEmail,receiverEmail]);
+
+    // Update messagesExchanged when a new message is sent
     useEffect(() => {
-      if (sentMessage) {
-        setSenderMsgs(prevState => [...prevState, sentMessage]);
+      if (sentMessage.msg !== "") {
+        setMessagesExhanged(prevState => [...prevState, sentMessage]);
       }
     }, [sentMessage]);
+
+// Update messagesExchanged when a new message is received
+        useEffect(() => {
+          if (receivedMessage.msg !== "") {
+            setMessagesExhanged(prevState => [...prevState, receivedMessage]);
+          }
+        }, [ receivedMessage]);
+
+    
   
-    // Update receiverMsgs when a new message is received
-    useEffect(() => {
-      if (receivedMessage) {
-        setReceiverMsgs(prevState => [...prevState, receivedMessage]);
-      }
-    }, [receivedMessage]);
 
       // Update database upon peerjs
-      useEffect(() => {
+      // useEffect(() => {
         
-        async function updateChatsAsync() {
-          await updateChats(senderEmail, receiverEmail, sentMessage, receivedMessage);
-        }
-        updateChatsAsync();
-      }, [sentMessage, receivedMessage, senderEmail, receiverEmail]);
+      //   async function updateChatsAsync() {
+      //     await updateChats(senderEmail, receiverEmail, sentMessage, receivedMessage);
+      //   }
+      //   updateChatsAsync();
+      // }, [sentMessage, receivedMessage, senderEmail, receiverEmail]);
 
-
-        const compareMessages = (a: eachMessage, b: eachMessage) => {
-          const timeA = new Date(a.date).getTime();
-          const timeB = new Date(b.date).getTime();
-          return timeA - timeB;
-        };    
-
-        senderMsgs.sort(compareMessages);
-        receiverMsgs.sort(compareMessages);
-
-      const combinedMessages = [...senderMsgs, ...receiverMsgs].sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      });
     
 //the following is the logic for the Sendbar
 const [message, setMessage] = useState<string>("");
@@ -84,23 +113,33 @@ const [message, setMessage] = useState<string>("");
       const handleSendMessage = () => {
         sendMessageFunction(message);
         setMessage('');
+        console.log("Message sent");
       };
 
   return (
   <div className="flex h-[calc(100%-80px)] flex-col mt-3 py-1">
-              <div className="flex-1 bg-gray-200 rounded-xl p-4">
-              {combinedMessages.map((message, index) => (
-                <div key={index} className="flex items-start justify-start">
-            <div className="flex justify-start items-start mt-4 w-full h-20 rounded-2xl px-2">
-          <MessageProp1 message={message.msg} msgTime={message.date} />
-          </div>
-          {index < receiverMsgs.length && (
-          <div className="flex justify-end items-start mt-20 w-full mr-8 h-20 rounded-2xl">
-            <MessageProp2 message={message.msg} msgTime={message.date} />
-          </div>
-        )}
-        </div>
-         ))}
+              <div className="flex-1 bg-gray-200 rounded-xl p-4 overflow-scroll">
+         {
+            messagesExhanged.map((message, index) => {
+              if (message.type === "sent") {
+                return (
+                  <div className="flex items-start justify-start" key={index}>
+                    <div className="flex justify-start items-start mt-4 w-full h-20 rounded-2xl px-2">
+                      <MessageProp1 message={message.msg} msgTime={sentTime} profilePic={senderPic}/>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="flex items-start justify-start" key={index}>
+                    <div className="flex justify-end items-start mt-6 w-full mr-8 h-20 rounded-2xl">
+                      <MessageProp2 message={message.msg} msgTime={receivedTime} profilePic={receiverPic}/>
+                    </div>
+                  </div>
+                );
+              }
+            })
+         }
               </div>
 
             
