@@ -17,11 +17,14 @@ interface _messageInfo {
 // get all the users
 const getConnectedUsers = async (senderUser: string) => {
 
+  if (!senderUser) {
+    return;
+  }
   const usersRef = collection(db, "connectedHistory");
   const userDocRef = doc(usersRef, senderUser);
   const userSnapshot = await getDoc(userDocRef);
   let usersConnected: string[][] = [];
-  let tempEmails: string[] = [];
+  let tempEmails: string[] = [];  
 
   if (userSnapshot.exists()) {
     const retrievedData = await userSnapshot.data();
@@ -42,6 +45,7 @@ const getConnectedUsers = async (senderUser: string) => {
     }
 
    }
+   console.log(usersConnected);
   return usersConnected;
 
 };

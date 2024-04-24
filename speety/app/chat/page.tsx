@@ -30,6 +30,7 @@ interface LocationData {
 
 //types for messages
 interface eachMessage {
+  type: string;
   msg: string;
   date: string;
 }
@@ -39,12 +40,14 @@ export default function Chat() {
   const [id, setId] = useState<string>("");
   const [clicked, setClicked] = useState("");
   const [sentMessage, setSentMessage] = useState<eachMessage>({
+    type: "",
     msg: "",
-    date: "",
+    date: ""
   });
   const [receivedMessage, setReceivedMessage] = useState<eachMessage>({
+    type: "",
     msg: "",
-    date: "",
+    date: ""
   });
   //chats
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
@@ -59,7 +62,6 @@ export default function Chat() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   //location
-  const [myGeocoder, setMyGeocoder] = useState<any>({});
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
 
@@ -119,18 +121,30 @@ export default function Chat() {
 
     //function to send the message
     const send = (message: any) => {
-      const conn = myPeer?.connect(clicked);
+      if (!clicked) {
+        console.error("No user selected to send message to");
+        return;
+      }
+      const conn = myPeer?.connect(clicked.slice(0, clicked.indexOf("@")));
+      if (!conn) {
+        console.log(conn)
+      }
       setConnection(conn);
       // sending a peerjs message
       if (typeof message === "string"){
         const formattedTime = currentTime.format("YYYY-MM-DD HH:mm:ss");
         setSentTime(String(formattedTime));
         setSentMessage({
+          type: "sent",
           msg: message,
           date: formattedTime,
         });
         conn?.on("open", () => {
-          conn.send(sentMessage);
+          conn.send({
+            type: "sent",
+            msg: message,
+            date: formattedTime
+          });
         });
       }
       //sending a location
@@ -183,22 +197,27 @@ export default function Chat() {
           path: "/myapp",
         });
 
+        // peer.on("open", (id) => {
+        //   setMyPeer(peer);
+        //   setId(id);
+        // })
         peer.on("open", (id) => {
           setMyPeer(peer);
-          setId(id);
         });
 
-        peer.on("connection", (conn) => {
+        peer.on("connection", (conn:any) => {
           conn.on("data", (data: any) => {
             if (data === null) {
               console.log("Nothing reeived on Receiver End");
               return;
             }
             //checking if the incoming data is a message
+            console.log(data);
 
             if (typeof data === "object" && "msg" in data && "date" in data) {
               const incomingMessage: eachMessage = data;
               setReceivedMessage({
+                type:"received",
                 msg: incomingMessage.msg,
                 date: incomingMessage.date,
               });
@@ -293,7 +312,7 @@ export default function Chat() {
         receivedMessage={receivedMessage}
         receivedTime={receivedTime}
         senderEmail={user?.email as string}
-        receiverEmail={clicked || "rishikeshadh4@gmail.com"}
+        receiverEmail={clicked || ""}
         sendMessageFunction={send} 
       />
   </div>

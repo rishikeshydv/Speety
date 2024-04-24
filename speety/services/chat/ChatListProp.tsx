@@ -10,7 +10,7 @@ interface ChatList {
   lastMsg: string;
   lastMsgTime: string;
   newMsg: boolean;
- onClick:(clickedUsername:string) => void;
+ onUserClick:(clickedUsername:string) => void;
   //onClick:() => void;
 }
 
@@ -21,12 +21,12 @@ const ChatListProp: React.FC<ChatList> = ({
   lastMsg,
   lastMsgTime,
   newMsg,
-  onClick
+  onUserClick
 }) => {
   if (newMsg === true) {
     return (
  
-<div className="flex items-start justify-start w-full h-24 " onClick={()=>onClick(email)}>
+<div className="flex items-start justify-start w-full h-24 " onClick={()=>onUserClick(email)}>
   <Button className="flex items-start justify-start w-full h-24 bg-blue-100 " variant="outline">
     <Avatar className="w-16 h-16 p-0.5 border rounded-full ">
       <AvatarImage alt="" src={imgUrl} />
@@ -42,7 +42,7 @@ const ChatListProp: React.FC<ChatList> = ({
   } else {
     return (
       
-      <div className="flex items-start justify-start w-full h-24" onClick={()=>onClick(email)}>
+      <div className="flex items-start justify-start w-full h-24" onClick={()=>onUserClick(email)}>
       <Button className="flex items-start justify-start w-full h-24 gap-2" variant="outline">
         <Avatar className="w-16 h-16 p-0.5 border rounded-full mt-2">
           <AvatarImage alt="@" src={imgUrl} />

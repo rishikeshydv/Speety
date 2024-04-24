@@ -1,4 +1,4 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import Signup from "@/firebase/auth/Signup";
 import e from "express";
@@ -14,11 +14,18 @@ const NormalUser = async (email:string, name:string,confirmPassword:string, pass
         brokerId: brokerId,
         role: role,
         loginStatus: "Offline",
+        address: "Not Added",
+        description: "Not Added",
+        phone: "Not Added",
+        profilePic: faceCapture,
+        website: "Not Added",
+
+
     });
     //we update the user verification ticket
     const userVerificationRef = collection(db, "user_verifications");
     const userVerificationDocRef = doc(userVerificationRef, email);
-    await setDoc(userVerificationDocRef, {
+    await updateDoc(userVerificationDocRef, {
         email: email,
         name: name,
         confirmPassword: confirmPassword,
