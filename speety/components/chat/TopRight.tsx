@@ -31,13 +31,11 @@ interface TopRightProps {
 callerRef:any
 receiverRef:any
 videoOnClick:any
-senderLoc:any
-receiverLoc:any
 clickedUser:string
 endCall:any
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, senderLoc,receiverLoc, clickedUser,endCall}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, clickedUser,endCall}) => {
   const [_user] = useAuthState(auth);
 
   const [datetime, setDatetime] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
@@ -99,8 +97,8 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, s
 <LocationTrigger 
 src="/map.png" 
 _className="w-18 h-20 rounded-full" 
-senderLoc={senderLoc}
-receiverLoc={receiverLoc}/>
+clickedUser={clickedUser}
+/>
 
 {/* Calender Element */}
 <Popover>

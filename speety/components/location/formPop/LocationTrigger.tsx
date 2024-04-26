@@ -11,11 +11,11 @@ import poppins from "@/font/font";
 interface PopOverComponentProps {
 src: string;
 _className: string;
-senderLoc:any
-receiverLoc:any
+clickedUser:string;
+
 }
 
-const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,senderLoc,receiverLoc}) => {
+const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,clickedUser}) => {
   return (
     <div className={poppins.className}>
     <Popover>
@@ -28,10 +28,8 @@ const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,senderL
 </button>
 {/* Popover for video-call */}
     </PopoverTrigger>
-    <PopoverContent align="end" style={{ width: "800px", height: "600px" }} className="flex-col border-0 p-0 bg-gray-400 rounded-3xl" side="top">
-      <LocationPopOver
-        senderLoc={senderLoc}
-        receiverLoc={receiverLoc}/>
+    <PopoverContent align="end" className="flex-col border-0 bg-gray-400 rounded-3xl p-10" side="top">
+      <LocationPopOver clickedUser={clickedUser}/>
     </PopoverContent>
   </Popover>
   </div>
