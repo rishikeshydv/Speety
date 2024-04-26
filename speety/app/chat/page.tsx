@@ -142,14 +142,13 @@ export default function Chat() {
         });
         conn?.on("open", () => {
           conn.send({
-            type: "sent",
             msg: message,
             date: formattedTime
           });
         });
       }
       //sending a location
-      if (typeof message === "object" && "msg" in message && "date" in message) {
+      if (typeof message === "object" && "lat" in message && "lng" in message) {
         setPosition1({
           lat: message.latt,
           lng: message.long,
@@ -348,8 +347,6 @@ export default function Chat() {
         callerRef={currentUserVideoRef}
         receiverRef={remoteVideoRef}
         videoOnClick={call}
-        senderLoc={position1}
-        receiverLoc={position2}
         clickedUser={clicked}
         endCall={endCall}
       />
