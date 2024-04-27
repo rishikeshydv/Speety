@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import poppins from '@/font/font';
 import { Label } from "@/components/ui/label"
@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
+
 import moment from "moment"; //use moment.js to get time/date in a good format
 
 interface LocationData {
@@ -24,95 +25,215 @@ const LocationMap = () => {
       setId(user?.email as string);
     }
   }
-  , [user]);
+  , [user?.email]);
 
   const params = useParams()
   const email = decodeURIComponent(params["email"] as string)
 
+  const userLocation = useRef<LocationData>({ lat: 0, lng: 0 });
+  const markerSender = useRef<google.maps.Marker>();
+  const markerReceiver = useRef<google.maps.Marker>();
+  const markerDestination = useRef<google.maps.Marker>();
+  const googlemap = useRef<HTMLDivElement>();
+  const map_ = useRef<google.maps.Map>();
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
+  const destination= useRef<LocationData>({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+  const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
+  const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false);  //to check if the google maps script is loaded or not
 
   const [streetAddress, setStreetAddress] = useState("")
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [zip, setZip] = useState("")
   const [country, setCountry] = useState("")
-  const [location, setLocation] = useState("")
+  const [destinationAddress, setDestinationAddress] = useState("")
+  const [buttonText, setButtonText] = useState("Submit")
+  const [buttonColor, setButtonColor] = useState("bg-black")
 
-  //state variables for the peer connection    ttfrfrdxsz
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
-  const [connection, setConnection] = useState<any>({});
+  const [connection, setConnection] = useState<DataConnection | null>(null);
   const [currentTime, setCurrentTime] = useState(moment());
   const [sentTime, setSentTime] = useState("");
   const [receivedTime, setReceivedTime] = useState("");
 
-  const initializeMap = () => {
-    //GEOCODE LOGIC
-   // const myGeocoder = new google.maps.Geocoder();
-      //  myGeocoder.geocode( { 'address': destination}, function(results, status) {
-      //   if (status == 'OK' && results) {
+  function joinAddress(e:any) {
+    e.preventDefault();
+    const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${country}`;
+    setDestinationAddress(address);
+    
+  }
 
+  useEffect(() => {
+    const geocodeDestination = async (address: any): Promise<LocationData> => {
+      const myGeocoder = new google.maps.Geocoder();
+      return new Promise<LocationData>((resolve, reject) => {
+        myGeocoder.geocode({ address }, (results, status) => {
+          if (status === "OK" && results) {
+            const destinationLocation = {
+              lat: results[0].geometry.location.lat(),
+              lng: results[0].geometry.location.lng(),
+            };
+            resolve(destinationLocation);
+          } else {
+            reject(new Error("Geocode request failed."));
+          }
+        });
+      });
+    };
+
+    const updateDestination = async () => {
+      if (destinationAddress) {
+        try {
+          const location = await geocodeDestination(destinationAddress);
+          destination.current = { lat: location.lat, lng: location.lng };
+
+          if (markerDestination.current) {
+            markerDestination.current.setPosition(destination.current);
+          }
+        } catch (error) {
+          console.error("Error updating destination marker:", error);
+        }
+      }
+    };
+  
+    updateDestination(); // Call function to update the destination marker when the address changes
+  }, [destinationAddress]);
+  
+  useEffect(() => {
+  const initializeMap = () => {
+  
           const map = new google.maps.Map(
-            document.getElementById("map") as HTMLElement,
+            googlemap.current as HTMLDivElement,
             {
               zoom: 4,
-              center: { lat:40.7128 , lng: -74.0060 },
+              center: position1,
               mapId: "LocationTrackingMap",
             }
           );
 
-          var markerSender = new google.maps.Marker({
-            map: map,
-            position: position1,
-            label: { text: "Destination", color: 'blue', fontSize: '16px', fontWeight: 'bold'},
+          //direction service
+          const directionsService = new google.maps.DirectionsService();
+          const directionsRenderer = new google.maps.DirectionsRenderer();
+          directionsRenderer.setMap(map);
+          map_.current = map;
+          directionsServiceRef.current = directionsService;  //storing as a ref
+          directionsRendererRef.current = directionsRenderer;  //storing as a ref
+
+          setGoogleMapsLoaded(true); 
+
+        markerSender.current = new google.maps.Marker({           
+          position: position1,
+          map,
+          label: 'User 1',
+          icon: {
+            url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
+            fillColor: "red",
+          },
         });
 
-        var markerReceiver = new google.maps.Marker({
-          map: map,
+        markerReceiver.current = new google.maps.Marker({           
           position: position2,
-          label: { text: "Destination", color: 'blue', fontSize: '16px', fontWeight: 'bold'},
-      });
+          map,
+          label: 'B',
+          icon: {
+            url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
+            fillColor: "blue",
+          },
+        });
 
+        markerDestination.current = new google.maps.Marker({           
+          position: destination.current,
+          map,
+          label: 'C',
+          icon: {
+            url: "https://maps.google.com/mapfiles/kml/shapes/ranger_station.png",
+            fillColor: "green",
+          },
+        
+        });
+        
+    }
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&callback=initializeMap`;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener('load', initializeMap);
+      document.body.appendChild(script);
+    } else {
+      initializeMap(); // If Google Maps is already loaded
     }
 
-  useEffect(() => {
+  }, []);
 
-    const loadGoogleMapsScript = () => {
-      const googleMapsScript = document.createElement('script');
-      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&callback=initializeMap`;
-      googleMapsScript.async = true;
-      googleMapsScript.defer = true;
-      googleMapsScript.addEventListener('load', initializeMap);
-      document.body.appendChild(googleMapsScript);
+  useEffect(() => {
+    if (isGoogleMapsLoaded) {
+    const renderDirection = (route:any) => {
+      if (directionsRendererRef.current) {
+        (directionsServiceRef.current as google.maps.DirectionsService).route(route, (result, status) => {
+          if (status === 'OK') {
+            (directionsRendererRef.current as google.maps.DirectionsRenderer).setDirections(result);
+          } else {
+            console.error("Failed to render directions:", status);
+          }
+        });
+      }
+    };
+  
+    // Define your routes based on updated positions
+    const route1 = {
+      origin: position1,
+      destination: destination.current,
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+  
+    const route2 = {
+      origin: position2,
+      destination: destination.current,
+      travelMode: google.maps.TravelMode.DRIVING,
     };
 
-    // Check if the Google Maps script has already been loaded
-    if (!window.google) {
-      loadGoogleMapsScript();
-    } 
-  }, [position1, position2]);
+    renderDirection(route1);
+//    renderDirection(route2);
+  }
+  
+  }, [position1, position2, destination,isGoogleMapsLoaded]); // Update directions when these dependencies change
+  
 
-   //   function to get the location of the user
-      function locationUpdate() {
-        //on clicking the location share button, there should be a popup
-        // Send location when obtained
+useEffect(() => {
+  const intervalId = setInterval(() => {
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition(function (position) {
-            send({
+            const newLocation = {
               lat: position.coords.latitude,
-              lng: position.coords.longitude,   
-            });    //connection stores 'conn' as a state
+              lng: position.coords.longitude,
+            };
+            send(newLocation);    //connection stores 'conn' as a state
           });
-        } else {
-          console.log("Geolocation is not supported by this browser.");
         }
+      },1000);
+    return () => clearInterval(intervalId); // Cleanup
+  }, []);
+
+  useEffect(() => {
+    if (map_.current) {
+      if (markerSender.current) {
+        markerSender.current.setPosition(position1);
+      }
+      if (markerReceiver.current) {
+        markerReceiver.current.setPosition(position2);
+      }
+      if (markerDestination.current) {
+        markerDestination.current.setPosition(destination.current);
+        // Optionally re-center the map if the destination changes
       }
 
-    //writing a function to get senderUser's location every 1 sec and sending it to the receiver
-    useEffect(() => {
-      const intervalId = setInterval(locationUpdate, 1000);
-      return () => clearInterval(intervalId);
-    }, []);
+      map_.current.setCenter(position1); 
+  
+    }
+  }, [position1,position2,destination]); 
 
     useEffect(() => {
       // Function to update the current time every second
@@ -133,21 +254,23 @@ const LocationMap = () => {
             console.error("No user selected to send message to");
             return;
           }
+          if (!connection) {
           const conn = myPeer?.connect(email.slice(0, email.indexOf("@")));
-          if (!conn) {
-            console.log(conn)
+          setConnection(conn as DataConnection);
           }
-          setConnection(conn);
 
+          
           //setting the position of the sender
           setPosition1({
               lat: message.lat,
               lng: message.lng,
             });
-            conn?.on("open", () => {
-              conn.send(message);
+            connection?.on("open", () => {
+              connection.send(message);
             });
         }
+
+  
 
        //     useEffect to make a peer connection
     useEffect(() => {
@@ -188,7 +311,7 @@ const LocationMap = () => {
           setMyPeer(null);
         }
       };
-    }, []);
+    }, [id]);
 
   return (
 
@@ -228,8 +351,12 @@ const LocationMap = () => {
         </div>
         
         <div className="flex items-center justify-center gap-5">
-    <Button className="w-32 text-xl mt-4" type="submit" onClick={()=>{    }}>
-          Submit
+    <Button className={`w-32 text-xl mt-4 ${buttonColor}`} type="submit" onClick={(e)=>{
+      joinAddress(e);
+      setButtonText("Submitted");
+      setButtonColor("bg-green-500");
+      }}>
+          {buttonText}
         </Button>
         </div>
       </div>
@@ -237,9 +364,7 @@ const LocationMap = () => {
     {/* Destination Form End */}
 
     {/* Map Start */}
-      <div className='bg-white p-4 rounded-3xl shadow-2xl'>
-      <div id="map" style={{ height: '850px', width:"1600px" }}></div>
-      </div>
+      <div ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: '850px', width:"1600px" }}></div>
       </div>
     </div>
 
