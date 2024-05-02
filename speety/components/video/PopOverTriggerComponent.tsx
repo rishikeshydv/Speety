@@ -4,20 +4,33 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 "use client";
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
+import VideoEnded from "../popups/VideoEnded";
+
 interface PopOverComponentProps {
-src: string;
-_className: string;
-videoOnClick:any
-callerVideoRef: any;
-receiverVideoRef: any;
-endCall:any
+  src: string;
+  _className: string;
+  videoOnClick: any;
+  callerVideoRef: any;
+  receiverVideoRef: any;
+  endCall: any;
+  callAccepted:React.MutableRefObject<boolean>
+  sendEndCallMessage:()=>void
+  changeCallEndedState:()=>void
+  callEndedState:boolean
 }
 
-const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className,videoOnClick,callerVideoRef,receiverVideoRef,endCall}) => {
+const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className,videoOnClick,callerVideoRef,receiverVideoRef,endCall, callAccepted,sendEndCallMessage,changeCallEndedState,callEndedState}) => {
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if(!callAccepted){
+      endCall();
+    }
+  }, [callAccepted]) 
   return (
+    <div>
             <Popover>
       <PopoverTrigger asChild>
       <button onClick={()=>{
@@ -33,7 +46,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
       </PopoverTrigger>
       {
         show && (
-          <PopoverContent align="end" style={{ width: "1700px", height: "1000px" }} className="flex-col border-0 p-0 bg-gray-600 rounded-2xl" side="top">
+          <PopoverContent align="end" style={{ width: "1700px", height: "1000px" }} className="flex-col border-0 p-0 bg-gray-600 rounded-2xl backdrop-blur-sm" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
           <video ref={receiverVideoRef} style={{ width: "1000", height: "700px" }} className=" bg-gray-100 rounded-xl" />
@@ -43,15 +56,55 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
       <VideoOffIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
         <MicIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
         <ScreenShareIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <PhoneCallIcon className="mx-2 h-16 w-16 rounded-full bg-red-600 p-3 text-white" onClick={()=>{setShow(false); endCall();}}/>
+        <PhoneCallIcon className="mx-2 h-16 w-16 rounded-full bg-red-600 p-3 text-white" onClick={()=>
+          {endCall();
+          sendEndCallMessage();
+          setShow(false);
+          changeCallEndedState();
+           }}/>
       </div>
           <video ref={callerVideoRef  } style={{ width: "307px", height: "230px" }} className="w-100% bg-gray-100 rounded-3xl"/>
           </div>
     </div>
           </PopoverContent>
         )
-      }
+}
     </Popover>
+
+    {
+        callAccepted.current && (
+          <div style={{ width: "1700px", height: "1000px" }} className="fixed inset-0 my-28 mx-80 z-50 flex flex-col border-0 p-0 bg-gray-600 rounded-2xl backdrop-blur-sm">
+                <div className="flex w-full h-full flex-col py-10">
+      <div className="flex-grow flex items-center justify-center">
+          <video ref={receiverVideoRef} style={{ width: "1000", height: "700px" }} className=" bg-gray-100 rounded-xl" />
+      </div>
+      <div className="flex items-center justify-between p-4">
+      <div className="flex flex-1 justify-center gap-4 ml-60">
+      <VideoOffIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
+        <MicIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
+        <ScreenShareIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
+        <PhoneCallIcon className="mx-2 h-16 w-16 rounded-full bg-red-600 p-3 text-white" onClick={()=>{
+          endCall();
+          sendEndCallMessage();
+          setShow(false);
+          callAccepted.current=false;
+          changeCallEndedState();
+          }}/>
+      </div>
+          <video ref={callerVideoRef  } style={{ width: "307px", height: "230px" }} className="w-100% bg-gray-100 rounded-3xl"/>
+          </div>
+    </div>
+          </div>
+        )
+}
+
+{
+  callEndedState && (
+    <VideoEnded changeCallEndedState={changeCallEndedState}/>
+  )
+}
+
+    </div>
   )
 }
 

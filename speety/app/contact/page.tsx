@@ -1,12 +1,15 @@
+"use client"
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { Ticket } from '@/components/contact/Ticket';
 import poppins from '@/font/font';
+import { set } from 'firebase/database';
 import React from 'react';
-export default function Contact() {
 
+export default function Contact() {
   return (
     <div className={poppins.className}>
+
       <Header/>
       <section className="relative w-full">
   <img

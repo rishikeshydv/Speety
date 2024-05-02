@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, useState, use } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import poppins from "@/font/font";
 import LeftmostBar from "@/components/chat/LeftmostBar";
 import TopLeft from "@/components/chat/TopLeft";
@@ -8,8 +8,9 @@ import UserList from "@/components/chat/UserList";
 import ChatList from "@/components/chat/ChatList";
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
 import moment from "moment"; //use moment.js to get time/date in a good format
+
 
 //imports for location
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
@@ -18,6 +19,9 @@ import { Locator } from "@/services/location/currentLocation";
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
 import { set } from "firebase/database";
+import VideoPopUp from "@/components/popups/VideoPopUp";
+import { get } from "http";
+
 
 interface userLoc {
   email: string;
@@ -52,7 +56,7 @@ export default function Chat() {
   });
   //chats
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
-  const [connection, setConnection] = useState<any>({});
+  const [connection, setConnection] = useState<DataConnection | null>(null);
   const [currentTime, setCurrentTime] = useState(moment());
   const [sentTime, setSentTime] = useState("");
   const [receivedTime, setReceivedTime] = useState("");
@@ -60,12 +64,35 @@ export default function Chat() {
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const [show, setShow] = useState(false);
+  const callAccepted = useRef<boolean>(false);
+  const [callRejected, setCallRejected] = useState(false);
   const [callerMediaStream_, setCallerMediaStream_] = useState<MediaStream | null>(null);
   const [receiverMediaStream_, setReceiverMediaStream_] = useState<MediaStream | null>(null);
+  const [sendingCall, setSendingCall] = useState<any>(null);
+  const [incomingCall, setIncomingCall] = useState<any>(null);
+  const [callEndedState, setCallEndedState] = useState<boolean>(false);
+
   //location
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
 
+
+  //changing showState
+  function changeShowState() {
+    setShow(!show);
+  }
+
+  function changeCallAcceptedState() {
+    callAccepted.current = true;
+  }
+
+  function changeCallRejectedState() {
+    setCallRejected(true);
+  }
+
+  const changeCallEndedState = () => {
+    setCallEndedState(!callEndedState);
+  }
 
     //function to get the location of the user
     function locationUpdate() {
@@ -130,7 +157,8 @@ export default function Chat() {
       if (!conn) {
         console.log(conn)
       }
-      setConnection(conn);
+      setConnection(conn as DataConnection);
+      
       // sending a peerjs message
       if (typeof message === "string"){
         const formattedTime = currentTime.format("YYYY-MM-DD HH:mm:ss");
@@ -160,7 +188,7 @@ export default function Chat() {
 
     //function to make a call to the remote peer
     const call = () => {
-      // Check if getUserMedia is supported
+    //  Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error("getUserMedia is not supported in this browser");
         return;
@@ -169,7 +197,6 @@ export default function Chat() {
         console.error("No user selected to send message to");
         return;
       }
-      // Use navigator.mediaDevices.getUserMedia for modern browsers
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((mediaStream) => {
@@ -183,6 +210,7 @@ export default function Chat() {
 
           // Call the remote peer
           const call = myPeer?.call(clicked.slice(0, clicked.indexOf("@")), mediaStream);
+          setSendingCall(call);
 
           // Handle incoming stream from the receiver
           call?.on("stream", (remoteStream) => {
@@ -206,6 +234,10 @@ export default function Chat() {
 
     //the following function is to end the call
     const endCall = () => {
+
+      callAccepted.current = false;
+      changeCallEndedState();
+
         if (callerMediaStream_) {
           callerMediaStream_.getTracks().forEach((track) => {
             track.stop();
@@ -217,9 +249,6 @@ export default function Chat() {
           });
         }
 
-        setCallerMediaStream_(null);
-        setReceiverMediaStream_(null);
-
         if (currentUserVideoRef.current) {
           (currentUserVideoRef.current as HTMLVideoElement).srcObject = null;
         }
@@ -227,7 +256,112 @@ export default function Chat() {
         if (remoteVideoRef.current) {
           (remoteVideoRef.current as HTMLVideoElement).srcObject = null;
         }
+
+        setCallerMediaStream_(null);
+        setReceiverMediaStream_(null);
+
+        if (sendingCall) {
+          sendingCall.close();
+        }
+        if (incomingCall) {
+          incomingCall.close();
+        }
+        setSendingCall(null);
+        setIncomingCall(null);
+        callAccepted.current = false;
+        setCallRejected(false);
+
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: true })
+          .then((mediaStream) => {
+            if (mediaStream) {
+              mediaStream.getTracks().forEach((track) => {
+                track.stop();
+              }
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("getUserMedia error:", error);
+          });
     };
+
+    const sendEndCallMessage = () => {
+      if (!clicked) {
+        console.error("No user selected to send message to");
+        return;
+      }
+      if (!connection) {
+      const conn = myPeer?.connect(clicked.slice(0, clicked.indexOf("@")));
+      setConnection(conn as DataConnection);
+      if (!conn) {
+        console.log(conn)
+      }
+      }
+      connection?.send("endCall");
+}
+
+    const acceptCall = () => {
+      if (!incomingCall) {
+        console.error("No incoming call to accept");
+        return;
+      }
+
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("getUserMedia is not supported in this browser");
+        return;
+      }
+
+      // Use navigator.mediaDevices.getUserMedia for modern browsers
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          if (mediaStream) {
+            setCallerMediaStream_(mediaStream);
+          }
+          // Play local video stream
+          if (currentUserVideoRef.current) {
+            (currentUserVideoRef.current as HTMLVideoElement).srcObject = mediaStream;
+            (currentUserVideoRef.current as HTMLVideoElement).play();
+          }
+
+          // Answer the call with the local media stream
+          incomingCall.answer(mediaStream);
+
+
+          // Handle incoming stream from the caller
+          incomingCall.on("stream", (remoteStream:MediaStream) => {
+            if (remoteStream) {
+            setReceiverMediaStream_(remoteStream);
+            }
+            // Play remote video stream
+            if (remoteVideoRef.current) {
+              (remoteVideoRef.current as HTMLVideoElement).srcObject = remoteStream;
+              (remoteVideoRef.current as HTMLVideoElement).play();
+            }
+          });
+
+          // Handle call errors
+          incomingCall.on("error", (error:any) => {
+            console.error("Call error:", error);
+          });
+        })
+        .catch((error) => {
+          console.error("getUserMedia error:", error);
+        });
+    }
+
+    const rejectCall = () => {
+      if (!incomingCall) {
+        console.error("No incoming call to reject");
+        return;
+      }
+
+      incomingCall.close();
+      setIncomingCall(null);
+    }
+
 
     //useEffect to make a peer connection
     useEffect(() => {
@@ -238,18 +372,19 @@ export default function Chat() {
           path: "/myapp",
         });
 
-        // peer.on("open", (id) => {
-        //   setMyPeer(peer);
-        //   setId(id);
-        // })
         peer.on("open", (id) => {
           setMyPeer(peer);
         });
 
         peer.on("connection", (conn:any) => {
+          setConnection(conn);
           conn.on("data", (data: any) => {
             if (data === null) {
               console.log("Nothing reeived on Receiver End");
+              return;
+            }
+            if (data === "endCall") {
+              endCall();
               return;
             }
             //checking if the incoming data is a message
@@ -284,50 +419,31 @@ export default function Chat() {
             console.error("getUserMedia is not supported in this browser");
             return;
           }
+          setShow(true);
+          //set the state variable
+          setIncomingCall(call);
+        });
 
-          // Use navigator.mediaDevices.getUserMedia for modern browsers
-          navigator.mediaDevices
-            .getUserMedia({ video: true, audio: true })
-            .then((mediaStream) => {
-              if (mediaStream) {
-              setCallerMediaStream_(mediaStream);
-              }
-              // Play local video stream
-              if (currentUserVideoRef.current) {
-                (currentUserVideoRef.current as HTMLVideoElement).srcObject = mediaStream;
-                (currentUserVideoRef.current as HTMLVideoElement).play();
-              }
-
-              // Answer the call with the local media stream
-              call.answer(mediaStream);
-
-              // Handle incoming stream from the caller
-              call.on("stream", (remoteStream) => {
-                if (remoteStream) {
-                setReceiverMediaStream_(remoteStream);
-                }
-                // Play remote video stream
-                if (remoteVideoRef.current) {
-                  (remoteVideoRef.current as HTMLVideoElement).srcObject = remoteStream;
-                  (remoteVideoRef.current as HTMLVideoElement).play();
-                }
-              });
-
-              // Handle call errors
-              call.on("error", (error) => {
-                console.error("Call error:", error);
-              });
-            })
-            .catch((error) => {
-              console.error("getUserMedia error:", error);
-            });
+        //handling the call close
+        peer.on("close", () => {
+          console.log("Peer connection closed");
+          callAccepted.current = false;
         });
       }
 
       return () => {
         if (myPeer) {
+          myPeer.off("call");
+          myPeer.off("connection");
           myPeer.destroy();
           setMyPeer(null);
+        }
+        if (callerMediaStream_) {
+          callerMediaStream_.getTracks().forEach((track) => track.stop());
+        }
+
+        if (receiverMediaStream_) {
+          receiverMediaStream_.getTracks().forEach((track) => track.stop());
         }
       };
     }, [myPeer, id]);
@@ -340,16 +456,30 @@ export default function Chat() {
       <TopLeft />
       <UserList onUserClick={userOnClick} /> 
       </div>
-      
+      {show &&
+        <VideoPopUp
+        email={clicked as string}
+        changeCallAcceptedState={changeCallAcceptedState}
+        changeCallRejectedState={changeCallRejectedState}
+        changeShowState={changeShowState}
+        callPickUp={acceptCall}
+        callReject={rejectCall}
+        />
+
+      }
  {clicked ? (
   <div className="flex-1 px-5 py-4">
-         <TopRight
-        callerRef={currentUserVideoRef}
-        receiverRef={remoteVideoRef}
-        videoOnClick={call}
-        clickedUser={clicked}
-        endCall={endCall}
-      />
+        <TopRight
+          callerRef={currentUserVideoRef}
+          receiverRef={remoteVideoRef}
+          videoOnClick={call}
+          clickedUser={clicked}
+          endCall={endCall}
+          callAccepted={callAccepted}
+          sendEndCallMessage={sendEndCallMessage}
+          changeCallEndedState={changeCallEndedState}
+          callEndedState={callEndedState}
+        />
     <ChatList
         sentMessage={sentMessage}
         sentTime={sentTime}

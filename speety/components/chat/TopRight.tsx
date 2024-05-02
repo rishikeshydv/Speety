@@ -33,9 +33,13 @@ receiverRef:any
 videoOnClick:any
 clickedUser:string
 endCall:any
+callAccepted:React.MutableRefObject<boolean>
+sendEndCallMessage:()=>void
+changeCallEndedState:()=>void
+callEndedState:boolean
 }
 
-const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, clickedUser,endCall}) => {
+const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, clickedUser,endCall, callAccepted,sendEndCallMessage,changeCallEndedState,callEndedState}) => {
   const [_user] = useAuthState(auth);
 
   const [datetime, setDatetime] = useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
@@ -91,7 +95,7 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
 
 {/* Video Call Component */}
     <div className="flex items-center">
-    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall}/>
+    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall} callAccepted={callAccepted} sendEndCallMessage={sendEndCallMessage} changeCallEndedState={changeCallEndedState} callEndedState={callEndedState}/>
 
     {/* Location Component */}
 <LocationTrigger 
