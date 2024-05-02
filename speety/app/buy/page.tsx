@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import Typist from "react-typist-component";
 import ListingCard from "@/services/agent/ListingCard";
 
-
 interface Property{
   [ key: string ]: {address:string,apartment:string,city:string,state:string,zip:string,price:string,beds:string,baths:string,houseType:string,transactionType:string,listedBy:string,brokerId:string,imageUrl:string[],videoUrl:string[],date:string}
 }
@@ -195,7 +194,6 @@ console.log("Refined: ",refinedList)
         </section>
       )
     }
-
     </div> 
     <Footer />   </div>
   )

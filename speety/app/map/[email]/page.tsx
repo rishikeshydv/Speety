@@ -58,6 +58,11 @@ const LocationMap = () => {
   const [sentTime, setSentTime] = useState("");
   const [receivedTime, setReceivedTime] = useState("");
 
+  //refresh the page
+  const handleRefresh = () => {
+    window.location.reload(); // This will refresh the page
+  };
+
   function joinAddress(e:any) {
     e.preventDefault();
     const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${country}`;
@@ -323,8 +328,15 @@ useEffect(() => {
         </p>
       </div>
       <div className='flex gap-10 py-10'>
+        <div className='flex flex-col gap-16 items-center'>
+      <Button className="flex items-center justify-center h-20 w-40 mt-20 text-lg font-bold rounded-3xl bg-slate-400/50" variant="outline"
+      onClick={handleRefresh}
+      >
+            <img src="/pin1.png" className='mr-2 h-7 w-7' alt="pin" />
+            Locate Me
+          </Button>
       {/* Destination Form Start*/}
-<div className="mx-auto mt-48 max-w-lg space-y-4 flex flex-col items-center justify-center bg-gray-100 px-20 rounded-3xl" style={{height:500}}>
+<div className="mx-auto max-w-lg space-y-4 flex flex-col items-center justify-center bg-gray-100 px-20 rounded-3xl" style={{height:500}}>
   <h1 className="text-2xl font-semibold">Enter Destination Location</h1>
       <div className="space-y-2">
         <div className="space-y-2">
@@ -363,8 +375,12 @@ useEffect(() => {
     </div> 
     {/* Destination Form End */}
 
+    </div>
+
     {/* Map Start */}
+    <div className='bg-white p-6 rounded-3xl'>
       <div ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: '850px', width:"1600px" }}></div>
+      </div>
       </div>
     </div>
 
@@ -372,3 +388,26 @@ useEffect(() => {
 };
 
 export default LocationMap;
+
+function LocateIcon(props:any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="2" x2="5" y1="12" y2="12" />
+      <line x1="19" x2="22" y1="12" y2="12" />
+      <line x1="12" x2="12" y1="2" y2="5" />
+      <line x1="12" x2="12" y1="19" y2="22" />
+      <circle cx="12" cy="12" r="7" />
+    </svg>
+  )
+}

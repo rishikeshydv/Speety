@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import updateStatus from "@/queries/changeLoginStatus";
+import { set } from 'firebase/database';
 
 
 
@@ -44,6 +45,7 @@ export default function Header() {
   }
   )}
   const [notificationIcon, setNotificationIcon] = useState("/notify.png");
+  const [notificationSize, setNotificationSize] = useState('w-11 h-11');
   const [meetingIcon, setMeetingIcon] = useState("/calendar-icon.webp");
   const [notificationList, setNotificationList] = useState<any>([]);
   const [meetingList, setMeetingList] = useState<any>([]);
@@ -56,6 +58,7 @@ export default function Header() {
         const notificationsExist = await CheckNotifications(user?.email as string);
         if (notificationsExist) {
           setNotificationIcon("/notify_on.webp");
+          setNotificationSize('w-16 h-16');
         }
         //check meetings
         const meetingsExist = await CheckMeetings(user?.email as string);
@@ -107,7 +110,7 @@ export default function Header() {
           {/* For Notification */}
             <DropdownMenu>
             <DropdownMenuTrigger>
-              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className='w-11 h-11 right-32 mt-1'/>
+              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className={`${notificationSize} right-32 mt-1`}/>
               </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='bg-gray-100'>
