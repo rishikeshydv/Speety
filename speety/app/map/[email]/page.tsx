@@ -323,6 +323,7 @@ useEffect(() => {
 
 
           const conn_ = peer.connect(email.slice(0, email.indexOf("@")));
+         // The peer that initiates the connection needs to handle data from the peer it connects to.
           conn_.on('open', () => {
             console.log('Connection to receiver established');
             setConnection(conn_);
@@ -342,6 +343,7 @@ useEffect(() => {
 
         peer.on("connection", (conn:any) => {
           console.log('Receiver connected');
+          //The peer that receives a connection request needs to handle data from the initiating peer.
           conn.on("data", (data: any) => {
             console.log('Data received on receiver:', data);
 
