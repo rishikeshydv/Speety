@@ -9,7 +9,12 @@ import { Button } from "@/components/ui/button"
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Peer, { DataConnection } from "peerjs";
-
+import {
+  collection,
+  getDoc,
+  doc
+} from "firebase/firestore";
+import { db } from "@/firebase/config";
 import moment from "moment"; //use moment.js to get time/date in a good format
 
 interface LocationData {
@@ -18,14 +23,14 @@ interface LocationData {
 }
 const LocationMap = () => {
   const [user] = useAuthState(auth);
-  const [id, setId] = useState("");
+  const [id, setId] = useState<string>("");
 
   useEffect(() => {
     if (user) {
-      setId(user?.email as string);
+      setId(user.email as string);
     }
   }
-  , [user?.email]);
+  , [user]);
 
   const params = useParams()
   const email = decodeURIComponent(params["email"] as string)
@@ -36,12 +41,15 @@ const LocationMap = () => {
   const markerDestination = useRef<google.maps.Marker>();
   const googlemap = useRef<HTMLDivElement>();
   const map_ = useRef<google.maps.Map>();
-  const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
-  const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
+  const position1 = useRef({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
+  const position2 = useRef({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
   const destination= useRef<LocationData>({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
   const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false);  //to check if the google maps script is loaded or not
+
+  const [senderUser, setSenderUser] = useState<string>('');
+  const [receiverUser, setReceiverUser] = useState<string>('');
 
   const [streetAddress, setStreetAddress] = useState("")
   const [city, setCity] = useState("")
@@ -62,6 +70,34 @@ const LocationMap = () => {
   const handleRefresh = () => {
     window.location.reload(); // This will refresh the page
   };
+
+  useEffect(() => {
+  //function to get each user's name
+  const getSenderUserInfo = async (userEmail:string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, userEmail as string);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setSenderUser(userSnapshot.data().name);
+    }
+  }
+  if (id){
+    getSenderUserInfo(id);
+  }
+  }, [id]);
+
+  useEffect(() => {
+    //function to get each user's name
+    const getReceiverUserInfo = async () => {
+      const userRef = collection(db, "User_Info");
+      const userDocRef = doc(userRef, email);
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        setReceiverUser(userSnapshot.data().name);
+      }
+    }
+    getReceiverUserInfo();
+  }, []);
 
   function joinAddress(e:any) {
     e.preventDefault();
@@ -105,6 +141,7 @@ const LocationMap = () => {
   
     updateDestination(); // Call function to update the destination marker when the address changes
   }, [destinationAddress]);
+
   
   useEffect(() => {
   const initializeMap = () => {
@@ -113,7 +150,7 @@ const LocationMap = () => {
             googlemap.current as HTMLDivElement,
             {
               zoom: 4,
-              center: position1,
+              center: position1.current,
               mapId: "LocationTrackingMap",
             }
           );
@@ -129,9 +166,9 @@ const LocationMap = () => {
           setGoogleMapsLoaded(true); 
 
         markerSender.current = new google.maps.Marker({           
-          position: position1,
+          position: position1.current,
           map,
-          label: 'User 1',
+          label: {text:senderUser, color: 'blue', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Arial'},
           icon: {
             url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
             fillColor: "red",
@@ -139,9 +176,9 @@ const LocationMap = () => {
         });
 
         markerReceiver.current = new google.maps.Marker({           
-          position: position2,
+          position: position2.current,
           map,
-          label: 'B',
+          label: {text: receiverUser, color: 'black', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Arial'},
           icon: {
             url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
             fillColor: "blue",
@@ -151,7 +188,7 @@ const LocationMap = () => {
         markerDestination.current = new google.maps.Marker({           
           position: destination.current,
           map,
-          label: 'C',
+          label: {text: "Destination", color: 'brown', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Arial'},
           icon: {
             url: "https://maps.google.com/mapfiles/kml/shapes/ranger_station.png",
             fillColor: "green",
@@ -171,7 +208,7 @@ const LocationMap = () => {
       initializeMap(); // If Google Maps is already loaded
     }
 
-  }, []);
+  }, [senderUser, receiverUser, position1, position2]);
 
   useEffect(() => {
     if (isGoogleMapsLoaded) {
@@ -189,19 +226,19 @@ const LocationMap = () => {
   
     // Define your routes based on updated positions
     const route1 = {
-      origin: position1,
+      origin: position1.current,
       destination: destination.current,
       travelMode: google.maps.TravelMode.DRIVING,
     };
   
     const route2 = {
-      origin: position2,
+      origin: position2.current,
       destination: destination.current,
       travelMode: google.maps.TravelMode.DRIVING,
     };
 
     renderDirection(route1);
-//    renderDirection(route2);
+    renderDirection(route2);
   }
   
   }, [position1, position2, destination,isGoogleMapsLoaded]); // Update directions when these dependencies change
@@ -215,30 +252,31 @@ useEffect(() => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            send(newLocation);    //connection stores 'conn' as a state
+              send(newLocation); // Send the new location to the other user
           });
         }
       },1000);
     return () => clearInterval(intervalId); // Cleanup
-  }, []);
+  });
+
 
   useEffect(() => {
     if (map_.current) {
-      if (markerSender.current) {
-        markerSender.current.setPosition(position1);
-      }
-      if (markerReceiver.current) {
-        markerReceiver.current.setPosition(position2);
-      }
+      // if (markerSender.current) {
+      //   markerSender.current.setPosition(position1);
+      // }
+      // if (markerReceiver.current) {
+      //   markerReceiver.current.setPosition(position2);
+      // }
       if (markerDestination.current) {
         markerDestination.current.setPosition(destination.current);
         // Optionally re-center the map if the destination changes
       }
 
-      map_.current.setCenter(position1); 
+      map_.current.setCenter(position1.current); 
   
     }
-  }, [position1,position2,destination]); 
+  }, [position1,destination]); 
 
     useEffect(() => {
       // Function to update the current time every second
@@ -254,56 +292,67 @@ useEffect(() => {
     }, []);
 
         //function to send the message
-        const send = (message: any) => {
-          if (!email) {
-            console.error("No user selected to send message to");
-            return;
-          }
-          if (!connection) {
-          const conn = myPeer?.connect(email.slice(0, email.indexOf("@")));
-          setConnection(conn as DataConnection);
-          }
+        const send = (message: LocationData) => {
 
-          
           //setting the position of the sender
-          setPosition1({
-              lat: message.lat,
-              lng: message.lng,
-            });
-            connection?.on("open", () => {
-              connection.send(message);
-            });
+          position1.current = message;
+            if (connection && connection.open ){
+             // connection.send(message);
+                console.log('Connection opened, sending message...');
+                connection.send(message);
+            }
+            if (markerSender.current) {
+              markerSender.current.setPosition(message);
+            }
         }
-
-  
 
        //     useEffect to make a peer connection
     useEffect(() => {
-      if (!myPeer && email) {
+      if (!myPeer && id) {
         const peer = new Peer(id.slice(0,id.indexOf("@")), {
           host: "localhost",
           port: 9000,
           path: "/myapp",
         });
 
+        setMyPeer(peer);
+
         peer.on("open", (id) => {
           setMyPeer(peer);
         });
 
-        peer.on("connection", (conn:any) => {
-          conn.on("data", (data: any) => {
-            if (data === null) {
-              console.log("Nothing reeived on Receiver End");
-              return;
+
+          const conn_ = peer.connect(email.slice(0, email.indexOf("@")));
+          conn_.on('open', () => {
+            console.log('Connection to receiver established');
+            setConnection(conn_);
+          });
+          conn_.on('data', (data:any) => {
+            console.log('Data received on receiver:', data);
+            if (data) {
+              if (markerReceiver.current) {
+                markerReceiver.current.setPosition(data);
+              }
+              position2.current = data;
+            } else {
+              console.log('Nothing received on Receiver End');
             }
-            //checking if the incoming data is a message
-            console.log(data);
+          });
+          
+
+        peer.on("connection", (conn:any) => {
+          console.log('Receiver connected');
+          conn.on("data", (data: any) => {
+            console.log('Data received on receiver:', data);
+
+              if (data && markerReceiver.current) {
+                markerReceiver.current.setPosition(data);
+                position2.current = data;
+              }
+              else{
+                console.log('No data received');
+              }
             
-              setPosition2({
-                lat: data.lat,
-                lng: data.lng,
-              });
-              return;
             
           });
         });
@@ -316,11 +365,13 @@ useEffect(() => {
           setMyPeer(null);
         }
       };
-    }, [id]);
+    }, [id, myPeer]);
+
 
   return (
 
         <div className={`flex flex-col w-full h-screen items-center ${poppins.className} bg-gray-200`}>
+
       <div className="text-center mt-20 py-8 px-16 rounded-full shadow-2xl bg-slate-400">
         <h1 className="text-7xl font-bold tracking-tighter">Location Tracker</h1>
         <p className="text-sm text-gray-500 leading-loose md:text-base dark:text-gray-400">
@@ -329,7 +380,7 @@ useEffect(() => {
       </div>
       <div className='flex gap-10 py-10'>
         <div className='flex flex-col gap-16 items-center'>
-      <Button className="flex items-center justify-center h-20 w-40 mt-20 text-lg font-bold rounded-3xl bg-slate-400/50" variant="outline"
+      <Button className="flex items-center justify-center h-16 w-40 mt-20 text-lg font-bold rounded-3xl bg-slate-400/50" variant="outline"
       onClick={handleRefresh}
       >
             <img src="/pin1.png" className='mr-2 h-7 w-7' alt="pin" />
