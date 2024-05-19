@@ -3,14 +3,125 @@
 * @see https://v0.dev/t/HG79xSQyyj9
 * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
 */
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator"
 import { CardContent, Card } from "@/components/ui/card"
 import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { cache } from "../page";
+import { useParams, useRouter } from "next/navigation";
+import { collection, query,getDocs, getDoc,doc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button";
 
-export default function Rent() {
+interface Property {
+  address: string;
+  apartment: string;
+  city: string;
+  state: string;
+  zip: string;
+  price: string;
+  beds: string;
+  baths: string;
+  houseType: string;
+  transactionType: string;
+  listedBy: string;
+  listerEmail: string;
+  brokerId: string;
+  imageUrl: string[];
+  videoUrl: string[];
+  date: string;
+  sqft: string;
+  lotSize: string;
+  yearBuilt: string;
+  description: string;
+  parkingSpace: string;
+  estimatedMortgage: string;
+  amenities: string;
+}
+
+export default function Property() {
+  const params = useParams()
+  const propertyId = decodeURIComponent(params["id"] as string)
+  const [property, setProperty] = useState<Property | null>(null)
+  const [buttonText, setButtonText] = useState("Connect");
+  const [buttonColor, setButtonColor] = useState("bg-black");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+
+  const router = useRouter();
+
+  async function fetchProperty() {
+    const q = query(
+      collection(db, "presentListings")
+    );
+    const buyResults = await getDocs(q);
+
+    buyResults.forEach((doc) => {
+      const data = doc.data();
+      const keys = Object.keys(data);
+      keys.map((key) => {
+        if (key === propertyId) {
+          setProperty(data[key]);
+        }
+      });
+    });
+  }
+
+  async function getAgentData(email:string) {
+    const receiverRef = collection(db, "agentList");
+    const receiverDocRef =  doc(receiverRef, email);
+    const receiverSnapshot = await getDoc(receiverDocRef);
+    if (receiverSnapshot.exists()) {
+      //console.log("Document data:", receiverSnapshot.data());
+      const data = receiverSnapshot.data();
+      setName(data?.name);
+      setDescription(data?.description);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  }
+
+  async function getAgentProfileImage(email: string) {
+    const receiverRef = collection(db, "User_Info");
+    const receiverDocRef =  doc(receiverRef, email);
+    const receiverSnapshot = await getDoc(receiverDocRef);
+    if (receiverSnapshot.exists()) {
+      //console.log("Document data:", receiverSnapshot.data());
+      const data = receiverSnapshot.data();
+      setProfileImage(data?.profilePic);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  }
+
+  const handleRoute = () => {
+    router.push(`/agent/profile/${property?.listerEmail}`);
+  }
+
+  useEffect(() => {
+    //retrieving the property from the cache
+    const getProperty = cache.get(propertyId);
+    //fetching the property from the database if not found in the cache
+     if (!getProperty) {
+      fetchProperty();
+     }
+     setProperty(getProperty);
+  }, [propertyId])
+
+  useEffect(() => {
+    if (property){
+      getAgentData(property.listerEmail);
+      getAgentProfileImage(property.listerEmail);
+    }
+  }, [property]);
+
   return (
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />
@@ -18,93 +129,84 @@ export default function Rent() {
         <div className="order-2 md:order-1">
           <div className="grid gap-6">
             <div>
-              <h1 className="text-6xl font-bold">Property Description</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-lg mt-4 font-medium"> · 3 beds · 2 baths · 1,800 sqft</p>
+              <h1 className="text-6xl font-bold tracking-tighter">Property Description</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-lg mt-4 font-medium"> · {property?.beds} beds · {property?.baths} baths · {property?.sqft} sqft</p>
             </div>
             <div className="grid gap-4">
               <div className="flex items-center gap-4">
                 <LocateIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">123 Beach Rd, Malibu, CA 90265</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">Malibu, California</p>
+                  <p className="font-medium text-xl">{property?.address}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-md">{property?.city}, {property?.state}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <CalendarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">Listed on May 1, 2023</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">Days on Zillow: 45</p>
+                  <p className="font-medium text-xl">Listed on {property?.date}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-md">Days on Zillow: {Math.floor((Date.now() - (new Date(property?.date as any) as any)) / (1000*60*60*24))}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <TagIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">$2,500,000</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">Estimated mortgage: $12,000/mo</p>
+                  <p className="font-medium text-xl">${property?.price}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-md">Estimated mortgage: ${property?.estimatedMortgage}/mo</p>
                 </div>
               </div>
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold">About this home</h2>
+              <h2 className="text-4xl font-bold tracking-tighter">About this home</h2>
               <div className="prose max-w-none">
                 <p className="text-lg">
-                  Welcome to this stunning beachfront oasis in the heart of Malibu. This spacious 3-bedroom, 2-bathroom
-                  home boasts breathtaking views of the Pacific Ocean and direct access to the beach. Featuring an
-                  open-concept layout, the home offers ample natural light, high ceilings, and a well-appointed kitchen
-                  perfect for entertaining.
-                </p>
-                <p className="text-lg">
-                  The primary suite features a private balcony, en-suite bathroom, and walk-in closet. Two additional
-                  bedrooms provide comfortable accommodations for guests or family. Enjoy al-fresco dining on the
-                  expansive deck, or relax in the serene backyard oasis. This property is a true gem, offering the
-                  ultimate in coastal living.
+                  {property?.description}
                 </p>
               </div>
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold">Key details</h2>
+              <h2 className="text-4xl font-bold tracking-tighter">Key details</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <BedIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">3 beds</p>
+                    <p className="font-medium text-xl">{property?.beds} beds</p>
                     <p className="text-gray-500 dark:text-gray-400 text-md">Bedrooms</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <BathIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">2 baths</p>
+                    <p className="font-medium text-xl">{property?.baths} baths</p>
                     <p className="text-gray-500 dark:text-gray-400 text-md">Bathrooms</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <RulerIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">1,800 sqft</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Living area</p>
+                    <p className="font-medium text-xl">{property?.sqft} sqft</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-md">Bedroom</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <ListIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">0.25 acres</p>
+                    <p className="font-medium text-xl">{property?.lotSize} acres</p>
                     <p className="text-gray-500 dark:text-gray-400 text-md">Lot size</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <CalendarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">1985</p>
+                    <p className="font-medium text-xl">{property?.yearBuilt}</p>
                     <p className="text-gray-500 dark:text-gray-400 text-md">Year built</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <CarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">2 car</p>
+                    <p className="font-medium text-xl">{property?.parkingSpace} car(s)</p>
                     <p className="text-gray-500 dark:text-gray-400 text-md">Garage</p>
                   </div>
                 </div>
@@ -112,7 +214,7 @@ export default function Rent() {
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold">Amenities</h2>
+              <h2 className="text-4xl font-bold tracking-tighter">Amenities</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <WifiIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
@@ -141,13 +243,59 @@ export default function Rent() {
               </div>
             </div>
           </div>
+          <Separator className="mt-5"/>
+          <div>
+            <p className="my-2 font-bold text-4xl tracking-tighter">Listed by:</p>
+      <div className="container p-6">
+        <div className="space-y-6">
+          <div className="flex items-start justify-start gap-40">
+            <div className="flex items-start justify-start space-x-4" onClick={handleRoute}>
+              <Avatar className="h-12 w-12">
+                <AvatarImage alt="Agent" src={profileImage} />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <div className="space-y-1">
+                <div className="text-lg font-semibold">{name}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Real Estate Agent</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button
+                className={`inline-flex items-center rounded-md ${buttonColor} px-3 py-2 text-sm font-medium text-gray-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:${buttonColor} dark:text-gray-900 dark:focus-visible:ring-gray-300`}
+                onClick={()=>{
+                  setButtonText("Requested");
+                  setButtonColor("bg-orange-400");
+                
+                }}
+              >
+                <PhoneIcon className="mr-2 h-4 w-4" />
+                {buttonText}
+              </Button>
+              <Button
+                className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
+              >
+                <MailIcon className="mr-2 h-4 w-4" />
+                Email
+              </Button>
+            </div>
+            </div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold">About the Agent</h3>
+            <p className="text-gray-500 dark:text-gray-400">
+              {description}
+            </p>
+          </div>
+          </div>
         </div>
+        
         <div className="order-1 md:order-2">
           <img
             alt="Property Image"
             className="w-full h-[400px] md:h-[600px] object-cover rounded-lg"
             height={400}
-            src="/placeholder.svg"
+            src={property?.imageUrl[0]}
             style={{
               aspectRatio: "600/400",
               objectFit: "cover",
@@ -159,7 +307,7 @@ export default function Rent() {
               alt="Property Image"
               className="w-full h-[200px] object-cover rounded-lg"
               height={200}
-              src="/placeholder.svg"
+              src={property?.imageUrl[0]}
               style={{
                 aspectRatio: "300/200",
                 objectFit: "cover",
@@ -170,7 +318,7 @@ export default function Rent() {
               alt="Property Image"
               className="w-full h-[200px] object-cover rounded-lg"
               height={200}
-              src="/placeholder.svg"
+              src={property?.imageUrl[0]}
               style={{
                 aspectRatio: "300/200",
                 objectFit: "cover",
@@ -181,7 +329,7 @@ export default function Rent() {
               alt="Property Image"
               className="w-full h-[200px] object-cover rounded-lg"
               height={200}
-              src="/placeholder.svg"
+              src={property?.imageUrl[0]}
               style={{
                 aspectRatio: "300/200",
                 objectFit: "cover",
@@ -192,7 +340,7 @@ export default function Rent() {
               alt="Property Image"
               className="w-full h-[200px] object-cover rounded-lg"
               height={200}
-              src="/placeholder.svg"
+              src={property?.imageUrl[0]}
               style={{
                 aspectRatio: "300/200",
                 objectFit: "cover",
@@ -202,8 +350,9 @@ export default function Rent() {
           </div>
         </div>
       </div>
+
       <div className="mt-8 px-40">
-        <h2 className="text-4xl font-bold">Similar Homes</h2>
+        <h2 className="text-4xl font-bold tracking-tighter">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>
             <img
@@ -592,6 +741,47 @@ function WifiIcon(props:any) {
       <path d="M8.5 16.5a5 5 0 0 1 7 0" />
       <path d="M2 8.82a15 15 0 0 1 20 0" />
       <line x1="12" x2="12.01" y1="20" y2="20" />
+    </svg>
+  )
+}
+
+
+function MailIcon(props:any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+  )
+}
+
+
+function PhoneIcon(props:any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
     </svg>
   )
 }
