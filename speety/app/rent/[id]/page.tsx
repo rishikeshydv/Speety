@@ -10,7 +10,7 @@ import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-export default function Property() {
+export default function Rent() {
   return (
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />
@@ -18,7 +18,7 @@ export default function Property() {
         <div className="order-2 md:order-1">
           <div className="grid gap-6">
             <div>
-              <h1 className="text-6xl font-bold tracking-tighter">Property Description</h1>
+              <h1 className="text-6xl font-bold">Property Description</h1>
               <p className="text-gray-500 dark:text-gray-400 text-lg mt-4 font-medium"> · 3 beds · 2 baths · 1,800 sqft</p>
             </div>
             <div className="grid gap-4">
@@ -46,7 +46,7 @@ export default function Property() {
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">About this home</h2>
+              <h2 className="text-4xl font-bold">About this home</h2>
               <div className="prose max-w-none">
                 <p className="text-lg">
                   Welcome to this stunning beachfront oasis in the heart of Malibu. This spacious 3-bedroom, 2-bathroom
@@ -64,7 +64,7 @@ export default function Property() {
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">Key details</h2>
+              <h2 className="text-4xl font-bold">Key details</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <BedIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
@@ -84,7 +84,7 @@ export default function Property() {
                   <RulerIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
                     <p className="font-medium text-xl">1,800 sqft</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Bedroom</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-md">Living area</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -112,7 +112,7 @@ export default function Property() {
             </div>
             <Separator />
             <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">Amenities</h2>
+              <h2 className="text-4xl font-bold">Amenities</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <WifiIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
@@ -203,7 +203,7 @@ export default function Property() {
         </div>
       </div>
       <div className="mt-8 px-40">
-        <h2 className="text-4xl font-bold tracking-tighter">Similar Homes</h2>
+        <h2 className="text-4xl font-bold">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>
             <img

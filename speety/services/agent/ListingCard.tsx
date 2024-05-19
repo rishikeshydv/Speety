@@ -3,9 +3,13 @@
  * @see https://v0.dev/t/UqARte4Egfr
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+"use client";
+import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
+import React from "react";
+import { useRouter } from "next/navigation";
 import Rating from '@mui/material/Rating';
 interface ListingProp {
+  propertyId: string;
     address: string;
     price: string;
     bedrooms: string;
@@ -17,9 +21,10 @@ interface ListingProp {
     image: string;
     }
 
-const ListingCard:React.FC<ListingProp>=({ address,price,bedrooms,bathrooms,transactionType,date,stars,review,image})=> {
+const ListingCard:React.FC<ListingProp>=({ propertyId,address,price,bedrooms,bathrooms,transactionType,date,stars,review,image})=> {
+  const router = useRouter();
   return (
-    <Card className="w-full max-w-sm bg-gray-100">
+    <Card className="w-full max-w-sm bg-gray-100" onClick={()=>router.push(`/buy/${propertyId}`)}>
       <CardHeader className="p-4 text-xs text-red-100">
         <CardTitle className="text-2xl">{address}</CardTitle>
         <hr className="border-gray-200 dark:border-gray-800 border-2" />

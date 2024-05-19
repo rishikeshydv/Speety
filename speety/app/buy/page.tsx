@@ -25,20 +25,18 @@ export default function Buy() {
         buyQ(formData.zip,formData.priceLower,formData.priceUpper,formData.searchType,formData.beds,formData.baths,formData.homeType)
           .then((buyList) => {
             setResultList(buyList as Property);
-            if (Object.keys(resultList).length === 0){
-              setResultText("No results found!")
-            }
-            else{
-              setResultText("Results:")
-            }
-            resolve(buyList);
+              if (Object.keys(buyList).length === 0){
+                setResultText("No results found!")
+              }
+              else{
+                setResultText("Results:")
+              }
+              resolve(buyList);
           })
           .catch((error) => {
             reject(error);
           });
       }); 
-        // setResultList(res);
-        // console.log(resultList)
   }
 
   //refine list
@@ -177,6 +175,7 @@ console.log("Refined: ",refinedList)
           return (
             <ListingCard
             key={key}
+              propertyId={key}
               address={refinedList[key]["address"]+", "+refinedList[key]["city"]}
               price={refinedList[key]["price"]}
               bedrooms={refinedList[key]["beds"]}
