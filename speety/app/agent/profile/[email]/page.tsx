@@ -34,18 +34,27 @@ interface Review {
 interface Property {
   address: string;
   apartment: string;
-  baths: string;
-  beds: string;
-  brokerId: string;
   city: string;
-  houseType: string;
-  imageUrl: string[];
-  listedBy: string;
-  price: string;
   state: string;
-  transactionType: string;
-  videoUrl: string[];
   zip: string;
+  price: string;
+  beds: string;
+  baths: string;
+  houseType: string;
+  transactionType: string;
+  listedBy: string;
+  listerEmail: string;
+  brokerId: string;
+  imageUrl: string[];
+  videoUrl: string[];
+  date: string;
+  sqft: string;
+  lotSize: string;
+  yearBuilt: string;
+  description: string;
+  parkingSpace: string;
+  estimatedMortgage: string;
+  amenities: string;
 }
 
 export default function Component() {
@@ -242,6 +251,7 @@ export default function Component() {
         {presentListings && presentListings.map((property, index) => (
           <ListingCard
           key={index}
+          propertyId=""
           address={property.address}
           price={property.price}
           bedrooms={property.beds}
@@ -268,6 +278,7 @@ export default function Component() {
           {soldListings.map((property, index) => (
           <ListingCard
           key={index}
+          propertyId=""
           address={property.address}
           price={property.price}
           bedrooms={property.beds}

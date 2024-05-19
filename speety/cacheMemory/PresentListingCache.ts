@@ -10,6 +10,7 @@ interface Property {
   houseType: string;
   transactionType: string;
   listedBy: string;
+  listerEmail: string;
   brokerId: string;
   imageUrl: string[];
   videoUrl: string[];
@@ -19,6 +20,7 @@ interface Property {
   yearBuilt: string;
   description: string;
   parkingSpace: string;
+  estimatedMortgage: string;
   amenities: string;
 }
 
