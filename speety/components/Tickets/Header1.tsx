@@ -9,7 +9,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import logout from '@/firebase/auth/logout';
 import checkNotifications from '@/queries/Notifications/CheckNotifications';
 import retrieveNotifications from '@/queries/Notifications/RetrieveNotifications';
-import NotificationProp from '@/services/header/NotificationProp';
+import NotificationProp from '@/services/header/NewNotificationProp';
 import NotificationSettle from '@/queries/Notifications/NotificationSettle';
 import {
   DropdownMenu,

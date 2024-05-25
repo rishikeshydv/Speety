@@ -75,18 +75,18 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
   //PushNotifications(user?.email as string,email,"msg",currentTime.format("YYYY-MM-DD HH:mm:ss"))
 
   return (
-    <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-20 px-6">
+    <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-16 px-6">
     <div className="flex items-center space-x-2">
       <button>
         <img
           src={userPic as string}
           alt="Image description"
-          className="w-12 h-12 rounded-full ml-3"
+          className="w-10 h-10 rounded-full ml-3"
         />
       </button>
       <div>
-        <div className="font-semibold text-xl ml-4">{userName}</div>
-        <div className={`text-md ${statusColor} ml-4`}>
+        <div className="font-semibold text-md ml-4">{userName}</div>
+        <div className={`text-xs ${statusColor} ml-4`}>
           {status}
         </div>
       </div>
@@ -94,12 +94,12 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
 
 {/* Video Call Component */}
     <div className="flex items-center">
-    <PopoverTriggerComponent src="/facetime.png" _className="w-16 h-20 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall} callAccepted={callAccepted} sendEndCallMessage={sendEndCallMessage} changeCallEndedState={changeCallEndedState} callEndedState={callEndedState}/>
+    <PopoverTriggerComponent src="/facetime.png" _className="w-12 h-14 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall} callAccepted={callAccepted} sendEndCallMessage={sendEndCallMessage} changeCallEndedState={changeCallEndedState} callEndedState={callEndedState}/>
 
     {/* Location Component */}
 <LocationTrigger 
 src="/map.png" 
-_className="w-18 h-20 rounded-full" 
+_className="w-18 h-12 rounded-full" 
 clickedUser={clickedUser}
 />
 
@@ -109,15 +109,15 @@ clickedUser={clickedUser}
   <img
           src="/calendar-icon.webp"
           alt="Image description"
-          className="w-26 h-14 rounded-full"
+          className="w-10 h-10 mb-1 rounded-full"
         />
   </PopoverTrigger>
 
 {show && (
-    <PopoverContent style={{width:600,height:600}} className="mr-10 mt-6 bg-gray-300 rounded-3xl">
+    <PopoverContent style={{width:400,height:600}} className="mr-10 mt-6 bg-gray-300 rounded-3xl">
     <LocalizationProvider dateAdapter={AdapterDayjs}>
        <StaticDateTimePicker 
-       className="w-full h-full bg-gray-300 rounded-3xl p-4"
+       className="w-full h-full bg-gray-300 rounded-3xl"
        value={datetime}
        onChange={(newValue) => setDatetime(newValue)}
        onAccept={()=>{

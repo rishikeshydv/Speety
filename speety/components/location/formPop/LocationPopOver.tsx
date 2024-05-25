@@ -21,12 +21,12 @@ const LocationPopOver:React.FC<LocationPopOverProps> = ({clickedUser}) =>{
   return (
     <div className={`${poppins.className}`}>
         <div className="grid gap-2 justify-items-center">
-      <h2 className="text-2xl font-semibold tracking-tighter">Location Tracking</h2>
+      <h2 className="text-lg font-semibold tracking-tighter">Location Tracking</h2>
       <div className="grid gap-2 justify-self-center">
-        <p className="text-center text-sm leading-none">Do you want to proceed?</p>
+        <p className="text-center text-xs leading-none">Do you want to proceed?</p>
         <div className="inline-grid gap-2">
-          <Button size="sm" variant="outline" onClick={()=>router.push(`/map/${clickedUser}`)}>
-            Proceed &gt;&gt;&gt;
+          <Button size="sm" onClick={()=>router.push(`/map/${clickedUser}`)}>
+           <p className="text-xs">Proceed &gt;&gt;&gt;</p> 
           </Button>
         </div>
       </div>

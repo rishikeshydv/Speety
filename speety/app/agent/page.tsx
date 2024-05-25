@@ -68,22 +68,22 @@ export default function Agent() {
     <div className={poppins.className}>
       <Header />
       <div>
-        <section className="py-52 shadow-md">
-          <h1 className="text-9xl font-bold text-center px-96">
+        <section className="py-20 shadow-md">
+          <h1 className="text-7xl font-bold tracking-tighter text-center px-96">
             Sell traditionally with an{" "}
-            <button className="bg-red-400 rounded-3xl px-10 py-6">agent</button>
+            <button className="bg-red-400 rounded-3xl px-6 py-4">agent</button>
           </h1>
           <div className="flex flex-col items-center justify-center mt-20">
             <input
               id="autocomplete"
               type="text"
               placeholder=" Enter a zip code ..."
-              className={`bottom-20 h-24 w-1/3 bg-gray-100 text rounded-3xl text-center text-3xl`}
+              className={`bottom-20 h-16 w-1/4 bg-gray-100 text rounded-3xl text-center text-xl`}
               value={zipVal}
               onChange={handleChange}
             />
             <button
-              className={` text-white bg-black rounded-2xl px-10 h-24 w-80 text-3xl font-bold uppercase mt-16`}
+              className={` text-white bg-black rounded-2xl px-4 h-16 w-60 text-xl font-bold uppercase mt-16`}
               onClick={handleSubmit}
             >
               Find an agent

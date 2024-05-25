@@ -31,14 +31,14 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
    
 }, [userEmail]);
   return (
-<aside className="w-40 bg-black text-white rounded-3xl m-6">
+<aside className="w-24 bg-black text-white rounded-3xl my-2 mx-2">
         <div className="flex items-center justify-center h-40 border-b border-gray-800">
           <a href={`/dashboard/${user?.email}`}>
             <img
               src="/speety_logo_revert.png"
               alt="Speety Logo"
-              width={150}
-              height={200}
+              width={75}
+              height={90}
               className="ml-1 mt-10"
             />
           </a>
@@ -49,32 +49,33 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
               src={userPic as string}
               alt="user_profile"
               className="mt-10 rounded-full"
-              width={80}
-              height={80}
+              width={40}
+              height={40}
             />
           </div>
-          <div className="flex flex-col items-center mt-10 py-10">
+          <div className="flex flex-col items-center mt-8 py-10">
             <div>
               <img
                 src="/msg.png"
                 alt="chat"
-                width={60}
-                height={60}
+                width={35}
+                height={35}
               />
-              <h1 className="text-white ml-2">Chat</h1>
+              <h1 className="text-white ml-1 mt-1 text-xs">Chat</h1>
             </div>
-            <div className="mt-10">
-              <img src="/people.png" alt="people" width={50} height={50} />
-              <h1 className="text-white">People</h1>
+            <div className="mt-8">
+              <img src="/people.png" alt="people" width={30} height={30} />
+              <h1 className="text-white text-xs mt-2 ">People</h1>
             </div>
-            <div className="mt-10">
+            <div className="mt-8">
               <img
                 src="/hourglass-not-done.png"
                 alt="requests"
-                width={50}
-                height={50}
+                width={35}
+                height={35}
+                className="ml-1"
               />
-              <h1 className="text-white">Request</h1>
+              <h1 className="text-white text-xs mt-2">Request</h1>
             </div>
           </div>
         </nav>

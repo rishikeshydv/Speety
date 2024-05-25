@@ -1,18 +1,15 @@
-import { collection, getDoc, getDocs, doc, updateDoc, addDoc, arrayUnion } from "firebase/firestore";
+import { collection, getDoc, getDocs, doc, updateDoc, addDoc, setDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import moment from 'moment'; 
 
 
 interface eachMessage {
+        type:string;
         msg: string;
         date: string;
 }
-interface _messageInfo {
-    anotherUserEmail: string;
-    receivedMessages: eachMessage[];
-    sentMessages: eachMessage[];
 
-}
+
 
 // get all the users
 const getConnectedUsers = async (senderUser: string) => {
@@ -31,7 +28,7 @@ const getConnectedUsers = async (senderUser: string) => {
     const allKeys = Object.keys(retrievedData);
     for (let i=0;i<allKeys.length;i++){
       const newKey = allKeys[i];
-      tempEmails.push(newKey)
+      tempEmails.push(newKey+".com")   //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
     }
 }
 
@@ -53,70 +50,68 @@ const getConnectedUsers = async (senderUser: string) => {
 
 // get a user's chat history
 const getChats = async (senderUser: string, receiverUser:string) => {
-    const usersCollection = collection(db, "connectedHistory");
-    const usersSnapshot = await getDocs(usersCollection);
-    let sentMessages: eachMessage[] = [];
-    let receivedMessages: eachMessage[] = [];
-    usersSnapshot.forEach(async (doc) => {
-        if (doc.id === senderUser) {
-            const data = doc.data();
-        for (let i = 0; i < Object.keys(data).length; i++){
-            const firstKey = Object.keys(data)[i];
-            if (data[firstKey].anotherUserEmail === receiverUser){
-                for (let i = 0; i < data[firstKey].sentMessages.length; i++){
-                  sentMessages.push(data[firstKey].sentMessages[i]);
-                }
-                for (let i = 0; i < data[firstKey].receivedMessages.length; i++){
-                  receivedMessages.push(data[firstKey].receivedMessages[i])
-                }
-           }
-        }
-          }
-    });
-  
-    return {sentMessages, receivedMessages};
+    const usersCollection = doc(db, "connectedHistory", senderUser);
+    const usersSnapshot = await getDoc(usersCollection);
+    let _messagesExchanged: eachMessage[] = [];
+    if (usersSnapshot.exists()) {
+      const data = usersSnapshot.data();
+      if (data && data[receiverUser.slice(0,receiverUser.indexOf("."))] && data[receiverUser.slice(0,receiverUser.indexOf("."))].messagesExchanged) {
+        _messagesExchanged = data[receiverUser.slice(0,receiverUser.indexOf("."))].messagesExchanged;
+      }
+    }
+    return _messagesExchanged
   };
 
-// update a user's chat history
-// const updateChats = async (senderUser: string, receiverUser:string,sent:eachMessage,sentTime:string,received:eachMessage,receivedTime:string) => {
-//  const messageRef = doc(db, "connectedHistory", String(senderUser));
-//   const docSnapshot = await getDoc(messageRef);
-//   console.log(docSnapshot.data());
-//   docSnapshot.data()?[0].forEach(async (_doc:any) => {
-//     for (let i = 0; i < Object.keys(_doc).length; i++){
-//         const firstKey = Object.keys(_doc)[i];
-//         if (_doc[firstKey].anotherUserEmail === receiverUser){
-//             await updateDoc(messageRef, {
-//                 [firstKey]: {
-//                     sentMessages: arrayUnion(sent),
-//                     receivedMessages: arrayUnion(received)
-//                 }
-//             });
-//         }
-//     }
-//   })    
-// }:
 
-const updateChats = async (senderUser: string, receiverUser: string, sent: eachMessage, received: eachMessage) => {
-  const messageRef = doc(db, "connectedHistory", String(senderUser));
+const updateChats = async (senderUser: string, receiverUser: string, messagesExchanged: eachMessage[]) => {
+  //we here get the name of teh receiverUser
+  let receiverName = "";
+const _usersRef = collection(db, "User_Info");
+ const _userDocRef = doc(_usersRef, receiverUser);
+ const _userSnapshot = await getDoc(_userDocRef);
+ if (_userSnapshot.exists()){
+   const _retrievedData = _userSnapshot.data();
+  receiverName = _retrievedData["name"];
+ }
+
+  const messageRef = doc(db, "connectedHistory", senderUser);
   const docSnapshot = await getDoc(messageRef);
   if (docSnapshot.exists()) {
     const data = docSnapshot.data();
-    Object.keys(data).forEach(async (key) => {
-      const _doc = data[key];
-      //console.log(_doc);
-      if (_doc.anotherUserEmail === "skoirala@caldwell.edu") {
-        const entryRef = doc(db, "connectedHistory", senderUser, key);
+    const connectedKeys = Object.keys(data);
+    for (let i = 0; i < connectedKeys.length; i++) {
+      const key = connectedKeys[i];
+      if (key === receiverUser.slice(0,receiverUser.indexOf("."))) {
+        const entryRef = doc(db, "connectedHistory", senderUser);
         await updateDoc(entryRef, {
-          sentMessages: _doc.sentMessages ? [..._doc.sentMessages, sent] : [sent],
-          receivedMessages: _doc.receivedMessages ? [..._doc.receivedMessages, received] : [received]
+          [receiverUser.slice(0,receiverUser.indexOf("."))]:  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
+          {
+            messagesExchanged: messagesExchanged,
+            name: data[key].name,
+          },
         });
       }
+      else{
+        const entryRef = doc(db, "connectedHistory", senderUser);
+        await setDoc(entryRef, {
+          [receiverUser.slice(0,receiverUser.indexOf("."))]: {  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
+            messagesExchanged: messagesExchanged,
+            name: data[key].name,
+          },
+        });
+      }
+    }
+  }
+  else{
+    const entryRef = doc(db, "connectedHistory", senderUser);
+    await setDoc(entryRef, {
+      [receiverUser.slice(0,receiverUser.indexOf("."))]: {  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
+        messagesExchanged: messagesExchanged,
+        name: receiverName,
+      },
     });
   }
 };
-
-
 
 export { getConnectedUsers, getChats,updateChats };
 

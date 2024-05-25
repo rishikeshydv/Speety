@@ -15,10 +15,13 @@ import Image from 'next/image';
 import ListingCard from "@/services/agent/ListingCard";
 import Header from "@/components/Header"
 import { Textarea } from "@/components/ui/textarea"
-import { useState,useEffect } from "react"
-import { collection,getDoc,doc, setDoc} from "firebase/firestore"; 
+import { useState,useEffect, useRef } from "react"
+import { collection,getDoc,doc, setDoc, updateDoc} from "firebase/firestore"; 
 import { db } from "@/firebase/config";
 import moment from "moment"; //use moment.js to get time/date in a good format
+import getImageUrl from "@/queries/ImgVidUrls/getImageUrl"
+import { set } from "firebase/database"
+
 
 interface Property {
   address: string;
@@ -81,7 +84,6 @@ const params = useParams();
 }
 
 //dealing with time
-
 const [currentTime, setCurrentTime] = useState(moment());
 useEffect(() => {
   // Function to update the current time every second
@@ -138,6 +140,54 @@ async function updateProfile(){
   }
   ,[]);
 
+  //dealing with profile picture change
+  const [newProfilePic, setNewProfilePic] =  useState<File | null>(null);
+  const [newProfilePicUrl, setNewProfilePicUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [confirmText, setConfirmText] = useState("Confirm");
+  const [confirmTextColor, setConfirmTextColor] = useState("bg-black");
+
+  const handleIconClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+    //to confirm the new profile pic
+    useEffect(() => {
+      if (!newProfilePic) {
+        return;
+      }
+  
+    const confirmNewProfile = () => {    
+      return new Promise((resolve, reject) => {
+        getImageUrl(newProfilePic as File)
+        .then((driverUrl) => {
+          setNewProfilePicUrl(driverUrl);
+          resolve(driverUrl);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      }
+      ); 
+    }
+    confirmNewProfile();
+      }, [newProfilePic]);
+
+  async function ConfirmFunc() {
+    setConfirmText("Confirmed!");
+    setConfirmTextColor("bg-green-400");
+
+    //update the profile pic in the database
+    const usersCollection = doc(db, "User_Info", paramsEmail);
+    const usersSnapshot = await getDoc(usersCollection);
+    if (usersSnapshot.exists()) {
+      await updateDoc(usersCollection, {
+        profilePic: newProfilePicUrl
+      });
+    }
+  }
 
   return (
     <div className={`${poppins.className}`}>
@@ -149,6 +199,7 @@ async function updateProfile(){
         <CardDescription className="text-xl">View and edit your profile</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
+        <div>
         <div className="flex items-center gap-6">
             <div className="relative w-20 h-20">
                 <img
@@ -163,6 +214,19 @@ async function updateProfile(){
                 <div className="font-bold text-lg md:text-2xl leading-none">{name}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{role}</div>
             </div>
+        </div>
+        <div className="mt-2">
+          <Button onClick={handleIconClick}>Change Profile</Button>
+          {newProfilePicUrl && (
+            <Button className={`confirmTextColor`} onClick={ConfirmFunc}>{confirmText}</Button>
+            )}
+        <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={(e) => {setNewProfilePic(e.target.files?.[0] || null);}}
+      />
+        </div>
         </div>
         <div>
           <form className="grid gap-4 md:grid-cols-2">
@@ -225,6 +289,7 @@ async function updateProfile(){
         {presentListings && presentListings.map((property, index) => (
           <ListingCard
           key={index}
+          propertyId={""}
           address={property.address}
           price={property.price}
           bedrooms={property.beds}

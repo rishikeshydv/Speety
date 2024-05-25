@@ -12,16 +12,16 @@ export default function Sec3() {
             <div className='mt-10 ml-10 px-10px flex items-center'>
                 <img 
                 src="/sparkle.png" 
-                width={80}
+                width={40}
                 height={5}
                 style={{ marginRight: '30px' }}/>
-                <h1 className='text-6xl font-bold'>
+                <h1 className='text-5xl font-bold'>
                 Our Features
                 </h1>
             </div>
             <hr className='border border-gray-300 w-30 mt-5 ml-5'/> {/* Horizontal line */}
             {/* The div following would create 3 features of the app */}
-            <div className='flex flex-col gap-80'>
+            <div className='flex flex-col gap-16'>
             <Feature 
             imageSrc='/bulb.png'
             title='Organized Workflow'

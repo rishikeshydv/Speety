@@ -136,7 +136,7 @@ export default function Buy() {
     <div className={poppins.className}>
       <Header />
       <div className="bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]">
-        <div className="flex items-center justify-center ml-10 py-4">
+        <div className="flex items-center justify-center ml-8 pt-3">
           {/* This div tag is for search bar  */}
           <form onSubmit={handleSubmit}>
             <input
@@ -146,14 +146,14 @@ export default function Buy() {
               name="zip"
               value={formData.zip}
               onChange={handleChange}
-              className="border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl"
+              className="border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm"
             />
 
             <select
               value={formData.searchType}
               onChange={handleChange}
               name="searchType"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm text-gray-400"
             >
               <option value="Buy">For Buy</option>
               <option value="Rent">For Rent</option>
@@ -164,7 +164,7 @@ export default function Buy() {
               value={formData.priceLower}
               onChange={handleChange}
               name="priceLower"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm text-gray-400"
             >
               <option value="NA">Min. Price</option>
               <option value="0">$0</option>
@@ -180,7 +180,7 @@ export default function Buy() {
               value={formData.priceUpper}
               onChange={handleChange}
               name="priceUpper"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm text-gray-400"
             >
               <option value="NA">Max. Price</option>
               <option value="100000">$100,000</option>
@@ -198,7 +198,7 @@ export default function Buy() {
               value={formData.beds}
               onChange={handleChange}
               name="beds"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm text-gray-400"
             />
             <input
               type="text"
@@ -206,14 +206,14 @@ export default function Buy() {
               value={formData.baths}
               onChange={handleChange}
               name="baths"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm text-gray-400"
             />
 
             <select
               value={formData.homeType}
               onChange={handleChange}
               name="homeType"
-              className="ml-6 border-gray-400 border-2 rounded-2xl h-16 w-60 pl-4 text-xl text-gray-400"
+              className="ml-2 border-gray-400 border-2 rounded-2xl h-10 w-40  pl-4 text-sm text-gray-400"
             >
               <option value="Houses">Houses</option>
               <option value="Townhomes">Townhomes</option>
@@ -226,7 +226,7 @@ export default function Buy() {
 
             <button
               type="submit"
-              className="ml-6 bg-black text-white px-3 py-2 rounded-xl h-16 w-36 font-bold text-2xl"
+              className="ml-2 bg-black text-white px-3 py-2 rounded-xl h-10 w-40 font-bold text-md"
             >
               Search
             </button>
@@ -235,14 +235,14 @@ export default function Buy() {
         <hr className="border-2 border-gray-300 mt-4" />
 
         <div className="bg-gray-200">
-          <section className="py-52 flex flex-col items-center justify-center">
+          <section className="py-10 flex flex-col items-center justify-center">
             {/* "Selling fast" */}
-            <div className="text-9xl font-bold flex items-center mb-10">
+            <div className="text-7xl font-bold flex items-center tracking-tighter">
               <span>Buying your home</span>
             </div>
 
             {/* "Buying smart" with gradient text */}
-            <h1 className="text-9xl font-bold flex items-center mb-10">
+            <h1 className="text-7xl font-bold flex items-center mb-10 tracking-tighter">
               <span>with</span>
               &nbsp;
               <span className="text-transparent bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text">
@@ -256,7 +256,7 @@ export default function Buy() {
                 alt="Home"
               />
             </h1>
-            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-2xl mb-10">
+            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-md mb-10">
               <Typist>
                 Speety is making it simpler to buy your home and settle.
               </Typist>
@@ -266,13 +266,13 @@ export default function Buy() {
         {refinedList && (
           <section className="p-10">
             <div className="flex flex-col">
-              <h1 className="p-10 text-3xl font-bold tracking-tight text-gray-700 ">
+              <h1 className="p-4 text-xl font-bold tracking-tight text-gray-700 ">
                 {resultText}
               </h1>
             </div>
             <div
               id="propertyLists"
-              className="flex p-10 gap-10 overflow-scroll"
+              className="flex p-4 gap-10 overflow-scroll"
             >
               {Object.keys(refinedList).map((key) => {
                 return (

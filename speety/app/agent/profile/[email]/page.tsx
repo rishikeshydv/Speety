@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/accordion"
 
 import ListingCard from "@/services/agent/ListingCard";
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment"; //use moment.js to get time/date in a good format
@@ -27,6 +27,9 @@ import { collection,getDoc,doc} from "firebase/firestore";
 import { db } from "@/firebase/config";
 import RealtorCard from "@/components/agent/RealtorCard";
 import ReviewProp from "@/services/agent/ReviewProp";
+import Review from "@/components/review/Review";
+import ReviewSuccess from "@/components/review/ReviewSubmit";
+import IsUserConnected from "@/queries/IsUserConnected";
 interface Review {
   [key: string]: string[];
 }
@@ -59,6 +62,8 @@ interface Property {
 
 export default function Component() {
 
+  const router = useRouter();
+
  const params = useParams();
  const emailParams = decodeURIComponent(params.email as string)
 
@@ -79,6 +84,15 @@ export default function Component() {
   const [profileImage, setProfileImage] = useState("");
   const [presentListings, setPresentListings] = useState<Property[]>([]);
   const [soldListings, setSoldListings] = useState<Property[]>([]);
+
+  //state variable to show if the agent is already a connection
+  const [connected, setConnected] = useState(false);
+
+  //showing review UI
+  const [reviewComplete, setReviewComplete] = useState(false);
+  const reviewCompleteFunc = () => {
+    setReviewComplete(!reviewComplete);
+  }
 
   let _presentListings: Property[] = [];
   let _soldListings: Property[] = [];
@@ -155,14 +169,62 @@ export default function Component() {
     }
   }
 
+    async function getProfileImage(reviewEmail_:string) {
+      const receiverRef = collection(db, "User_Info");  
+      const receiverDocRef =  doc(receiverRef, reviewEmail_);
+      const receiverSnapshot = await getDoc(receiverDocRef);
+      if (receiverSnapshot.exists()) {
+        //console.log("Document data:", receiverSnapshot.data());
+        const data = receiverSnapshot.data();
+        return data?.profilePic;
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }
+
+
+async function checkConnection(senderEmail:string, receiverEmail:string) {
+  const connected = await IsUserConnected(senderEmail, receiverEmail);
+  setConnected(connected);
+}
+
+async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
+  const receiverRef = collection(db, "notifications");
+  const receiverDocRef =  doc(receiverRef, receiverEmail);
+  const receiverSnapshot = await getDoc(receiverDocRef);
+  if (receiverSnapshot.exists()) {
+    const data = receiverSnapshot.data();
+    const keys = Object.keys(data);
+    for (let i = 0; i < keys.length; i++) {
+      const notificationData = data[keys[i]];
+      if (notificationData.from === senderEmail && notificationData.status === "pending") {
+        setButtonText("Requested");
+        setButtonIcon("/check.png");
+        setButtonColor("bg-green-200");
+      }
+    }
+  }
+}
 
   useEffect(() => {
     getPresentListings();
     getSoldListings();
-    getAgentData();
     getAgentProfileImage();
-  }, []);
-
+    if (user){
+      checkRequestStatus(user.email as string,emailParams);
+      checkConnection(user.email as string,emailParams);
+    }
+    getAgentData().then(async() => {
+      const updatedReviews = { ...reviews };
+      for (const key of Object.keys(reviews)) {
+        const reviewEmail_ = reviews[key][0];
+        const retrievedProfilePic = await getProfileImage(reviewEmail_);
+        updatedReviews[key] = [...reviews[key], retrievedProfilePic];
+      }
+      setReviews(updatedReviews);
+    });
+  }, [user]);
 
 
 
@@ -202,24 +264,37 @@ export default function Component() {
               />
             </Avatar>
             <div className="space-y-1">
-              <h2 className="text-3xl font-bold">{name}</h2>
-              <p className="text-lg text-gray-500 dark:text-gray-400">Real Estate Broker</p>
+              <h2 className="text-xl font-bold">{name}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Real Estate Broker</p>
+              {
+                connected ? 
+                
               <button 
-              className={`flex shadow-sm p-2 ${buttonColor} font-bold rounded-lg`}
+              className={`flex shadow-sm p-2 bg-slate-200 font-bold text-sm rounded-lg`}
               onClick={()=>{
-                if (buttonText!="Requested") {
-                  PushNotifications(user?.email as string,emailParams,currentTime.format("YYYY-MM-DD HH:mm:ss"))
-                  setButtonText("Requested")
-                  setButtonIcon("/check.png")
-                  setButtonColor("bg-green-200")
-                }
-                else{
-                  alert("User already requested!")
-                }
+                router.push(`/chat`)
               }}
-              > {buttonText}
-          <img src={buttonIcon} className="w-7 h-7 ml-2" />
+              > Message
+          <img src={buttonIcon} className="w-5 h-5 ml-2" />
           </button>
+                : 
+                <button 
+                className={`flex shadow-sm p-2 ${buttonColor} font-bold text-sm rounded-lg`}
+                onClick={()=>{
+                  if (buttonText!="Requested") {
+                    PushNotifications(user?.email as string,emailParams,currentTime.format("YYYY-MM-DD"))
+                    setButtonText("Requested")
+                    setButtonIcon("/check.png")
+                    setButtonColor("bg-green-200")
+                  }
+                  else{
+                    alert("User already requested!")
+                  }
+                }}
+                > {buttonText}
+            <img src={buttonIcon} className="w-5 h-5 ml-2" />
+            </button>
+              }
             </div>
           </div>
         </div>
@@ -232,8 +307,8 @@ export default function Component() {
         <CardContent className="pt-0">
         <div className="border-t border-gray-200 dark:border-gray-800" />
         <div className="mt-4 space-y-4 text-sm text-black dark:text-gray-400">
-          <h1 className="font-bold text-4xl">About {name}</h1>
-          <p className="text-xl">
+          <h1 className="font-bold text-2xl">About {name}</h1>
+          <p className="text-md">
             {description}
           </p>
         </div>
@@ -241,7 +316,7 @@ export default function Component() {
 
   <Accordion type="single" collapsible>
   <AccordionItem value="item-1">
-    <AccordionTrigger className="text-3xl font-bold">Present Listings</AccordionTrigger>
+    <AccordionTrigger className="text-2xl font-bold">Present Listings</AccordionTrigger>
     <AccordionContent className="text-xl">
    
 
@@ -269,7 +344,7 @@ export default function Component() {
   </AccordionItem>
 
   <AccordionItem value="item-2">
-    <AccordionTrigger className="text-3xl font-bold">Sold Listings</AccordionTrigger>
+    <AccordionTrigger className="text-2xl font-bold">Sold Listings</AccordionTrigger>
     <AccordionContent className="text-xl">
    
 
@@ -296,13 +371,13 @@ export default function Component() {
   </AccordionItem>
 
   <AccordionItem value="item-3">
-    <AccordionTrigger className="text-3xl font-bold">Customer Reviews</AccordionTrigger>
+    <AccordionTrigger className="text-2xl font-bold">Customer Reviews</AccordionTrigger>
     <AccordionContent className="text-xl">
     <div className="mt-4 space-y-4 text-sm text-black dark:text-gray-400">
           <div className="grid gap-4">
             {
-              Object.keys(reviews).map((key) => {
-                return <ReviewProp key={key} name={reviews[key][1]} stars={parseInt(reviews[key][2])} comment={reviews[key][3]} date={reviews[key][4]} />
+              Object.keys(reviews).map( (key) => {
+                return <ReviewProp key={key} name={reviews[key][1]} stars={parseInt(reviews[key][2])} comment={reviews[key][3]} date={reviews[key][4]} profilePic={reviews[key][-1]} />
               })
             }
           </div>
@@ -311,65 +386,17 @@ export default function Component() {
   </AccordionItem>
 </Accordion>
 </CardContent>
-
         {/* Right Column */}
 <RealtorCard name={name} phone={phoneNumber} email={emailParams} address={address} website={website} />
 
       </div>
     </Card>
+    {
+      reviewComplete ? <ReviewSuccess reviewCompleteFunc={reviewCompleteFunc}/> : <Review name={name} reviewCompleteFunc={reviewCompleteFunc} agentEmail={emailParams}/>
+    }
     <Footer />
     </div>
   )
 }
 
-interface HomeIconProps {
-    className?: string;
-    width?: number;
-    height?: number;
-}
 
-function HomeIcon(props: HomeIconProps) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width={props.width || 24}
-            height={props.height || 24}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-    )
-}
-
-
-interface StarIconProps {
-    className?: string;
-    width?: number;
-    height?: number;
-}
-
-function StarIcon(props: StarIconProps): JSX.Element {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width={props.width || 24}
-            height={props.height || 24}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-    );
-}
