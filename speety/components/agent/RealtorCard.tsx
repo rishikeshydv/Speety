@@ -18,30 +18,30 @@ const RealtorCard:React.FC<RealtorCardProps> = ({name,phone,email,website,addres
   return (
     <Card className="p-20 shadow-md">
       <CardHeader>
-        <CardTitle className="text-4xl font-bold">Contact Details</CardTitle>
+        <CardTitle className="text-2xl font-bold">Contact Details</CardTitle>
       </CardHeader>
       <CardContent>
       <div className="grid gap-1">
-          <p className="text-xl py-4">
-            <PhoneIcon className="w-7 h-7 mr-1.5 inline-block" />
+          <p className="text-md py-4">
+            <PhoneIcon className="w-5 h-5 mr-1.5 inline-block" />
             <strong>Phone: </strong>
             (555) 123-4567{"\n                  "}
           </p>
           <hr className="border-gray-200 dark:border-gray-800" />
-          <p className="text-xl py-4">
-            <MailIcon className="w-7 h-7 mr-1.5 inline-block" />
+          <p className="text-md py-4">
+            <MailIcon className="w-5 h-5 mr-1.5 inline-block" />
             <strong>Email: </strong>
             emma@example.com{"\n                  "}
           </p> 
           <hr className="border-gray-200 dark:border-gray-800" />
-          <p className="text-xl py-4">
-            <LinkIcon className="w-7 h-7 mr-1.5 inline-block" />
+          <p className="text-md py-4">
+            <LinkIcon className="w-5 h-5 mr-1.5 inline-block" />
             <strong>Website: </strong>
             <Link href="#">example.com</Link>
           </p>
           <hr className="border-gray-200 dark:border-gray-800" />
-          <p className="text-xl py-4">
-            <MapPinIcon className="w-7 h-7 mr-1.5 inline-block" />
+          <p className="text-md py-4">
+            <MapPinIcon className="w-5 h-5 mr-1.5 inline-block" />
             <strong>Address: </strong>
             1234 Elm Street, Pleasantville, CO, 80202{"\n                  "}
           </p>
@@ -49,8 +49,8 @@ const RealtorCard:React.FC<RealtorCardProps> = ({name,phone,email,website,addres
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="text-xl shadow-md bg-gray-100">
-          <ShareIcon className="mr-2 h-7 w-7" />
+        <Button variant="outline" className="text-sm shadow-md bg-gray-100">
+          <ShareIcon className="mr-2 h-4 w-4" />
           Share Profile
         </Button>
       </CardFooter>

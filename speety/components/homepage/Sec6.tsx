@@ -1,12 +1,19 @@
+"use client"
 import React from "react";
 import { AiOutlineDoubleRight } from "react-icons/ai";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 export default function Sec6() {
+  const router = useRouter();
+  const loginDirect = () => {
+    router.push("/auth/login")
+}
   return (
     <div className="bg-gray-200">
       <section className="py-20">
         {/* This DIV will be used to write the slogan */}
-        <div className="text-center py-20 mt-20 mb-20">
-          <h1 className="text-8xl font-bold text-gray-500 mb-10">
+        <div className="text-center py-2">
+          <h1 className="text-7xl font-bold text-gray-500 mb-10">
             <span>Get started for </span>
             <button className="py-1 px-4 border border-blue-200 border-opacity-20 bg-green-200 rounded-xl">
               free
@@ -19,15 +26,15 @@ export default function Sec6() {
           {/* The DIV below takes care fof the buttons */}
 
           <div className="mt-20 flex justify-center">
-  <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins mb-5">
+          <Button className="bg-black hover:bg-gray-900 text-white px-4 rounded-2xl h-14 flex items-center text-xl font-poppins mb-5" onClick={loginDirect}>
     <span>Get started</span>
-    &nbsp; &nbsp; &nbsp;
+    &nbsp; 
     <AiOutlineDoubleRight />
-  </button>
+  </Button>
 
-  <button className="bg-black hover:bg-gray-900 text-white py-1 px-9 rounded-2xl h-20 flex items-center space-x-2 text-2xl font-poppins mb-5 ml-5">
+  <Button className="bg-black hover:bg-gray-900 text-white py-1 px-6 rounded-2xl h-14 flex items-center space-x-2 text-xl font-poppins mb-5 ml-5">
     Plans
-  </button>
+  </Button>
 </div>
 
 

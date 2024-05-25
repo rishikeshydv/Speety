@@ -24,41 +24,41 @@ interface ListingProp {
 const ListingCard:React.FC<ListingProp>=({ propertyId,address,price,bedrooms,bathrooms,transactionType,date,stars,review,image})=> {
   const router = useRouter();
   return (
-    <Card className="w-full max-w-sm bg-gray-100" onClick={()=>router.push(`/buy/${propertyId}`)}>
-      <CardHeader className="p-4 text-xs text-red-100">
-        <CardTitle className="text-2xl">{address}</CardTitle>
-        <hr className="border-gray-200 dark:border-gray-800 border-2" />
-        </CardHeader>
-        <CardContent className="text-lg">
-          <div className="flex items-center justify-between">
-            <h1>{bedrooms} Beds, {bathrooms} Baths</h1>
-            <h1 className="text-xl font-bold">${price}</h1>
-            </div>
-            <div className="flex gap-2"><p>Listed On: </p><p className="font-bold">{date}</p></div>
+    
+    //         <div className="flex gap-2"><p>Listed On: </p><p className="font-bold">{date}</p></div>
 
-            <div className="flex items-center gap-2 text-lg font-medium">
-          <HomeIcon className="w-4 h-4" />
-          <h1 className="py-2">For {transactionType}</h1>
+    <Card onClick={()=>router.push(`/buy/${propertyId}`)} className="bg-gray-200">
+    <img
+      alt="property"
+      className="w-full h-[200px] object-cover rounded-t-lg"
+      height={300}
+      src={image}
+      style={{
+        aspectRatio: "400/300",
+        objectFit: "cover",
+      }}
+      width={400}
+    />
+    <CardContent className="px-4 py-2 bg-slate-100">
+      <h3 className="text-lg font-bold">{address}</h3>
+      <div className="flex">
+      <p className="text-gray-500 dark:text-gray-400 text-sm">{bedrooms} beds · {bathrooms} baths · </p>
+      <div className="flex ml-1">
+      <HomeIcon className="w-3 h-3 mt-1" />
+      <p className="text-gray-500 dark:text-gray-400 text-sm ml-1 font-bold">For {transactionType}</p>
+      </div>
+      </div>
+      <div className="flex justify-between">
+        <div className="flex">
+      <p className="font-semibold tracking-tighter text-sm">Listed On:</p>
+      &nbsp;
+      <p className="text-sm tracking-tighter italic">{date}</p>
+      </div>
+        <p className="font-medium tracking-tighter text-sm">${price}</p>
         </div>
-              
-      <img
-        alt="Property image"
-        height={225}
-        src={image}
-        style={{
-          aspectRatio: "400/225",
-          objectFit: "cover",
-        }}
-        width={400}
-        className="rounded-md shadow-lg"
-      />
-        </CardContent>
-        <hr className="border-gray-200 dark:border-gray-800 border-2" />
-      <CardFooter className="flex flex-col p-4">
-        <div className='ml-2'><Rating name="read-only" value={stars} readOnly /></div>
-        <div className="text-lg font-medium">{review}</div>
-      </CardFooter>
-    </Card>
+      
+    </CardContent>
+  </Card>
   )
 }
 

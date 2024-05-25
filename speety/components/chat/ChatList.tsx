@@ -1,5 +1,6 @@
+"use client"
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MessageProp1 from "@/services/chat/MessageProp1";
 import MessageProp2 from "@/services/chat/MessageProp2";
 import { getChats,updateChats } from "@/queries/chatSystem";
@@ -10,6 +11,7 @@ import {
   doc
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import { send } from "process";
 
 interface eachMessage {
       type: string;
@@ -19,20 +21,18 @@ interface eachMessage {
 
 interface ChatListProps {
   sentMessage: eachMessage;
-  sentTime:string;
   receivedMessage: eachMessage;
-  receivedTime:string;
   senderEmail: string;
   receiverEmail: string;
   sendMessageFunction:(textMessage:string)=>void;
-}
+  lastMsg: string;
+  setLastMsg: React.Dispatch<React.SetStateAction<string>>;
+} 
 
-// {sendMessageFunction}:{sendMessageFunction:(textMessage:string)=>void}
-
-const ChatList:React.FC<ChatListProps>=({sentMessage,sentTime, receivedMessage,receivedTime, senderEmail, receiverEmail,sendMessageFunction }) => {
+const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEmail, receiverEmail,sendMessageFunction, lastMsg, setLastMsg }) => {
   //write a logic to retrieve the chatHistory or chatLists of sender and receiver
   //these are retrieved from the database
-  const [messagesExhanged,setMessagesExhanged] = useState<eachMessage[]>([]);
+  var [messagesExhanged,setMessagesExhanged] = useState<eachMessage[]>([]);
   const [senderPic,setSenderPic] = useState<string>("");
   const [receiverPic,setReceiverPic] = useState<string>("");
 
@@ -66,42 +66,48 @@ const ChatList:React.FC<ChatListProps>=({sentMessage,sentTime, receivedMessage,r
   }, [receiverEmail]);
 
 
+//retrieveing the chat history from the database
+  useEffect(() => {
+    const fetchMsgs = async () => {
+      const response = await getChats(senderEmail,receiverEmail);
+      setMessagesExhanged(response);
+     setLastMsg(response[response.length-1].msg);
+    }
+    fetchMsgs();
+  }, [senderEmail,receiverEmail]);
 
-  // useEffect(() => {
-  //   const fetchMsgs = async () => {
-  //     const response = await getChats(senderEmail,receiverEmail);
-  //     setSenderMsgs(response.sentMessages)
-  //     setReceiverMsgs(response.receivedMessages)
-  //   }
-  //   fetchMsgs();
-  // }, [senderEmail,receiverEmail]);
 
     // Update messagesExchanged when a new message is sent
     useEffect(() => {
       if (sentMessage.msg !== "") {
-        setMessagesExhanged(prevState => [...prevState, sentMessage]);
-      }
+       setMessagesExhanged(prevState => [...prevState, sentMessage]);
+        }
+      setLastMsg(sentMessage.msg); 
     }, [sentMessage]);
 
 // Update messagesExchanged when a new message is received
         useEffect(() => {
           if (receivedMessage.msg !== "") {
             setMessagesExhanged(prevState => [...prevState, receivedMessage]);
-          }
+        }
+        setLastMsg(receivedMessage.msg);
         }, [ receivedMessage]);
 
-    
-  
+useEffect(() => {
+      // Update database only at the end of the chat
+      //We dont push after every new messages we get
+      //This saves a lot of costs
 
-      // Update database upon peerjs
-      // useEffect(() => {
-        
-      //   async function updateChatsAsync() {
-      //     await updateChats(senderEmail, receiverEmail, sentMessage, receivedMessage);
-      //   }
-      //   updateChatsAsync();
-      // }, [sentMessage, receivedMessage, senderEmail, receiverEmail]);
-
+        async function updateChatsAsync() {
+            await updateChats(senderEmail, receiverEmail, messagesExhanged); 
+          }
+            window.addEventListener('beforeunload', updateChatsAsync);
+       
+        return () => {
+          window.removeEventListener('beforeunload', updateChatsAsync);
+        };
+}
+, [messagesExhanged, senderEmail, receiverEmail]);
     
 //the following is the logic for the Sendbar
 const [message, setMessage] = useState<string>("");
@@ -116,40 +122,52 @@ const [message, setMessage] = useState<string>("");
         console.log("Message sent");
       };
 
+
   return (
-  <div className="flex h-[calc(100%-80px)] flex-col mt-3 py-1">
-              <div className="flex-1 bg-gray-200 rounded-xl p-4 overflow-scroll">
-         {
+  <div className="flex h-[calc(89%-0px)] flex-col mt-1">
+              <div className="flex-1 bg-gray-200 rounded-lg p-4 overflow-scroll">
+         { messagesExhanged.length > 0 ? (
             messagesExhanged.map((message, index) => {
-              if (message.type === "sent") {
+              if (message.type === "sent" && message.msg !== "") {
                 return (
                   <div className="flex items-start justify-start" key={index}>
-                    <div className="flex justify-start items-start mt-4 w-full h-20 rounded-2xl px-2">
-                      <MessageProp1 message={message.msg} msgTime={sentTime} profilePic={senderPic}/>
+                    <div className="flex justify-start items-start mt-2 w-full h-20 rounded-2xl px-2">
+                      <MessageProp1 message={message.msg} msgTime={message.date} profilePic={senderPic}/>
                     </div>
                   </div>
                 );
-              } else {
+              } else if (message.type === "received" && message.msg !== ""){
                 return (
                   <div className="flex items-start justify-start" key={index}>
-                    <div className="flex justify-end items-start mt-6 w-full mr-8 h-20 rounded-2xl">
-                      <MessageProp2 message={message.msg} msgTime={receivedTime} profilePic={receiverPic}/>
+                    <div className="flex justify-end items-start mt-6 w-full h-20 rounded-2xl">
+                      <MessageProp2 message={message.msg} msgTime={message.date} profilePic={receiverPic}/>
                     </div>
                   </div>
                 );
               }
             })
+            ) : (
+              <div className="flex items-center justify-center h-full">
+              <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-gray-400">
+                <MessageCircleIcon className="h-10 w-10" />
+                <p className="text-xl font-medium">No Messages Yet</p>
+                <p className="text-sm text-center max-w-[300px]">
+                  Start a conversation by sending your first message. We&apos;ll be here to help you along the way.
+                </p>
+              </div>
+            </div>
+            )
          }
               </div>
 
             
     {/* Sendbar */}
-     <div className="h-16 flex flex-row w-full mt-3">
+     <div className="h-4 flex flex-row w-full mt-1">
     <div className="w-full bg-gray-200 border-gray-200 rounded-2xl">
-      <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-4 px-6">
-        <div className="grid w-full text-sm ">
+      <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-2 px-6">
+        <div className="grid w-full ">
           <input 
-          className="text-black bg-gray-200 text-xl" 
+          className="text-black bg-gray-200 text-md" 
           placeholder='Type your message here...'
           value={message}
           onChange={messageFunc}
@@ -157,17 +175,17 @@ const [message, setMessage] = useState<string>("");
         </div>
       </div>
     </div>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <SmileIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <PaperclipIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <MicIcon className="w-10 h-10" />
-    </Button>
+    <button className="ml-4 h-10 w-10">
+      <SmileIcon className="w-6 h-6" />
+    </button>
+    <button className="ml-4 h-10 w-10 rounded-full">
+      <PaperclipIcon className="w-6 h-6" />
+    </button>
+    <button className="ml-4 h-10 w-10 rounded-full">
+      <MicIcon className="w-6 h-6" />
+    </button>
     <Button 
-    className="ml-4 mr-12 text-xl h-14 px-10 py-1"
+    className="ml-4 text-sm h-10 px-6"
     onClick={handleSendMessage}
     >Send</Button>
   </div>
@@ -239,4 +257,23 @@ function SmileIcon(props: any) {
       <line x1="15" x2="15.01" y1="9" y2="9" />
     </svg>
   );
+}
+
+function MessageCircleIcon(props:any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+  )
 }

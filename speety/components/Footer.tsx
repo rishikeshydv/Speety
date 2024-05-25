@@ -7,10 +7,10 @@ export default function Footer() {
     <div>
 <section>
     {/* This DIV will be handling the social media icons */}
-    <div className='py-20 flex justify-between'>
+    <div className='py-10 flex justify-between'>
   <ul className='flex px-10'>
-    <li className='mr-4'><AiFillTwitterCircle size="50px" /></li>
-    <li className='mr-4'><AiOutlineMail size="50px" /></li>
+    <li className='mr-4'><AiFillTwitterCircle size="30px" /></li>
+    <li className='mr-4'><AiOutlineMail size="30px" /></li>
   </ul>
   
   <div className='flex flex-row'>

@@ -29,8 +29,10 @@ export default async function PushMeetings(
       // If the document doesn't exist, create a new one
       [`${_uniqueId}`]: {
         email: senderEmail,
-        status: "PENDING",
+        status: "pending",
         date: date,
+        age:"new",
+        id: _uniqueId
       },
     });
   } else {
@@ -38,8 +40,10 @@ export default async function PushMeetings(
     await updateDoc(receiverDocRef, {
       [`${_uniqueId}`]: {
         email: senderEmail,
-        status: "PENDING",
+        status: "pending",
         date: date,
+        age:"new",
+        id: _uniqueId
       },
     });
   }

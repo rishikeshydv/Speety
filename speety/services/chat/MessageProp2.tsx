@@ -8,14 +8,14 @@ interface MsgProp {
 }
 const MessageProp2:React.FC<MsgProp> = ({message,msgTime,profilePic}) => {
   return (
-            <div className="flex items-start justify-start w-28 h-16 rounded-2xl">
-  <Button className="flex items-start justify-start w-28 h-20 gap-2 bg-gray-100 shadow-md px-6" variant="outline">
-    <div className="grid text-left ml-4">
-      <div className="font-semibold text-lg mt-2">{message}</div>
-      <div className="text-xs line-clamp-1 mt-4 italic"><h3>{msgTime}</h3></div>
+  <div className="flex items-center justify-start w-28 h-14 rounded-2xl gap-2">
+  <Button className="flex items-center w-28 h-14 bg-gray-100 shadow-md px-4" variant="outline">
+    <div className="grid text-right ml-1">
+      <div className="font-semibold text-md">{message}</div>
+      <div className="text-xs mt-1 ml-4 tracking-tighter"><h3>{msgTime}</h3></div>
     </div>
   </Button>
-  <Avatar className="w-16 h-16 p-0.5 border rounded-full ml-2 mt-1">
+  <Avatar className="w-10 h-10 p-0.5 border rounded-full mt-1">
       <AvatarImage alt="@jessica" src={profilePic} />
       <AvatarFallback>J</AvatarFallback>
     </Avatar>

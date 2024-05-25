@@ -19,10 +19,10 @@ export default function Contact() {
     style={{ maxHeight: '70vh' }} // Set maximum height to 50% of the viewport height
   />
   <div className="absolute inset-0 flex flex-col items-center justify-center w-full p-4 text-center gap-4 mb-40">
-    <h2 className="text-9xl font-bold tracking-tighter">
-      Contact &nbsp; Us
+    <h2 className="text-7xl font-bold tracking-tight">
+      Contact Us
     </h2>
-    <p className="max-w-[1200px] text-black text-2xl font-semi-bold">
+    <p className="max-w-[1200px] text-black text-md font-semi-bold">
       Speety is always here to help you. If you have any questions or need help, feel free to contact us.
     </p>
   </div>

@@ -5,34 +5,34 @@ const DummyChatList = () => {
 
 
   return (
-  <div className="flex h-[calc(100%-80px)] flex-col mt-3 py-1">
-              <div className="flex-1 bg-gray-200 rounded-xl p-4">
+    <div className="flex h-[calc(89%-0px)] flex-col mt-1">
+    <div className="flex-1 bg-gray-200 rounded-lg p-4 overflow-scroll">
               </div>
 
             
     {/* Sendbar */}
-     <div className="h-16 flex flex-row w-full mt-3">
+    <div className="h-4 flex flex-row w-full mt-1">
     <div className="w-full bg-gray-200 border-gray-200 rounded-2xl">
-      <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-4 px-6">
-        <div className="grid w-full text-sm ">
+      <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-2 px-6">
+        <div className="grid w-full ">
           <input 
-          className="text-black bg-gray-200 text-xl" 
+          className="text-black bg-gray-200 text-md" 
           placeholder='Type your message here...'
           />
         </div>
       </div>
     </div>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <SmileIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <PaperclipIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <MicIcon className="w-10 h-10" />
-    </Button>
+    <button className="ml-4 h-10 w-10">
+      <SmileIcon className="w-6 h-6" />
+    </button>
+    <button className="ml-4 h-10 w-10 rounded-full">
+      <PaperclipIcon className="w-6 h-6" />
+    </button>
+    <button className="ml-4 h-10 w-10 rounded-full">
+      <MicIcon className="w-6 h-6" />
+    </button>
     <Button 
-    className="ml-4 mr-12 text-xl h-14 px-10 py-1"
+    className="ml-4 text-sm h-10 px-6"
     >Send</Button>
   </div>
             </div>

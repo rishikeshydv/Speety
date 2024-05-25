@@ -6,22 +6,27 @@ import { FaCheckToSlot } from "react-icons/fa6";
 export default function Section2() {
   return (
     <div className='bg-gray-200'>
-        <section className='py-52'>
-            <h1 className='text-9xl font-bold text-center px-96'>Sell traditionally with an <button className='bg-red-400 rounded-3xl px-10 py-6'>agent</button></h1>
-            <div className='flex items-center justify-center mt-20'><button className='text-gray-500 bg-white rounded-2xl px-10 h-24 w-80 text-3xl font-bold uppercase'><a href="/agent">Find an agent</a></button></div>
-            <div className='flex'><div className=' mt-20 ml-40'><h3 className='text-5xl font-bold'>Why sell with <button className='text-gray-500 bg-green-300 rounded-2xl h-16 w-56'>agents?</button></h3>
-            <ul className='text-2xl'>
-                <li className='flex py-4'><FaCheckToSlot /> &nbsp;  &nbsp; Potential for bidding wars</li>
-                <li className='flex py-4'><FaCheckToSlot />&nbsp;  &nbsp;Access to local market expertise</li>
-                <li className='flex py-4'><FaCheckToSlot />&nbsp;  &nbsp;Get help negotiating and reviewing offers</li>
-                <li className='flex py-4'><FaCheckToSlot />&nbsp;  &nbsp;Navigate with a dedicated guide</li>
+        <section className='py-20'>
+            <h1 className='text-7xl font-bold text-center px-96 tracking-tighter'>Sell traditionally with an <button className='bg-red-400 rounded-3xl px-4 py-6 tracking-tighter'>agent</button></h1>
+            <div className='flex items-center justify-center mt-20 tracking-tighter'><button className='text-gray-500 bg-white rounded-2xl px-10 h-16 w-80 text-3xl font-bold uppercase tracking-tighter'><a href="/agent">Find an agent</a></button></div>
+            <div className='flex'>
+              <div className=' mt-10 ml-40'>
+            <h3 className='text-3xl font-bold'>Why sell with</h3>
+            <button className='text-gray-500 bg-green-300 rounded-2xl h-12 w-36 text-3xl font-bold'>agents?</button>
+ 
+            <ul className='text-lg mt-4'>
+                <li className='flex py-1'><FaCheckToSlot /> &nbsp;  &nbsp; Potential for bidding wars</li>
+                <li className='flex py-1'><FaCheckToSlot />&nbsp;  &nbsp;Access to local market expertise</li>
+                <li className='flex py-1'><FaCheckToSlot />&nbsp;  &nbsp;Get help negotiating and reviewing offers</li>
+                <li className='flex py-1'><FaCheckToSlot />&nbsp;  &nbsp;Navigate with a dedicated guide</li>
             </ul>
             </div>
             <div className='flex items-center justify-end'>
             <img
                 src="/sell_right.png"
-                className="px-96 ml-80 h-fit w-fit"
+                className="ml-20 mt-6"
                 alt="Home"
+                style={{ width: "500px" }}
       
     />
     </div>

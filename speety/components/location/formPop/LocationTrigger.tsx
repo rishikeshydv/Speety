@@ -28,7 +28,7 @@ const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,clicked
 </button>
 {/* Popover for video-call */}
     </PopoverTrigger>
-    <PopoverContent align="end" className="flex-col border-0 bg-gray-400 rounded-3xl p-10" side="top">
+    <PopoverContent align="end" className="flex-col border-0 bg-gray-400 rounded-3xl p-6" side="top">
       <LocationPopOver clickedUser={clickedUser}/>
     </PopoverContent>
   </Popover>

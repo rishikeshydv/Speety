@@ -28,8 +28,10 @@ export default async function PushNotifications(senderEmail:string,receiverEmail
       [`${_uniqueId}`]: {
         age:"new",
         from:senderEmail,
-        status:"PENDING",
-        date:date
+        status:"pending",
+        date:date,
+        type:"chat",
+        id:_uniqueId
       }
       });
   }
@@ -39,8 +41,10 @@ export default async function PushNotifications(senderEmail:string,receiverEmail
     [`${_uniqueId}`]: {
       age:"new",
       from:senderEmail,
-      status:"PENDING",
-      date:date
+      status:"pending",
+      date:date,
+      type:"chat",
+      id:_uniqueId
     }
   });
   }

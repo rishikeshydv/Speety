@@ -60,6 +60,7 @@ export default function Chat() {
   const [currentTime, setCurrentTime] = useState(moment());
   const [sentTime, setSentTime] = useState("");
   const [receivedTime, setReceivedTime] = useState("");
+  const [lastMsg,setLastMsg] = useState(""); //will be using this to maintain the last message in the userlist
   //video call
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -451,10 +452,11 @@ export default function Chat() {
     <div className={`flex h-screen bg-white ${poppins.className}`}>
       <LeftmostBar userEmail={user?.email as string}/>
       <main className="flex-1">
-        <div className="flex h-[calc(103%-64px)]">
-          <div className="flex flex-col h-full">
+        <div className="flex h-[calc(104%-59px)]">
+
+        <div className="flex flex-col h-screen">
       <TopLeft />
-      <UserList onUserClick={userOnClick} /> 
+      <UserList onUserClick={userOnClick} lastMsg={lastMsg}/> 
       </div>
       {show &&
         <VideoPopUp
@@ -468,7 +470,7 @@ export default function Chat() {
 
       }
  {clicked ? (
-  <div className="flex-1 px-5 py-4">
+  <div className="flex-1 px-2">
         <TopRight
           callerRef={currentUserVideoRef}
           receiverRef={remoteVideoRef}
@@ -482,16 +484,16 @@ export default function Chat() {
         />
     <ChatList
         sentMessage={sentMessage}
-        sentTime={sentTime}
         receivedMessage={receivedMessage}
-        receivedTime={receivedTime}
         senderEmail={user?.email as string}
         receiverEmail={clicked || ""}
-        sendMessageFunction={send} 
+        sendMessageFunction={send}
+        lastMsg={lastMsg}
+        setLastMsg={setLastMsg} 
       />
   </div>
   ) : (
-    <div className="flex-1 px-5 py-4">
+    <div className="flex-1 px-2">
     <DummyTopRight />
       <DummyChatList />
 

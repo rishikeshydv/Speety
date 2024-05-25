@@ -129,141 +129,141 @@ export default function Property() {
          <Header />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-40 py-6">
         <div className="order-2 md:order-1">
-          <div className="grid gap-6">
+          <div className="grid gap-2">
             <div>
-              <h1 className="text-6xl font-bold tracking-tighter">Property Description</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-lg mt-4 font-medium"> · {property?.beds} beds · {property?.baths} baths · {property?.sqft} sqft</p>
+              <h1 className="text-4xl font-bold tracking-tighter">Property Description</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-md mt-4 font-medium"> · {property?.beds} beds · {property?.baths} baths · {property?.sqft} sqft</p>
             </div>
             <div className="grid gap-4">
               <div className="flex items-center gap-4">
                 <LocateIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">{property?.address}</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">{property?.city}, {property?.state}</p>
+                  <p className="font-medium text-md">{property?.address}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{property?.city}, {property?.state}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <CalendarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">Listed on {property?.date}</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">Days on Zillow: {Math.floor((Date.now() - (new Date(property?.date as any) as any)) / (1000*60*60*24))}</p>
+                  <p className="font-medium text-md">Listed on {property?.date}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Days on Zillow: {Math.floor((Date.now() - (new Date(property?.date as any) as any)) / (1000*60*60*24))}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <TagIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <p className="font-medium text-xl">${property?.price}</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-md">Estimated mortgage: ${property?.estimatedMortgage}/mo</p>
+                  <p className="font-medium text-md">${property?.price}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Estimated mortgage: ${property?.estimatedMortgage}/mo</p>
                 </div>
               </div>
             </div>
             <Separator />
-            <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">About this home</h2>
+            <div className="grid gap-4 mt-4">
+              <h2 className="text-3xl font-bold tracking-tighter">About this home</h2>
               <div className="prose max-w-none">
-                <p className="text-lg">
+                <p className="text-sm">
                   {property?.description}
                 </p>
               </div>
             </div>
             <Separator />
-            <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">Key details</h2>
+            <div className="grid gap-4 mt-4">
+              <h2 className="text-3xl font-bold tracking-tighter">Key details</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <BedIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.beds} beds</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Bedrooms</p>
+                    <p className="font-medium text-md">{property?.beds} beds</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Bedrooms</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <BathIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.baths} baths</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Bathrooms</p>
+                    <p className="font-medium text-md">{property?.baths} baths</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Bathrooms</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <RulerIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.sqft} sqft</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Bedroom</p>
+                    <p className="font-medium text-md">{property?.sqft} sqft</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Bedroom</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <ListIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.lotSize} acres</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Lot size</p>
+                    <p className="font-medium text-md">{property?.lotSize} acres</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Lot size</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <CalendarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.yearBuilt}</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Year built</p>
+                    <p className="font-medium text-md">{property?.yearBuilt}</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Year built</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <CarIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   <div>
-                    <p className="font-medium text-xl">{property?.parkingSpace} car(s)</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-md">Garage</p>
+                    <p className="font-medium text-md">{property?.parkingSpace} car(s)</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Garage</p>
                   </div>
                 </div>
               </div>
             </div>
             <Separator />
-            <div className="grid gap-4">
-              <h2 className="text-4xl font-bold tracking-tighter">Amenities</h2>
+            <div className="grid gap-4 mt-4">
+              <h2 className="text-3xl font-bold tracking-tighter">Amenities</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <WifiIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Wifi</p>
+                  <p className="text-md font-medium">Wifi</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <FlameIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Fireplace</p>
+                  <p className="text-md font-medium">Fireplace</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <LoaderIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Washer</p>
+                  <p className="text-md font-medium">Washer</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <RefrigeratorIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Dryer</p>
+                  <p className="text-md font-medium">Dryer</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <WalletIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Pool</p>
+                  <p className="text-md font-medium">Pool</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <BuildingIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <p className="text-lg font-medium">Balcony</p>
+                  <p className="text-md font-medium">Balcony</p>
                 </div>
               </div>
             </div>
           </div>
           <Separator className="mt-5"/>
-          <div>
-            <p className="my-2 font-bold text-4xl tracking-tighter">Listed by:</p>
+          <div className="mt-4">
+            <p className="my-2 font-bold text-3xl tracking-tighter">Listed by:</p>
       <div className="container p-6">
         <div className="space-y-6">
           <div className="flex items-start justify-start gap-40">
             <div className="flex items-start justify-start space-x-4" onClick={handleRoute}>
-              <Avatar className="h-12 w-12">
+              <Avatar className="h-8 w-8">
                 <AvatarImage alt="Agent" src={profileImage} />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div className="space-y-1">
-                <div className="text-lg font-semibold">{name}</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">Real Estate Agent</div>
+                <div className="text-md font-semibold">{name}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Real Estate Agent</div>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <Button
-                className={`inline-flex items-center rounded-md ${buttonColor} px-3 py-2 text-sm font-medium text-gray-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:${buttonColor} dark:text-gray-900 dark:focus-visible:ring-gray-300`}
+                className={`inline-flex items-center rounded-md ${buttonColor} px-3 py-2 text-xs font-medium text-gray-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:${buttonColor} dark:text-gray-900 dark:focus-visible:ring-gray-300`}
                 onClick={()=>{
                   setButtonText("Requested");
                   setButtonColor("bg-orange-400");
@@ -274,7 +274,7 @@ export default function Property() {
                 {buttonText}
               </Button>
               <Button
-                className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
+                className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-xs font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
               >
                 <MailIcon className="mr-2 h-4 w-4" />
                 Email
@@ -284,8 +284,8 @@ export default function Property() {
             </div>
           </div>
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold">About the Agent</h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <h3 className="text-xl font-bold">About the Agent</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-md">
               {description}
             </p>
           </div>
@@ -354,7 +354,7 @@ export default function Property() {
       </div>
 
       <div className="mt-8 px-40">
-        <h2 className="text-4xl font-bold tracking-tighter">Similar Homes</h2>
+        <h2 className="text-3xl font-bold tracking-tighter">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>
             <img

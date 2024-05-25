@@ -16,7 +16,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import moment from "moment"; //use moment.js to get time/date in a good format
-
+import LocationRequestPopup from '@/components/location/formPop/LocationRequestPopup';
+import { MdAddLocationAlt } from "react-icons/md";
+import { set } from 'date-fns';
 interface LocationData {
   lat: number;
   lng: number;
@@ -24,6 +26,10 @@ interface LocationData {
 const LocationMap = () => {
   const [user] = useAuthState(auth);
   const [id, setId] = useState<string>("");
+
+  //handling pop up and location sharing permission
+  const [shareAllow, setShareAllow] = useState(false);
+  const [popUpOpen, setPopUpOpen] = useState(false);  
 
   useEffect(() => {
     if (user) {
@@ -245,19 +251,27 @@ const LocationMap = () => {
   
 
 useEffect(() => {
-  const intervalId = setInterval(() => {
-        if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(function (position) {
-            const newLocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-              send(newLocation); // Send the new location to the other user
-          });
-        }
-      },1000);
-    return () => clearInterval(intervalId); // Cleanup
-  });
+  if (shareAllow){
+    const intervalId = setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(function (position) {
+          const newLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          send(newLocation); // Send the new location to the other user
+        });
+      }
+      },3000);
+    return () => {
+      clearInterval(intervalId);
+    } 
+  }
+  else{
+    console.log("Location Sharing Permission Denied. Please Retry Request.")
+  }
+// Cleanup
+  },[shareAllow]);
 
 
   useEffect(() => {
@@ -306,6 +320,15 @@ useEffect(() => {
             }
         }
 
+          //function to send the message
+          const locationRequest = () => {
+              if (connection && connection.open ){
+                // connection.send(message);
+                  connection.send("location-request");
+                  console.log('Location Request sent');
+              }
+          }
+
        //     useEffect to make a peer connection
     useEffect(() => {
       if (!myPeer && id) {
@@ -322,7 +345,7 @@ useEffect(() => {
         });
 
 
-          const conn_ = peer.connect(email.slice(0, email.indexOf("@")));
+        const conn_ = peer.connect(email.slice(0, email.indexOf("@")));
          // The peer that initiates the connection needs to handle data from the peer it connects to.
           conn_.on('open', () => {
             console.log('Connection to receiver established');
@@ -330,14 +353,18 @@ useEffect(() => {
           });
           conn_.on('data', (data:any) => {
             console.log('Data received on receiver:', data);
-            if (data) {
-              if (markerReceiver.current) {
-                markerReceiver.current.setPosition(data);
-              }
-              position2.current = data;
-            } else {
-              console.log('Nothing received on Receiver End');
+            if (data === "location-request") {
+              setPopUpOpen(true);
             }
+            else{
+                if ( data && markerReceiver.current) {
+                  markerReceiver.current.setPosition(data);
+                  position2.current = data;
+                }
+               else {
+                console.log('Nothing received on Receiver End');
+              }
+            } 
           });
           
 
@@ -346,7 +373,10 @@ useEffect(() => {
           //The peer that receives a connection request needs to handle data from the initiating peer.
           conn.on("data", (data: any) => {
             console.log('Data received on receiver:', data);
-
+            if (data === "location-request") {
+              setPopUpOpen(true);
+            }
+            else{
               if (data && markerReceiver.current) {
                 markerReceiver.current.setPosition(data);
                 position2.current = data;
@@ -354,8 +384,7 @@ useEffect(() => {
               else{
                 console.log('No data received');
               }
-            
-            
+            }
           });
         });
 
@@ -374,49 +403,61 @@ useEffect(() => {
 
         <div className={`flex flex-col w-full h-screen items-center ${poppins.className} bg-gray-200`}>
 
-      <div className="text-center mt-20 py-8 px-16 rounded-full shadow-2xl bg-slate-400">
-        <h1 className="text-7xl font-bold tracking-tighter">Location Tracker</h1>
+{
+        popUpOpen && <LocationRequestPopup email={email} shareAllow={shareAllow} setShareAllow={setShareAllow} popUpOpen={popUpOpen} setPopUpOpen={setPopUpOpen}/>
+      }
+
+      <div className="text-center mt-10 py-4 px-10 rounded-full shadow-2xl bg-slate-400">
+        <h1 className="text-3xl font-bold tracking-tighter">Location Tracker</h1>
         <p className="text-sm text-gray-500 leading-loose md:text-base dark:text-gray-400">
           Accessible. Customizable. Open Source.
         </p>
       </div>
-      <div className='flex gap-10 py-10'>
-        <div className='flex flex-col gap-16 items-center'>
-      <Button className="flex items-center justify-center h-16 w-40 mt-20 text-lg font-bold rounded-3xl bg-slate-400/50" variant="outline"
+      <div className='flex gap-6 py-6'>
+        <div className='flex flex-col gap-6 items-center'>
+          <div className='flex gap-6'>
+      <Button className="flex items-center justify-center h-10 w-32 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50" variant="outline"
       onClick={handleRefresh}
       >
-            <img src="/pin1.png" className='mr-2 h-7 w-7' alt="pin" />
+            <img src="/pin1.png" className='mr-2 h-4 w-4' alt="pin" />
             Locate Me
           </Button>
+    <Button className="flex items-center justify-center h-10 w-60 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50" variant="outline"
+      onClick={()=>locationRequest()}
+      >
+            <MdAddLocationAlt className='w-6 h-6 mr-2'/>
+            Request Location Access
+          </Button>
+          </div>
       {/* Destination Form Start*/}
-<div className="mx-auto max-w-lg space-y-4 flex flex-col items-center justify-center bg-gray-100 px-20 rounded-3xl" style={{height:500}}>
-  <h1 className="text-2xl font-semibold">Enter Destination Location</h1>
-      <div className="space-y-2">
+<div className="mx-auto max-w-lg space-y-2 flex flex-col items-center justify-center bg-gray-100 px-6 rounded-3xl" style={{height:400}}>
+  <h1 className="text-lg font-semibold">Enter Destination Location</h1>
+      <div className="">
         <div className="space-y-2">
-          <Label htmlFor="street-address" className="text-xl">Street Address</Label>
-          <Input id="street-address" placeholder="123 Main St" required  className="text-xl" value={streetAddress} onChange={(e)=>{setStreetAddress(e.target.value)}}/>
+          <Label htmlFor="street-address" className="text-sm">Street Address</Label>
+          <Input id="street-address" placeholder="123 Main St" required  className="text-sm" value={streetAddress} onChange={(e)=>{setStreetAddress(e.target.value)}}/>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="city" className="text-xl">City</Label>
-            <Input id="city" placeholder="City" required  className="text-xl" value={city} onChange={(e)=>{setCity(e.target.value)}}/>
+            <Label htmlFor="city" className="text-sm">City</Label>
+            <Input id="city" placeholder="City" required  className="text-sm" value={city} onChange={(e)=>{setCity(e.target.value)}}/>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="state" className="text-xl">State/Province</Label>
-            <Input id="state" placeholder="State" required  className="text-xl" value={state} onChange={(e)=>{setState(e.target.value)}}/>
+            <Label htmlFor="state" className="text-sm">State/Province</Label>
+            <Input id="state" placeholder="State" required  className="text-sm" value={state} onChange={(e)=>{setState(e.target.value)}}/>
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="zip" className="text-xl">Postal/ZIP code</Label>
-          <Input id="zip" placeholder="90210" required  className="text-xl" value={zip} onChange={(e)=>{setZip(e.target.value)}}/>
+          <Label htmlFor="zip" className="text-sm">Postal/ZIP code</Label>
+          <Input id="zip" placeholder="90210" required  className="text-sm" value={zip} onChange={(e)=>{setZip(e.target.value)}}/>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="country" className="text-xl">Country</Label>
-          <Input id="country" placeholder="Country" required  className="text-xl" value={country} onChange={(e)=>{setCountry(e.target.value)}}/>
+          <Label htmlFor="country" className="text-sm">Country</Label>
+          <Input id="country" placeholder="Country" required  className="text-sm" value={country} onChange={(e)=>{setCountry(e.target.value)}}/>
         </div>
         
-        <div className="flex items-center justify-center gap-5">
-    <Button className={`w-32 text-xl mt-4 ${buttonColor}`} type="submit" onClick={(e)=>{
+        <div className="flex items-center justify-center">
+    <Button className={`w-20 text-sm mt-4 ${buttonColor}`} type="submit" onClick={(e)=>{
       joinAddress(e);
       setButtonText("Submitted");
       setButtonColor("bg-green-500");
@@ -432,7 +473,7 @@ useEffect(() => {
 
     {/* Map Start */}
     <div className='bg-white p-6 rounded-3xl'>
-      <div ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: '850px', width:"1600px" }}></div>
+      <div ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: '550px', width:"1000px" }}></div>
       </div>
       </div>
     </div>
@@ -441,26 +482,3 @@ useEffect(() => {
 };
 
 export default LocationMap;
-
-function LocateIcon(props:any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="2" x2="5" y1="12" y2="12" />
-      <line x1="19" x2="22" y1="12" y2="12" />
-      <line x1="12" x2="12" y1="2" y2="5" />
-      <line x1="12" x2="12" y1="19" y2="22" />
-      <circle cx="12" cy="12" r="7" />
-    </svg>
-  )
-}

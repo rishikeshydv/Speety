@@ -7,11 +7,13 @@ import { db,auth } from "@/firebase/config";
 import { getConnectedUsers } from "@/queries/chatSystem";
 import { Loading } from "@/app/Loading";
 
-interface User {
-  name: string;
-  role: string;
+interface UserListProps {
+  onUserClick:(clickedUsername:string) => void;
+  lastMsg: string;
 }
-export default function UserList({ onUserClick }: { onUserClick: (clickedUsername:string) => void }) {
+
+
+const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg}) => {
   const [user] = useAuthState(auth);
   const [usersConnected, setUsersConnected] = useState<string[][]>([]);
   
@@ -36,7 +38,7 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
 
 
   return (
-  <div className="w-full h-full rounded-2xl shadow-xs mt-2 bg-gray-200">
+  <div className="w-76 h-full rounded-2xl shadow-xs mb-3 mt-1 bg-gray-200">
   <div className="flex flex-col items-center">
   {usersConnected.length > 0 ? (
   usersConnected.map(([_email,_name,_profilePic], index) => (
@@ -45,7 +47,7 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
       imgUrl={_profilePic} // replace with default avatar URL
       userName={_name}
       email={_email}
-      lastMsg="Hello"
+      lastMsg={lastMsg}
       lastMsgTime="Just now" // replace with actual last message time
       newMsg={false}
       onUserClick={onUserClick}
@@ -58,3 +60,5 @@ export default function UserList({ onUserClick }: { onUserClick: (clickedUsernam
 </div>
   );
 }
+
+export default UserList;

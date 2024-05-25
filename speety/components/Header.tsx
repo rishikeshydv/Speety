@@ -5,17 +5,15 @@ import poppins from "@/font/font";
 import { auth} from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from 'next/navigation';
-import { AiOutlineLogout } from "react-icons/ai";
 import logout from '@/firebase/auth/logout';
 
 import RetrieveNotifications from '@/queries/Notifications/RetrieveNotifications';
 import CheckNotifications from '@/queries/Notifications/CheckNotifications';
-import NotificationProp from '../services/header/NotificationProp';
-import NotificationSettle from '@/queries/Notifications/NotificationSettle';
-
-import MeetingProp from '@/services/header/MeetingProp';
+import NewNotificationProp from '../services/header/NewNotificationProp';
+import NewMeetingProp from '@/services/header/NewMeetingProp';
+import AcceptedMeetingProp from '@/services/header/AcceptedMeetingProp';
+import CancelledMeetingProp from '@/services/header/CancelledMeetingProp';
 import CheckMeetings from '@/queries/Meetings/CheckMeetings';
-import MeetingSettle from '@/queries/Meetings/MeetingSettle';
 import getUserProfile from '@/queries/getUserProfile';
 import {
   DropdownMenu,
@@ -26,10 +24,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import updateStatus from "@/queries/changeLoginStatus";
-import { set } from 'firebase/database';
-
-
-
+import NewReviewNotificationProp from '@/services/header/NewReviewNotificationProp';
+import OldReviewNotificationProp from '@/services/header/OldReviewNotificationProp';
+import RetrieveMeetings from '@/queries/Meetings/RetrieveMeetings';
 
 
 export default function Header() {
@@ -45,8 +42,9 @@ export default function Header() {
   }
   )}
   const [notificationIcon, setNotificationIcon] = useState("/notify.png");
-  const [notificationSize, setNotificationSize] = useState('w-11 h-11');
+  const [notificationSize, setNotificationSize] = useState('w-8 h-8');
   const [meetingIcon, setMeetingIcon] = useState("/calendar-icon.webp");
+  const [meetingIconSize, setMeetingIconSize] = useState('w-8 h-8');
   const [notificationList, setNotificationList] = useState<any>([]);
   const [meetingList, setMeetingList] = useState<any>([]);
   const [userName, setUserName] = useState("");
@@ -58,20 +56,28 @@ export default function Header() {
         const notificationsExist = await CheckNotifications(user?.email as string);
         if (notificationsExist) {
           setNotificationIcon("/notify_on.webp");
-          setNotificationSize('w-16 h-16');
+          setNotificationSize('w-12 h-12');
         }
         //check meetings
-        const meetingsExist = await CheckMeetings(user?.email as string);
+        if (user && user.email){
+        const meetingsExist = await CheckMeetings(user.email as string);
         if (meetingsExist) {
           setMeetingIcon("/active_meetings.png");
+          setMeetingIconSize('w-12 h-12');
         }
+      }
         //retrieve notifications
         const notifications = await RetrieveNotifications(user?.email as string);
         setNotificationList(notifications);
 
         //retrieve meetings
-        const meeting = await RetrieveNotifications(user?.email as string);
-        setMeetingList(meeting);
+        if (user && user.email){
+          const meeting = await RetrieveMeetings(user.email);
+          setMeetingList(meeting);
+        }
+        else{
+          return;
+        }
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -80,16 +86,17 @@ export default function Header() {
     fetchData();
 
     //retrieveing username and profile picture
-    if (!user) return;
-    getUserProfile(user?.email as string).then((userProfile: any) => {
-      setUserName(userProfile.name);
-      setUserPic(userProfile.profilePic);
-    });
+    if (user && user.email){
+      getUserProfile(user?.email as string).then((userProfile: any) => {
+        setUserName(userProfile.name);
+        setUserPic(userProfile.profilePic);
+      });
+    }
     // Cleanup function if needed
     return () => {
       // Any cleanup code here if needed
     };
-  }, [user?.email]);
+  }, [user]);
 
 
 
@@ -97,27 +104,40 @@ export default function Header() {
     <div className={poppins.className}>
       <div className='flex items-center justify-center p-4'>
         <div className='flex items-center justify-center'>
-            <img src="/speety_logo.png" alt="logo"/>
+            <img src="/speety_logo.png" alt="logo" style={{width:300}}/>
         </div>
         {user && (
-          <div className='absolute flex items-center justify-between text-xl shadow-sm px-4 top-5 right-5'>
-             <button onClick={dashboardRedirect} className='flex font-bold  text-blue-300 top-8 right-80 '>
-             <img src={userPic} alt="pp" className='w-12 h-12 bg-gray-300 p-1 rounded-full'/>
-              <p className='mt-3 ml-2 hover:text-2xl hover:underline'>{userName}</p>
+          <div className='absolute flex items-center justify-between shadow-sm px-4 top-1 right-2'>
+             <button onClick={dashboardRedirect} className='flex font-bold  text-blue-300 right-80 '>
+             <img src={userPic} alt="pp" className='w-8 h-8 bg-gray-300 p-1 rounded-full'/>
+              <p className='mt-2 ml-2 text-sm hover:text-md hover:underline'>{userName}</p>
               </button>
-             <button onClick={()=>router.push('/chat')} className='ml-2'><img src="/speech-balloon.png" className='w-16 h-16 right-52'/></button>
+             <button onClick={()=>router.push('/chat')} className='ml-2'><img src="/speech-balloon.png" className='w-12 h-12 right-52'/></button>
 
           {/* For Notification */}
             <DropdownMenu>
             <DropdownMenuTrigger>
-              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className={`${notificationSize} right-32 mt-1`}/>
+              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className={`${notificationSize} right-40 mt-1`}/>
               </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='bg-gray-100'>
+              <DropdownMenuContent className=''>
     <DropdownMenuSeparator />
     {notificationList.map((notification: any, index: number) => (
-      <DropdownMenuItem key={index} onClick={()=>{NotificationSettle(notification.id,"OLD",notification.type,user?.email as string,notification.from,"completed",notification.date)}}>
-        <NotificationProp from={notification.from} date={notification.date}/>
+      <DropdownMenuItem className='overflow-scroll' key={index}>
+        {
+notification.type === "chat" && notification.age === "new" ? (
+            <NewNotificationProp id={notification.id} type={notification.type} from={notification.from} date={notification.date} selfName={userName}/>
+          ) 
+          
+          : notification.type === "review" && notification.age === "new" ? 
+           (
+            <NewReviewNotificationProp id={notification.id} type={notification.type} from={notification.from} date={notification.date}/>
+          )
+          : (
+            <OldReviewNotificationProp id={notification.id} type={notification.type} from={notification.from} date={notification.date}/>
+          )
+        }
+        
       </DropdownMenuItem>
     ))}
   </DropdownMenuContent>
@@ -125,32 +145,40 @@ export default function Header() {
 
           {/* For Meetings/Appointments */}
           <DropdownMenu>
-            
             <DropdownMenuTrigger>
-              <button className='ml-2 mt-1'><img src={meetingIcon} className='w-11 h-11 right-52'/></button>
+              <button className='ml-2 mt-1'><img src={meetingIcon} className={`${meetingIconSize} right-52`}/></button>
               </DropdownMenuTrigger>
-
-              <DropdownMenuContent className=''>
+              <DropdownMenuContent className='mr-6'>
     <DropdownMenuSeparator />
     {meetingList.map((meeting: any, index: number) => (
-      <DropdownMenuItem key={index} onClick={()=>{MeetingSettle(meeting.id,user?.email as string,meeting.from,"completed",meeting.date)}}>
-        <MeetingProp from={meeting.from} date={meeting.date}/>
+      <DropdownMenuItem key={index} >
+        {
+        meeting.status === "pending" ? (
+          <NewMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
+        ):
+        meeting.status === "cancelled" ? (
+          <CancelledMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
+        )
+        : (
+          <AcceptedMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
+        )
+        }
+        
       </DropdownMenuItem>
     ))}
   </DropdownMenuContent>
           </DropdownMenu>
-
-             <button onClick={logoutUser} className='ml-4'><img src="/logout.webp" className="w-10 h-10 right-10"/></button>
+             <button onClick={logoutUser} className='ml-4'><img src="/logout.webp" className="w-6 h-6 right-10"/></button>
           </div>
 )}
 </div>
-        <div className='w-screen h-20 bg-gray-400'>
+        <div className='w-screen h-12 bg-gray-400'>
             <ul className='font-bold flex items-center justify-center'>
-                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5'><a href='/buy'>BUY</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/rent'>RENT</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/sell'>SELL</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/agent'>AGENT</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-3xl mt-5 ml-16'><a href='/contact'>HELP</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xl mt-2'><a href='/buy'>BUY</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/rent'>RENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/sell'>SELL</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/agent'>AGENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/contact'>HELP</a></li>
             </ul>
         </div>
     </div>
