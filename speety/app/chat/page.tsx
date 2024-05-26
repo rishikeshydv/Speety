@@ -19,7 +19,7 @@ import { Locator } from "@/services/location/currentLocation";
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
 import { set } from "firebase/database";
-import VideoPopUp from "@/components/popups/VideoPopUp";
+import VideoPopUp from "@/components/video/VideoPopUp";
 import { get } from "http";
 
 

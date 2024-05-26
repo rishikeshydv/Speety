@@ -6,7 +6,7 @@
 "use client";
 import React, {useState, useEffect} from "react"
 import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
-import VideoEnded from "../popups/VideoEnded";
+import VideoEnded from "./VideoEnded";
 
 interface PopOverComponentProps {
   src: string;

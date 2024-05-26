@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 //imports for video call
 import PopoverTriggerComponent from "@/components/video/PopOverTriggerComponent";
-import LocationTrigger from "../location/formPop/LocationTrigger";
+import LocationTrigger from "../location/LocationTrigger";
 
 //imports for calendar
 import {
