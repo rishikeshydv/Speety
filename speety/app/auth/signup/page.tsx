@@ -284,7 +284,7 @@ export default function SignupPage() {
                     <MdCamera className="h-7 w-7 mb-1 mr-2" />
                   </PopoverTrigger>
                   <PopoverContent
-                    style={{ width: 600, height: 550 }}
+                    style={{ width: 400, height: 250 }}
                     className="mr-10 mt-6 bg-gray-300 rounded-3xl"
                   >
                      {showCamera ? (
@@ -293,20 +293,21 @@ export default function SignupPage() {
                       audio={false}
                       ref={webcamRef}
                       screenshotFormat="image/jpeg"
-                      width={600}
-                      height={450}
+                      width={400}
+                      height={200}
                       className="rounded-3xl"
                     />
-                    <button onClick={capturePhoto} className="bg-gray-400 p-6 rounded-full"><MdCamera className="h-10 w-10"/></button>
+                    <button onClick={capturePhoto} className="bg-gray-400 p-2 rounded-full">
+                      <MdCamera className="h-8 w-8"/></button>
                       </div>
 
                     ):(
                       <div className="flex flex-col items-center justify-center gap-2">
                         <img src={imgSrc as string} alt="Captured Image" className="rounded-3xl"/>
                         <div className="flex gap-6">
-                        <button onClick={confirmPhoto} className="bg-gray-100 p-6 rounded-3xl font-bold text-xl"><img className="w-10 h-10" src="/confirm.png" alt="confirm" /></button>
+                        <button onClick={confirmPhoto} className="bg-gray-100 p-2 rounded-3xl font-bold text-xl"><img className="w-8 h-8" src="/confirm.png" alt="confirm" /></button>
              
-                        <button onClick={retakePhoto} className="bg-gray-100 p-6 rounded-3xl font-bold text-xl"><img className="w-10 h-10" src="/retake.webp" alt="retake" /></button>
+                        <button onClick={retakePhoto} className="bg-gray-100 p-2 rounded-3xl font-bold text-xl"><img className="w-8 h-8" src="/retake.webp" alt="retake" /></button>
                         </div>
                       </div>
                     
