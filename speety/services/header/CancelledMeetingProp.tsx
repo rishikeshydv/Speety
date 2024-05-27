@@ -10,7 +10,9 @@ import { useState,useEffect } from "react"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
-
+import DeleteMeetings from "@/queries/Meetings/DeleteMeetings";
+import { auth} from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
 interface MeetingProps {
 from:string
 date:string
@@ -19,7 +21,7 @@ id:string
 
 const CancelledMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
   const router = useRouter();
-
+  const [user] = useAuthState(auth);
   //retrieve profilePic and name of the user
   const [userProfile, setUserProfile] = useState<{ name: string; profilePic: string } | null>(null);
   useEffect(() => {
@@ -31,7 +33,7 @@ const CancelledMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
     fetchUserProfile();
   }, [from]);
     return (
-      <div className="group flex flex-col gap-2 border bg-gray-100 border-gray-200 rounded-lg dark:border-gray-800">
+      <div className="group flex flex-col gap-2 w-full border bg-gray-100 border-gray-200 rounded-lg dark:border-gray-800">
         {userProfile ? (
 
 <div className="flex flex-1 flex-row items-center p-2 gap-2">
@@ -45,8 +47,8 @@ const CancelledMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
 </div>
 <div className="ml-auto text-xs text-gray-500 dark:text-gray-400">{date}</div>
 <div className="ml-2 flex gap-2">
-  <Button size="sm" variant="outline" className="text-xs bg-red-400" onClick={()=>router.push("/chat")}>
-    Proceed
+  <Button size="sm" variant="outline" className="text-xs bg-red-400" onClick={()=>DeleteMeetings(id,user?.email as string)}>
+    Ignore
   </Button>
 </div>
 </div>)

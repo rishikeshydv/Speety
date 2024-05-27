@@ -211,23 +211,32 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
     getPresentListings();
     getSoldListings();
     getAgentProfileImage();
+    getAgentData();
     if (user){
       checkRequestStatus(user.email as string,emailParams);
       checkConnection(user.email as string,emailParams);
     }
-    getAgentData().then(async() => {
+  }, [user, emailParams]);
+  
+
+
+  useEffect(() => {
+    const appendProfilePics = async () => {
+      if (!reviews || Object.keys(reviews).length === 0) {
+        return;
+      }
       const updatedReviews = { ...reviews };
       for (const key of Object.keys(reviews)) {
-        const reviewEmail_ = reviews[key][0];
-        const retrievedProfilePic = await getProfileImage(reviewEmail_);
-        updatedReviews[key] = [...reviews[key], retrievedProfilePic];
+        if (reviews[key].length === 5) {
+          const reviewEmail_ = reviews[key][0];
+          const retrievedProfilePic = await getProfileImage(reviewEmail_);
+          updatedReviews[key].push(retrievedProfilePic);
+        }
       }
       setReviews(updatedReviews);
-    });
-  }, [user]);
-
-
-
+    };
+    appendProfilePics();
+  }, [reviews]);
 
   const [currentTime, setCurrentTime] = useState(moment());
   useEffect(() => {
@@ -242,6 +251,7 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
+
   return (
     <div className={poppins.className}>
         <Header />
@@ -377,7 +387,7 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
           <div className="grid gap-4">
             {
               Object.keys(reviews).map( (key) => {
-                return <ReviewProp key={key} name={reviews[key][1]} stars={parseInt(reviews[key][2])} comment={reviews[key][3]} date={reviews[key][4]} profilePic={reviews[key][-1]} />
+                return <ReviewProp key={key} name={reviews[key][1]} stars={parseInt(reviews[key][2])} comment={reviews[key][3]} date={reviews[key][4]} profilePic={reviews[key][5]} />
               })
             }
           </div>
