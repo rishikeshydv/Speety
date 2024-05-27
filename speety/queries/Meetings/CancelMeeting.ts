@@ -15,22 +15,7 @@ import { db } from "@/firebase/config";
             status:status,
             date:date,
             id:meetingId,
-            age:"old"
+            age:"new"
           }
         });
-
-      //resolves the from side notifications
-      const docRef2 = doc(db, "meetings", senderEmail);
-      const docSnap2 = await getDoc(docRef2);
-      if (docSnap2.exists()) {
-        const data = docSnap2.data();
-        const keys  = Object.keys(data);
-        for (const key of keys) {
-          if(data[key].email === receiverEmail && data[key].date === date){
-          data[key].status = "cancelled";
-          data[key].age = "old";
-          await updateDoc(docRef2, data);
-          } 
-        }
-      }
 }

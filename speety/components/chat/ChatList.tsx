@@ -130,7 +130,7 @@ const [message, setMessage] = useState<string>("");
             messagesExhanged.map((message, index) => {
               if (message.type === "sent" && message.msg !== "") {
                 return (
-                  <div className="flex items-start justify-start" key={index}>
+                  <div className="flex items-start justify-start mt-4" key={index}>
                     <div className="flex justify-start items-start mt-2 w-full h-20 rounded-2xl px-2">
                       <MessageProp1 message={message.msg} msgTime={message.date} profilePic={senderPic}/>
                     </div>
@@ -138,8 +138,8 @@ const [message, setMessage] = useState<string>("");
                 );
               } else if (message.type === "received" && message.msg !== ""){
                 return (
-                  <div className="flex items-start justify-start" key={index}>
-                    <div className="flex justify-end items-start mt-6 w-full h-20 rounded-2xl">
+                  <div className="flex items-start justify-start mt-4" key={index}>
+                    <div className="flex justify-end items-start mt-2 w-full h-20 rounded-2xl">
                       <MessageProp2 message={message.msg} msgTime={message.date} profilePic={receiverPic}/>
                     </div>
                   </div>

@@ -124,9 +124,8 @@ clickedUser={clickedUser}
         setShow(false);
       console.log(datetime?.toString());
       alert("Appointment Scheduled for "+datetime?.toString());
-      //we need to push this meeting to both sender and receiver database
+      //we only push this meeting to the receiver
       PushMeetings(_user?.email as string,clickedUser,datetime?.toString() as string);
-      PushMeetings(clickedUser, _user?.email as string,datetime?.toString() as string);
     }} 
        />
            </LocalizationProvider>

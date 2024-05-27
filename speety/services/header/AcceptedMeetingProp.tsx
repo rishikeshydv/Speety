@@ -31,7 +31,7 @@ const AcceptedMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
     fetchUserProfile();
   }, [from]);
     return (
-      <div className="group flex flex-col gap-2 border bg-gray-100 border-gray-200 rounded-lg dark:border-gray-800">
+      <div className="group flex flex-col gap-2 w-full border bg-gray-100 border-gray-200 rounded-lg dark:border-gray-800">
         {userProfile ? (
 
 <div className="flex flex-1 flex-row items-center p-2 gap-2">

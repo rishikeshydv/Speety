@@ -35,13 +35,10 @@ interface messagesExchanged {
 interface ConnectedHistory {
   [key: string]: {
   name: string;
-  messages: messagesExchanged[];
+  messagesExchanged: messagesExchanged[];
   }
   
 }
-
-//notification.id,"old",notification.type,user?.email as string,notification.from,"completed",notification.date
-
 const NewNotificationProp:React.FC<NotificationProps> = ({id,type,from,date,selfName}) => {
   const [user] = useAuthState(auth);
   console.log(user?.displayName)
@@ -70,7 +67,7 @@ const NewNotificationProp:React.FC<NotificationProps> = ({id,type,from,date,self
     const senderData:ConnectedHistory = {
       [`${receiverEmail.slice(0,receiverEmail.indexOf("."))}`]:{
         name:receiverName,
-        messages:[]
+        messagesExchanged:[]
       }
     }
     const docRef1 = doc(db, "connectedHistory", senderEmail);
@@ -84,9 +81,9 @@ const NewNotificationProp:React.FC<NotificationProps> = ({id,type,from,date,self
 
   //defining an  data object for the receiver connection
       const receiverData:ConnectedHistory = {
-        [`${senderEmail.slice(0,receiverEmail.indexOf("."))}`]:{
+        [`${senderEmail.slice(0,senderEmail.indexOf("."))}`]:{
           name:selfName,
-          messages:[]
+          messagesExchanged:[]
         }
       }
       const docRef2 = doc(db, "connectedHistory", receiverEmail);
@@ -102,7 +99,7 @@ const NewNotificationProp:React.FC<NotificationProps> = ({id,type,from,date,self
 }
 
     return (
-      <div className="group flex flex-col gap-4  border bg-blue-100 border-gray-200 rounded-lg dark:border-gray-800">
+      <div className="group flex flex-col gap-4 w-full border bg-blue-100 border-gray-200 rounded-lg dark:border-gray-800">
       <div className="flex items-start p-4">
         <div className="flex items-start gap-4 text-sm">
           <Avatar>
@@ -115,13 +112,13 @@ const NewNotificationProp:React.FC<NotificationProps> = ({id,type,from,date,self
           </div>
         </div>
         <div className="ml-2 flex gap-2">
-          <Button variant="outline" size="sm" onClick={()=>{
-            addConnection(user?.email as string,from as string);
-            DeleteNotification(id,from as string);
+          <Button variant="outline" size="sm" onClick={async()=>{
+            await addConnection(user?.email as string,from as string);
+            await DeleteNotification(id,user?.email as string);
             router.push(`/chat`);
           }}>Accept</Button>
           <Button variant="ghost" size="sm" onClick={()=>{
-            DeleteNotification(id,from as string);
+            DeleteNotification(id,user?.email as string);
           }}>Decline</Button>
         </div>
       </div>

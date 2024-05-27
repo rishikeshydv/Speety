@@ -99,7 +99,6 @@ export default function Header() {
   }, [user]);
 
 
-
   return (
     <div className={poppins.className}>
       <div className='flex items-center justify-center p-4'>
@@ -150,7 +149,7 @@ notification.type === "chat" && notification.age === "new" ? (
               </DropdownMenuTrigger>
               <DropdownMenuContent className='mr-6'>
     <DropdownMenuSeparator />
-    {meetingList.map((meeting: any, index: number) => (
+    {meetingList &&  meetingList.map((meeting: any, index: number) => (
       <DropdownMenuItem key={index} >
         {
         meeting.status === "pending" ? (
@@ -159,9 +158,11 @@ notification.type === "chat" && notification.age === "new" ? (
         meeting.status === "cancelled" ? (
           <CancelledMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
         )
-        : (
+        : meeting.status === "accepted" ?
+         (
           <AcceptedMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
         )
+        : null
         }
         
       </DropdownMenuItem>

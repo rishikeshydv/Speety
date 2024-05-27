@@ -23,6 +23,11 @@ const ChatListProp: React.FC<ChatList> = ({
   newMsg,
   onUserClick
 }) => {
+
+  if (lastMsg.length > 22) {
+    lastMsg = lastMsg.slice(0, 22) + "...";
+  }
+
   if (newMsg === true) {
     return (
  
@@ -42,7 +47,7 @@ const ChatListProp: React.FC<ChatList> = ({
   } else {
     return (
       
-      <div className="flex items-start justify-start w-full h-16" onClick={()=>onUserClick(email)}>
+      <div className="flex items-start justify-start w-76 truncate h-16" onClick={()=>onUserClick(email)}>
       <Button className="flex items-start justify-start w-full h-16 gap-4 " variant="outline">
         <Avatar className="w-11 h-11 border rounded-full mt-1">
           <AvatarImage alt="@" src={imgUrl} />
@@ -51,7 +56,10 @@ const ChatListProp: React.FC<ChatList> = ({
         <div className="grid text-left mt-1">
           <div className="font-semibold text-lg tracking-tighter">{userName}</div>
           <div className="flex gap-16">
-          <div className="text-xs font-semibold line-clamp-1 text-gray-500"><h3>{lastMsg}</h3></div>
+          <div className="text-xs font-semibold text-gray-500 ">
+            <h3 className="w-24 pr-4">
+           {lastMsg}
+          </h3></div>
         <div className="text-xs line-clamp-1 text-gray-400 tracking-tighter">{lastMsgTime}</div>
           </div>
           

@@ -13,9 +13,8 @@ import MeetingSettle from '@/queries/Meetings/MeetingSettle';
 import CancelMeetings from "@/queries/Meetings/CancelMeeting";
 import { auth} from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from 'next/navigation';
-import { collection,getDoc,doc, updateDoc} from "firebase/firestore"; 
-import { db } from "@/firebase/config";
+import { useRouter } from 'next/navigation'
+import DeleteMeetings from "@/queries/Meetings/DeleteMeetings";
 
 interface MeetingProps {
 from:string
@@ -26,9 +25,6 @@ id:string
 const NewMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
   const [user] = useAuthState(auth);
   const router = useRouter();
-
-
-
   //retrieve profilePic and name of the user
   const [userProfile, setUserProfile] = useState<{ name: string; profilePic: string } | null>(null);
   useEffect(() => {
@@ -40,7 +36,7 @@ const NewMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
     fetchUserProfile();
   }, [from]);
     return (
-      <div className="group flex flex-col gap-2 border bg-blue-100 border-gray-200 rounded-lg dark:border-gray-800">
+      <div className="group flex flex-col w-full gap-2 border bg-blue-100 border-gray-200 rounded-lg dark:border-gray-800">
         {userProfile ? (
 
 <div className="flex flex-1 flex-row items-center p-2 gap-2">
@@ -59,7 +55,10 @@ const NewMeetingProp:React.FC<MeetingProps> = ({from,date,id}) => {
     Accept
   </Button>
   <Button size="sm" variant="outline" className="text-xs"
-  onClick={()=>{CancelMeetings(id,user?.email as string,from,"cancelled",date)}}
+  onClick={()=>{
+    CancelMeetings(id,from,user?.email as string,"cancelled",date);
+    DeleteMeetings(id,user?.email as string);
+  }}
   >
     Decline
   </Button>
