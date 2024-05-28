@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { useState } from "react"
+import AIBot from "../ai-bot/AIBot"
 
 export function Ticket() {
   const [name, setName] = useState('')
@@ -42,6 +43,7 @@ export function Ticket() {
   return (
     <section className="w-full py-12 lg:py-24 bg-gray-200">
       <div className="mx-auto grid max-w-6xl px-4 gap-10 lg:grid-cols-2 lg:px-6 lg:gap-40">
+        <div>
         <div className="space-y-10">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold">Need Help?</h1>
@@ -70,8 +72,13 @@ export function Ticket() {
             </div>
           </div>
         </div>
+        <div className="mt-10 mr-20">
+          <AIBot />
+          </div>
+        </div>
+
         {/* Start of Ticket Form */}
-        <div className="space-y-8 bg-gray-400 p-10 rounded-3xl w-full">
+        <div className="space-y-8 bg-gray-400 p-10 rounded-3xl w-full mt-32" style={{height:650}}>
       <div className="space-y-2">
         <h2 className="text-4xl font-bold">Submit a ticket</h2>
         <p className="text-gray-500 text-lg dark:text-gray-400">

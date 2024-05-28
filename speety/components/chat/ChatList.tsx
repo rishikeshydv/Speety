@@ -171,6 +171,12 @@ const [message, setMessage] = useState<string>("");
           placeholder='Type your message here...'
           value={message}
           onChange={messageFunc}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSendMessage();
+            }
+          }
+          }
           />
         </div>
       </div>
