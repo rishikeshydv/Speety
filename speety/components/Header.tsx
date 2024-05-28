@@ -121,7 +121,7 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className=''>
     <DropdownMenuSeparator />
-    {notificationList.map((notification: any, index: number) => (
+    {notificationList && notificationList.map((notification: any, index: number) => (
       <DropdownMenuItem className='overflow-scroll' key={index}>
         {
 notification.type === "chat" && notification.age === "new" ? (
@@ -149,17 +149,29 @@ notification.type === "chat" && notification.age === "new" ? (
               </DropdownMenuTrigger>
               <DropdownMenuContent className='mr-6'>
     <DropdownMenuSeparator />
-    {meetingList &&  meetingList.map((meeting: any, index: number) => (
+    {/* Requested Meetings */}
+    <div>
+      <h1 className='px-2 text-xs font-bold'>Requests</h1>
+      {meetingList &&  meetingList.map((meeting: any, index: number) => (
       <DropdownMenuItem key={index} >
         {
         meeting.status === "pending" ? (
           <NewMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
-        ):
-        meeting.status === "cancelled" ? (
-          <CancelledMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
         )
-        : meeting.status === "accepted" ?
-         (
+        : null
+        }
+        
+      </DropdownMenuItem>
+    ))}
+    </div>
+
+{/* Upcoming Meetings */}
+    <div>
+      <h1 className='px-2 text-xs font-bold'>Upcoming</h1>
+      {meetingList &&  meetingList.map((meeting: any, index: number) => (
+      <DropdownMenuItem key={index} >
+        {
+        meeting.status === "accepted" && new Date(meeting.date) > new Date() ? (
           <AcceptedMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
         )
         : null
@@ -167,6 +179,39 @@ notification.type === "chat" && notification.age === "new" ? (
         
       </DropdownMenuItem>
     ))}
+    </div>
+
+{/* Completed Meetings */}
+    <div>
+      <h1 className='px-2 text-xs font-bold'>Completed</h1>
+      {meetingList &&  meetingList.map((meeting: any, index: number) => (
+      <DropdownMenuItem key={index} >
+        {
+        meeting.status === "accepted" &&  new Date(meeting.date) < new Date() ? (
+          <AcceptedMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
+        )
+        : null
+        }
+        
+      </DropdownMenuItem>
+    ))}
+    </div>
+
+{/* Cancelled Meetings */}
+    <div>
+      <h1 className='px-2 text-xs font-bold'>Cancelled</h1>
+      {meetingList &&  meetingList.map((meeting: any, index: number) => (
+      <DropdownMenuItem key={index} >
+        {
+        meeting.status === "cancelled" ? (
+          <CancelledMeetingProp from={meeting.email} date={meeting.date} id={meeting.id}/>
+        )
+        : null
+        }
+        
+      </DropdownMenuItem>
+    ))}
+    </div>
   </DropdownMenuContent>
           </DropdownMenu>
              <button onClick={logoutUser} className='ml-4'><img src="/logout.webp" className="w-6 h-6 right-10"/></button>

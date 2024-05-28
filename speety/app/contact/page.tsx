@@ -1,11 +1,11 @@
 "use client"
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import AIBot from '@/components/ai-bot/AIBot';
 import { Ticket } from '@/components/contact/Ticket';
 import poppins from '@/font/font';
 import { set } from 'firebase/database';
 import React from 'react';
-
 export default function Contact() {
   return (
     <div className={poppins.className}>
