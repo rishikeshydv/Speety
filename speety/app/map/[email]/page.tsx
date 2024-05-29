@@ -20,7 +20,6 @@ import FaceDeclinedReceiver from "@/components/face-detect/FaceDeclinedSender";
 import FaceDeclinedSender from "@/components/face-detect/FaceDeclinedReceiver";
 import TimerStartConfirm from "@/components/timer/TimerStartConfirm";
 import ComparingImages from "@/components/face-detect/ComparingImages";
-import { set } from "date-fns";
 
 interface LocationData {
   lat: number;

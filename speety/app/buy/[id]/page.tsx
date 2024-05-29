@@ -18,6 +18,7 @@ import { set } from "firebase/database";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import Link from "next/link"
 import { Button } from "@/components/ui/button";
+import TourUI from "@/components/virtual-tour/TourUI";
 
 interface Property {
   address: string;
@@ -54,6 +55,12 @@ export default function Property() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [profileImage, setProfileImage] = useState("");
+  const [showVirtualTour, setShowVirtualTour] = useState(false);
+  const [fullAddress, setFullAddress] = useState("");
+
+  useEffect(() => {
+  setFullAddress(`${property?.address}, ${property?.city}, ${property?.state}, ${property?.zip}`);
+  }, [property]);
 
   const router = useRouter();
 
@@ -128,6 +135,11 @@ export default function Property() {
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-40 py-6">
+        {
+          showVirtualTour ? (
+            <TourUI propertyAddress={fullAddress as string} />
+          ) : null
+        }
         <div className="order-2 md:order-1">
           <div className="grid gap-2">
             <div>
@@ -350,6 +362,13 @@ export default function Property() {
               width={300}
             />
           </div>
+          <div className="my-2 flex items-end justify-end">
+          <Button onClick={()=>{
+            setShowVirtualTour(true);
+          }}>
+          Virtual Tour
+        </Button>
+        </div> 
         </div>
       </div>
 
