@@ -31,7 +31,7 @@ const ChatListProp: React.FC<ChatList> = ({
   if (newMsg === true) {
     return (
  
-<div className="flex items-start justify-start h-16 " onClick={()=>onUserClick(email)}>
+<div className="flex items-start justify-start h-16 w-full" onClick={()=>onUserClick(email)}>
   <Button className="flex items-start justify-start w-full h-16 bg-blue-100 " variant="outline">
     <Avatar className="w-11 h-11 p-0.5 border rounded-full mt-1">
       <AvatarImage alt="" src={imgUrl} />

@@ -8,15 +8,20 @@ import { Button } from "@/components/ui/button";
 import {
   collection,
   getDoc,
-  doc
+  doc,
+  updateDoc
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { send } from "process";
+import NewProp1 from "@/services/chat/NewProp1";
+import NewProp2 from "@/services/chat/NewProp2";
 
 interface eachMessage {
       type: string;
       msg: string;
       date: string;
+      status: string;
+      messageIndex: number;
 }
 
 interface ChatListProps {
@@ -27,14 +32,31 @@ interface ChatListProps {
   sendMessageFunction:(textMessage:string)=>void;
   lastMsg: string;
   setLastMsg: React.Dispatch<React.SetStateAction<string>>;
+  lastMsgTime: string;
+  setLastMsgTime: React.Dispatch<React.SetStateAction<string>>;
+  messageIndex: number;
+  indexSeen: number;
 } 
 
-const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEmail, receiverEmail,sendMessageFunction, lastMsg, setLastMsg }) => {
+const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEmail, receiverEmail,sendMessageFunction, lastMsg, setLastMsg, lastMsgTime, setLastMsgTime, messageIndex, indexSeen }) => {
   //write a logic to retrieve the chatHistory or chatLists of sender and receiver
   //these are retrieved from the database
   var [messagesExhanged,setMessagesExhanged] = useState<eachMessage[]>([]);
   const [senderPic,setSenderPic] = useState<string>("");
   const [receiverPic,setReceiverPic] = useState<string>("");
+
+  const refineTime = (msgTime:string) => 
+  {
+    const time = new Date(msgTime)
+    var hours = time.getHours()
+    const minutes = time.getMinutes()
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    if (hours > 12) {
+        hours = hours - 12;
+    }
+    const updatedTime = `${hours}:${minutes} ${ampm}`
+    return updatedTime;
+  }
 
   const setupSender = async (_userEmail:string) => {
     const userRef = collection(db, "User_Info");
@@ -59,8 +81,6 @@ const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEma
     setupSender(senderEmail);
   }, [senderEmail]);
 
-
-
   useEffect(() => {
     setupReceiver(receiverEmail);
   }, [receiverEmail]);
@@ -70,11 +90,46 @@ const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEma
   useEffect(() => {
     const fetchMsgs = async () => {
       const response = await getChats(senderEmail,receiverEmail);
+      if (response.length === 0) {
+        return;
+      }
       setMessagesExhanged(response);
+      if (response.length > 0) {
      setLastMsg(response[response.length-1].msg);
+     setLastMsgTime(refineTime(response[response.length-1].date));
+      }
     }
     fetchMsgs();
   }, [senderEmail,receiverEmail]);
+
+//every time we load the chats from database, the 'sent' messages exchanges of 'clicked' is changed to seen
+     useEffect(() => {
+      async function updateSeenAsync() {
+        const statusDoc = doc(db,"connectedHistory",receiverEmail) 
+        const statusSnapshot = await getDoc(statusDoc);
+        if (statusSnapshot.exists()) {
+          const statusData = statusSnapshot.data();
+          const keys = Object.keys(statusData);
+          for (const key of keys) {
+            if (key === senderEmail.slice(0, senderEmail.indexOf("."))) {
+              const dummyMessages = statusData[key].messagesExchanged;
+              for (const message of dummyMessages) {
+                  message.status = "seen";
+              }
+              await updateDoc(statusDoc, {
+                [key]: {
+                  messagesExchanged: dummyMessages,
+                  name: statusData[key].name
+                }
+              } as any, {merge: true});
+            }
+          }
+        }
+      }
+      updateSeenAsync();
+
+     },[messagesExhanged, senderEmail, receiverEmail]);
+
 
 
     // Update messagesExchanged when a new message is sent
@@ -82,7 +137,8 @@ const ChatList:React.FC<ChatListProps>=({sentMessage, receivedMessage, senderEma
       if (sentMessage.msg !== "") {
        setMessagesExhanged(prevState => [...prevState, sentMessage]);
         }
-      setLastMsg(sentMessage.msg); 
+      setLastMsg(sentMessage.msg);
+      setLastMsgTime(refineTime(sentMessage.date)); 
     }, [sentMessage]);
 
 // Update messagesExchanged when a new message is received
@@ -130,17 +186,17 @@ const [message, setMessage] = useState<string>("");
             messagesExhanged.map((message, index) => {
               if (message.type === "sent" && message.msg !== "") {
                 return (
-                  <div className="flex items-start justify-start mt-4" key={index}>
-                    <div className="flex justify-start items-start mt-2 w-full h-20 rounded-2xl px-2">
-                      <MessageProp1 message={message.msg} msgTime={message.date} profilePic={senderPic}/>
+                  <div className="flex items-start justify-start mt-1" key={index}>
+                    <div className="flex justify-start items-start mt-1 w-full h-20 rounded-2xl px-2">
+                      <NewProp1 message={message.msg} msgTime={message.date} profilePic={senderPic} status={message.status} messageIndex={message.messageIndex}/>
                     </div>
                   </div>
                 );
               } else if (message.type === "received" && message.msg !== ""){
                 return (
-                  <div className="flex items-start justify-start mt-4" key={index}>
-                    <div className="flex justify-end items-start mt-2 w-full h-20 rounded-2xl">
-                      <MessageProp2 message={message.msg} msgTime={message.date} profilePic={receiverPic}/>
+                  <div className="flex items-start justify-start mt-1" key={index}>
+                    <div className="flex justify-end items-start w-full h-20 rounded-2xl">
+                      <NewProp2 message={message.msg} msgTime={message.date} profilePic={receiverPic} status={message.status} messageIndex={message.messageIndex}/>
                     </div>
                   </div>
                 );

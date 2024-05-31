@@ -10,17 +10,17 @@ export default function Sec2() {
       <Card 
         imageSrc="/hourglass.png"
         title="Realtime Communication"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+        description="Connect instantly with voice, video, or chat."
       />
       <Card 
         imageSrc="/anchor.png"
         title="Dual Location Tracking"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+        description="Track each other in real-time on a shared map."
       />
       <Card 
         imageSrc="/secure.png"
         title="Highly Secure"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+        description="Experience seamless and secure real-time connection, wherever life takes you."
       />
     </div>
 

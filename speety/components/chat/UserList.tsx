@@ -10,10 +10,11 @@ import { Loading } from "@/app/Loading";
 interface UserListProps {
   onUserClick:(clickedUsername:string) => void;
   lastMsg: string;
+  lastMsgTime: string;
 }
 
 
-const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg}) => {
+const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) => {
   const [user] = useAuthState(auth);
   const [usersConnected, setUsersConnected] = useState<string[][]>([]);
   
@@ -48,7 +49,7 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg}) => {
       userName={_name}
       email={_email}
       lastMsg={lastMsg}
-      lastMsgTime="Just now" // replace with actual last message time
+      lastMsgTime={lastMsgTime} // replace with actual last message time
       newMsg={false}
       onUserClick={onUserClick}
     />

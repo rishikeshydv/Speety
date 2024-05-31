@@ -13,13 +13,13 @@ export default function Sec6() {
       <section className="py-20">
         {/* This DIV will be used to write the slogan */}
         <div className="text-center py-2">
-          <h1 className="text-7xl font-bold text-gray-500 mb-10">
+          <h1 className="text-7xl font-bold text-[#16302B] mb-10">
             <span>Get started for </span>
             <button className="py-1 px-4 border border-blue-200 border-opacity-20 bg-green-200 rounded-xl">
               free
             </button>
           </h1>
-          <h2 className="text-3xl text-gray-600">
+          <h2 className="text-xl text-[#84A07C]">
             Start using it for free, and upgrade to premium whenever you want.
           </h2>
 

@@ -11,8 +11,8 @@
   
 }
 
-.verticalBox:hover .title {
-  color:gold; /* Change title color to yellow on hover */
+.verticalBox:hover {
+  background-color:#439A86; /* Change title color to yellow on hover */
 }
 
 .image {

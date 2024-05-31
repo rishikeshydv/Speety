@@ -7,6 +7,8 @@ interface eachMessage {
         type:string;
         msg: string;
         date: string;
+        status: string;
+        messageIndex: number;
 }
 
 
