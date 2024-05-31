@@ -12,17 +12,18 @@ export default function Sec1() {
 
   return (
     <div>
-      <section>
+      <img src="/homepage1.jpg" alt="home-bg" className="aspect-video object-cover object-center w-full"/>
+      <section className="absolute inset-0 ">
         {/* Logo and Get Started Button */}
         <div className="flex flex-row justify-between mt-10 mb-10 mr-9">
           <img
             src="/speety_logo.png"
             alt="Speety Logo"
-            width={250}
-            height={130}
-            className="ml-14"
+            width={160}
+            height={100}
+            className="ml-14 "
           />
-          <button className="bg-black hover:bg-gray-900 text-white px-4 rounded-2xl h-10 flex items-center space-x-2 text-md font-poppins" onClick={loginDirect}>
+          <button className="bg-black hover:bg-gray-900 text-white px-4 rounded-2xl h-14 flex items-center space-x-2 text-lg font-poppins" onClick={loginDirect}>
             <span>Get started</span>
             &nbsp; 
             <AiOutlineDoubleRight />
@@ -31,48 +32,48 @@ export default function Sec1() {
 
         {/* Rolling text, slogan, and get started button */}
         <div className="flex flex-col justify-center items-center py-">
-  <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-lg mb-10">
+  <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#84A07C] text-lg font-semibold tracking-tighter mb-10">
     <Typist>Introducing safety enhanced brokerage ...</Typist>
   </button>
   
   {/* "Selling fast" */}
   <div className="text-8xl font-bold flex items-center mb-10">
-    <span>Selling fast,</span>
+    <span className="text-[#16302B]">Selling fast,</span>
   </div>
-
+  
   {/* "Buying smart" with gradient text */}
   <h1 className="text-8xl font-bold flex items-center mb-10">
-    <span>buying</span>
+    <span className="text-[#16302B]">buying</span>
     &nbsp;
-    <span className="text-transparent bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text">
+    <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
       smart
     </span>
     &nbsp;
     <img
       src="/home.png"
-      width={80}
-      height={40}
-      className="mb-2 ml-5"
+      width={100}
+      height={60}
+      className="ml-5"
       alt="Home"
     />
   </h1>
 
   {/* Buttons for Buy, Sell, Rent */}
   <h1 className="text-black-500 text-xl flex items-center mt-5  mb-10">
-    <button className="py-1 px-2 border border-blue-200 border-opacity-20  bg-violet-100 rounded-xl">
+    <button className="py-1 px-2 border  border-opacity-20 font-semibold tracking-tighter bg-gradient-to-r from-[#90A955] to-[#397367] rounded-xl">
       Buy
     </button>
     &nbsp;, &nbsp;
-    <button className="py-1 px-2 border border-blue-200 border-opacity-20  bg-blue-100 rounded-xl">
+    <button className="py-1 px-2 border border-opacity-20  bg-gradient-to-r from-[#90A955] to-[#397367] rounded-xl font-semibold tracking-tighter">
       Sell
     </button>{" "}
     &nbsp; &amp; &nbsp;
-    <button className="py-1 px-2 border border-blue-200 border-opacity-20  bg-pink-100 rounded-xl">
+    <button className="py-1 px-2 border border-opacity-20  bg-gradient-to-r from-[#90A955] to-[#397367] rounded-xl font-semibold tracking-tighter">
       Rent
     </button>{" "}
     &nbsp; with &nbsp;
-    <button className="py-1 px-2 border border-blue-200 border-opacity-20  bg-gray-200 rounded-xl">
-      Speety
+    <button className="py-1 px-2 bg-gradient-to-r from-[#90A955] to-[#397367] border border-opacity-20  rounded-xl font-semibold tracking-tighter">
+      scail.it
     </button>
     <img
       src="/sparkle.png"
@@ -91,7 +92,7 @@ export default function Sec1() {
   </Button>
 
   {/* No Credit Card Required */}
-  <h2 className="text-gray-500 mb-10">(No Credit Card Required)</h2>
+  <h2 className="text-white mb-10">(No Credit Card Required)</h2>
 </div>
 
       </section>

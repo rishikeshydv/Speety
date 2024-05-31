@@ -4,18 +4,19 @@ import Typist from "react-typist-component";
 export default function Section1() {
   return (
     <div>
-        <section className='py-20 flex flex-col items-center justify-center'>
+      <img src="/sellHome.jpg" alt="alt" className='aspect-video object-cover object-center w-full' style={{height:650}}/>
+        <section className=' flex flex-col items-center justify-center absolute inset-0 mt-28'>
         
   {/* "Selling fast" */}
   <div className="text-7xl tracking-tighter font-bold flex items-center">
-    <span>Selling your home</span>
+    <span className='text-[#16302B]'>Selling your home</span>
   </div>
 
   {/* "Buying smart" with gradient text */}
   <h1 className="text-7xl tracking-tighter font-bold flex items-center mb-10">
-    <span>with</span>
+    <span className='text-[#16302B]'>with</span>
     &nbsp;
-    <span className="text-transparent bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text">
+    <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
       confidence
     </span>
     <img
@@ -26,8 +27,8 @@ export default function Section1() {
       alt="Home"
     />
   </h1>
-        <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-md mb-10">
-    <Typist>Zillow is making it simpler to sell your home and move forward.</Typist>
+        <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#84A07C] text-md mb-10">
+    <Typist>Scail is making it simpler to sell your home and move forward.</Typist>
   </button>
         </section>
     </div>

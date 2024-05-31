@@ -29,6 +29,15 @@ import OldReviewNotificationProp from '@/services/header/OldReviewNotificationPr
 import RetrieveMeetings from '@/queries/Meetings/RetrieveMeetings';
 
 
+//icons
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import { set } from 'date-fns';
+
 export default function Header() {
   const [user] = useAuthState(auth);
   const router = useRouter();
@@ -41,10 +50,8 @@ export default function Header() {
     router.push('/auth/login');
   }
   )}
-  const [notificationIcon, setNotificationIcon] = useState("/notify.png");
-  const [notificationSize, setNotificationSize] = useState('w-8 h-8');
-  const [meetingIcon, setMeetingIcon] = useState("/calendar-icon.webp");
-  const [meetingIconSize, setMeetingIconSize] = useState('w-8 h-8');
+  const [isNotification, setIsNotification] = useState(false);
+  const [isMeeting, setIsMeeting] = useState(false);
   const [notificationList, setNotificationList] = useState<any>([]);
   const [meetingList, setMeetingList] = useState<any>([]);
   const [userName, setUserName] = useState("");
@@ -55,15 +62,13 @@ export default function Header() {
         //check notifications
         const notificationsExist = await CheckNotifications(user?.email as string);
         if (notificationsExist) {
-          setNotificationIcon("/notify_on.webp");
-          setNotificationSize('w-12 h-12');
+          setIsNotification(true);
         }
         //check meetings
         if (user && user.email){
         const meetingsExist = await CheckMeetings(user.email as string);
         if (meetingsExist) {
-          setMeetingIcon("/active_meetings.png");
-          setMeetingIconSize('w-12 h-12');
+          setIsMeeting(true);
         }
       }
         //retrieve notifications
@@ -103,20 +108,30 @@ export default function Header() {
     <div className={poppins.className}>
       <div className='flex items-center justify-center p-4'>
         <div className='flex items-center justify-center'>
-            <img src="/speety_logo.png" alt="logo" style={{width:300}}/>
+            <img src="/speety_logo.png" onClick={()=>router.push("/")} alt="logo" style={{width:200}}/>
         </div>
         {user && (
-          <div className='absolute flex items-center justify-between shadow-sm px-4 top-1 right-2'>
-             <button onClick={dashboardRedirect} className='flex font-bold  text-blue-300 right-80 '>
+          <div className='absolute flex items-center justify-between shadow-sm px-4 top-4 right-1 bg-[#95D7AE] rounded-3xl'>
+             <button onClick={dashboardRedirect} className='flex font-bold  right-80 '>
              <img src={userPic} alt="pp" className='w-8 h-8 bg-gray-300 p-1 rounded-full'/>
               <p className='mt-2 ml-2 text-sm hover:text-md hover:underline'>{userName}</p>
               </button>
-             <button onClick={()=>router.push('/chat')} className='ml-2'><img src="/speech-balloon.png" className='w-12 h-12 right-52'/></button>
+             <button onClick={()=>router.push('/chat')} className='ml-4'>
+              {/* <img src="/speech-balloon.png" className='w-12 h-12 right-52'/> */}
+              <EmailRoundedIcon className='right-52' style={{width:25,height:25}}/>
+              </button>
 
           {/* For Notification */}
             <DropdownMenu>
             <DropdownMenuTrigger>
-              <button onClick={()=>{}} className='ml-2'><img src={notificationIcon} className={`${notificationSize} right-40 mt-1`}/>
+              <button onClick={()=>{}} className='ml-2'>
+                {
+                  isNotification ? (
+                    <NotificationsActiveIcon className='right-40'style={{width:25,height:25}}/>
+                  ) : (
+                    <NotificationsIcon className='right-40'style={{width:25,height:25}}/>
+                  )
+                }
               </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className=''>
@@ -145,7 +160,13 @@ notification.type === "chat" && notification.age === "new" ? (
           {/* For Meetings/Appointments */}
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <button className='ml-2 mt-1'><img src={meetingIcon} className={`${meetingIconSize} right-52`}/></button>
+              <button className='ml-2'>
+                {isMeeting ? (
+                  <EditCalendarIcon className="right-52" style={{width:25,height:25}}/>
+                ) : (
+                <CalendarMonthIcon className="right-52" style={{width:25,height:25}}/>
+                )}
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='mr-6'>
     <DropdownMenuSeparator />
@@ -214,7 +235,9 @@ notification.type === "chat" && notification.age === "new" ? (
     </div>
   </DropdownMenuContent>
           </DropdownMenu>
-             <button onClick={logoutUser} className='ml-4'><img src="/logout.webp" className="w-6 h-6 right-10"/></button>
+             <button onClick={logoutUser} className='ml-4'>
+              <LogoutIcon className="w-6 h-6 right-8" style={{width:20,height:20}}/>
+              </button>
           </div>
 )}
 </div>

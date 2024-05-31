@@ -68,7 +68,8 @@ export default function Agent() {
     <div className={poppins.className}>
       <Header />
       <div>
-        <section className="py-20 shadow-md">
+        <img src="/sellAgent.avif" alt="alt"/>
+        <section className=" absolute inset-0 top-80">
           <h1 className="text-7xl font-bold tracking-tighter text-center px-96">
             Sell traditionally with an{" "}
             <button className="bg-red-400 rounded-3xl px-6 py-4">agent</button>
@@ -95,11 +96,11 @@ export default function Agent() {
 
       <section className="flex flex-col ">
         <div>
-        <h1 className="p-10 text-3xl font-bold tracking-tight text-gray-700 ">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-700 ">
           {resultText}
         </h1>
         </div>
-        <div className="flex overflow-scroll p-10 gap-10">
+        <div className="flex overflow-scroll gap-10">
       {
         resultList.map((agent:any) => {
           return (

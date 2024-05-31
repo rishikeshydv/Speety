@@ -46,24 +46,24 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
       </PopoverTrigger>
       {
         show && (
-          <PopoverContent align="end" style={{ width: "1700px", height: "1000px" }} className="flex-col border-0 p-0 bg-gray-600 rounded-2xl backdrop-blur-sm" side="top">
+          <PopoverContent align="end" style={{ width: "1200px", height: "700px" }} className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
-          <video ref={receiverVideoRef} style={{ width: "1000", height: "700px" }} className=" bg-gray-100 rounded-xl" />
+          <video ref={receiverVideoRef} style={{ width: "800", height: "500px" }} className=" bg-gray-100 rounded-xl" />
       </div>
-      <div className="flex items-center justify-between p-4">
-      <div className="flex flex-1 justify-center gap-4 ml-60">
-      <VideoOffIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <MicIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <ScreenShareIcon className="mx-2 h-16 w-16 rounded-full bg-white p-3 text-gray-600" />
-        <PhoneCallIcon className="mx-2 h-16 w-16 rounded-full bg-red-600 p-3 text-white" onClick={()=>
+      <div className="flex items-center justify-between p-2">
+      <div className="flex flex-1 justify-center gap-2 ml-60">
+      <VideoOffIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
+        <MicIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
+        <ScreenShareIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
+        <PhoneCallIcon className="mx-2 h-12 w-12 rounded-full bg-red-600 p-3 text-white" onClick={()=>
           {endCall();
           sendEndCallMessage();
           setShow(false);
           changeCallEndedState();
            }}/>
       </div>
-          <video ref={callerVideoRef  } style={{ width: "307px", height: "230px" }} className="w-100% bg-gray-100 rounded-3xl"/>
+          <video ref={callerVideoRef  } style={{ width: "173px", height: "130px" }} className="w-100% bg-gray-100 rounded-3xl mr-4 mt-1"/>
           </div>
     </div>
           </PopoverContent>

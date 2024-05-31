@@ -9,7 +9,7 @@ export default function Sec3() {
             <div className='flex'>
             <div className='w-1/2 p-4'>
             {/* This Div will create a title and a sparkle on the left */}
-            <div className='mt-10 ml-10 px-10px flex items-center'>
+            <div className='mt-10 ml-10 px-10px flex items-center text-[#16302B]'>
                 <img 
                 src="/sparkle.png" 
                 width={40}

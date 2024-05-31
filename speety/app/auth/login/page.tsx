@@ -13,8 +13,6 @@ import { AiFillYahoo } from "react-icons/ai";
 import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 import Login from "@/firebase/auth/Login";
-import { set } from "firebase/database";
-import { useKeyPress } from "@react-typed-hooks/use-key-press";
 import updateStatus from "@/queries/changeLoginStatus";
 
 interface SignInData {
@@ -26,13 +24,10 @@ export default function SignInPage() {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const [err, setErr] = useState<string>("");
-
-  //logic for onkeypress enter
-  const isEnterPressed = useKeyPress({ targetKey: "Enter" });
   
   const { register, handleSubmit,formState: { errors } } = useForm<SignInData>();
 
-  const onSubmit:SubmitHandler<SignInData> = async (data) => {
+  const onSubmit:SubmitHandler<any> = async (data) => {
     const { email, password } = data;
 
     try {
@@ -46,21 +41,19 @@ export default function SignInPage() {
       const receiverSnapshot = await getDoc(receiverDocRef);
 
       if(!receiverSnapshot.exists()){
-        console.log("User does not exist!");
-        setErr("User does not exist!");
         throw new Error("User does not exist");
+//        alert("User does not exist");
       }
-        Login(email,password).then(() => {
+      await Login(email,password).then(() => {
         if (email){
             updateStatus(email,"Online");
         }
         router.push(`/dashboard/${email}`);
-
-          
-
         });
+
     } catch (error) {
-      console.error("Error signing in:", error);
+      alert("Invalid email or password");
+
     }
   };
 
@@ -68,18 +61,16 @@ export default function SignInPage() {
     <div className={poppins.className}>
       <div className="flex">
         <div className={`bg-gray-800 h-screen w-1/2 flex items-center`}>
-          <h1 className="text-7xl text-white px-16 text-center font-bold">
-            <Typist>Your trusted partner in wealth creation.</Typist>
-          </h1>
+          <img src="/loginFamily.jpg" alt="alt" />
         </div>
 
         <div className="h-screen w-1/2 flex flex-col items-center justify-center">
           <Image
             src="/speety_logo.png"
             alt="Speety Logo"
-            width={250}
+            width={180}
             height={130}
-            className="py-10"
+            className="py-4"
           />
           <h1 className="text-md text-gray-400">
             <Typist> Begin the journey with us ...</Typist>
@@ -116,7 +107,7 @@ export default function SignInPage() {
                 type="text"
                 required
                 {...register("email")}
-                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-2xl"
+                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-sm"
               />
               {errors.email && <p className="text-red-500">Email is required.</p>}
               <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
@@ -126,7 +117,7 @@ export default function SignInPage() {
                 type="password"
                 required
                 {...register("password")}
-                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-2xl"
+                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-sm"
               />
 
               {errors.password && <p className="text-red-500">Password is required.</p>}

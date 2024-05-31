@@ -134,8 +134,8 @@ export default function Rent() {
   return (
     <div className={poppins.className}>
       <Header />
-      <div className="bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]">
-        <div className="flex items-center justify-center ml-10 py-4">
+      <div className="">
+        <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]">
         <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -230,20 +230,20 @@ export default function Rent() {
             </button>
           </form>
         </div>
-        <hr className="border-2 border-gray-300 mt-4" />
 
         <div className="bg-gray-200">
-          <section className="py-10 flex flex-col items-center justify-center">
+        <img src="/buyHome.jpg" alt="alt" className="aspect-video object-cover object-center w-full"/>
+          <section className="py-10 flex flex-col items-center justify-center absolute inset-0 top-60">
             {/* "Selling fast" */}
-            <div className="text-7xl font-bold flex items-center tracking-tighter">
+            <div className="text-7xl font-bold flex items-center tracking-tighter text-[#16302B]">
               <span>Renting your home</span>
             </div>
 
             {/* "Buying smart" with gradient text */}
             <h1 className="text-7xl font-bold flex items-center mb-10 tracking-tighter">
-              <span>with</span>
+              <span className="text-[#16302B]">with</span>
               &nbsp;
-              <span className="text-transparent bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text">
+              <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
                 confidence
               </span>
               <img
@@ -254,7 +254,7 @@ export default function Rent() {
                 alt="Home"
               />
             </h1>
-            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-blue-500 bg-blue-50 text-md mb-10">
+            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#004F2D] text-md mb-10">
               <Typist>
                 Speety is making it simpler to buy your home and settle.
               </Typist>
@@ -262,15 +262,15 @@ export default function Rent() {
           </section>
         </div>
         {refinedList && (
-          <section className="p-10">
+          <section className="">
             <div className="flex flex-col">
-              <h1 className="p-10 text-3xl font-bold tracking-tight text-gray-700 ">
+              <h1 className="px-4 text-3xl font-bold tracking-tight text-gray-700 ">
                 {resultText}
               </h1>
             </div>
             <div
               id="propertyLists"
-              className="flex p-10 gap-10 overflow-scroll"
+              className="flex px-4 gap-10 overflow-scroll"
             >
               {Object.keys(refinedList).map((key) => {
                 return (

@@ -6,21 +6,17 @@ import TopLeft from "@/components/chat/TopLeft";
 import TopRight from "@/components/chat/TopRight";
 import UserList from "@/components/chat/UserList";
 import ChatList from "@/components/chat/ChatList";
-import { auth } from "@/firebase/config";
+import { auth, db } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Peer, { DataConnection } from "peerjs";
 import moment from "moment"; //use moment.js to get time/date in a good format
 
 
 //imports for location
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
-import { Loader } from "@googlemaps/js-api-loader"
-import { Locator } from "@/services/location/currentLocation";
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
-import { set } from "firebase/database";
 import VideoPopUp from "@/components/video/VideoPopUp";
-import { get } from "http";
+import { getDoc, doc } from "firebase/firestore";
 
 
 interface userLoc {
@@ -38,6 +34,8 @@ interface eachMessage {
   type: string;
   msg: string;
   date: string;
+  status: string;
+  messageIndex: number;
 }
 
 export default function Chat() {
@@ -47,20 +45,28 @@ export default function Chat() {
   const [sentMessage, setSentMessage] = useState<eachMessage>({
     type: "",
     msg: "",
-    date: ""
+    date: "",
+    status: "",
+    messageIndex: 0,
+
   });
   const [receivedMessage, setReceivedMessage] = useState<eachMessage>({
     type: "",
     msg: "",
-    date: ""
+    date: "",
+    status: "",
+    messageIndex: 0,
+
   });
   //chats
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
   const [connection, setConnection] = useState<DataConnection | null>(null);
   const [currentTime, setCurrentTime] = useState(moment());
-  const [sentTime, setSentTime] = useState("");
-  const [receivedTime, setReceivedTime] = useState("");
   const [lastMsg,setLastMsg] = useState(""); //will be using this to maintain the last message in the userlist
+  const [lastMsgTime,setLastMsgTime] = useState(""); //will be using this to maintain the last message time in the userlist 
+  const [deliveryStatus, setDeliveryStatus] = useState<string>("sent"); //will be using this to maintain the delivery status of the message 
+  const [messageIndex, setMessageIndex] = useState<number>(0); //will be using this to maintain the latest/current index of the message
+  const [indexSeen,setIndexSeen] = useState<number>(0); //will be using this to maintain the index of the message that has been seen
   //video call
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -76,7 +82,6 @@ export default function Chat() {
   //location
   const [position1, setPosition1] = useState({ lat: 0, lng: 0 }); //retrieving user1's location uponChange
   const [position2, setPosition2] = useState({ lat: 0, lng: 0 }); //retrieving user2's location uponChange
-
 
   //changing showState
   function changeShowState() {
@@ -94,6 +99,52 @@ export default function Chat() {
   const changeCallEndedState = () => {
     setCallEndedState(!callEndedState);
   }
+
+  //the function below works with the message delivery status
+  useEffect(() => {
+    const deliveryStatusFinder = async (userEmailAddress:string) => {
+    const deliveryDoc = doc(db,'User_Info',userEmailAddress)
+    const deliverySnapshot = await getDoc(deliveryDoc)
+    if (deliverySnapshot.exists()) {
+      const data = deliverySnapshot.data()
+      if (data.loginStatus === "Online"){
+        setDeliveryStatus("delivered")
+      }
+    }
+  }
+  if (clicked){
+    deliveryStatusFinder(clicked);
+  }
+  },[clicked])
+
+  //the function below works with the message indexing
+  useEffect(() => {
+    const messageIndexFinder = async (senderEmail:string, receiverEmail:string) => {
+    const messageIndexDoc = doc(db,'connectedHistory',senderEmail)
+    const messageIndexSnapshot = await getDoc(messageIndexDoc)
+    if (messageIndexSnapshot.exists()) {
+      const data = messageIndexSnapshot.data()
+      const keys = Object.keys(data)
+      if (keys.length > 0){
+        for (let i=0; i<keys.length; i++){
+          const key = keys[i]
+          if (key ===  receiverEmail.slice(0, receiverEmail.indexOf("."))){
+            setMessageIndex((data[key].messagesExchanged).length)
+          }
+        }
+      }
+    }
+  }
+  if (user && user.email){
+    messageIndexFinder(user?.email as string, clicked as string);
+  }
+  return () => {
+    setMessageIndex(0);
+  }
+}
+  ,[user,clicked])
+
+  console.log("Message Index: ", messageIndex)
 
     //function to get the location of the user
     function locationUpdate() {
@@ -117,9 +168,6 @@ export default function Chat() {
       return () => clearInterval(intervalId);
     }, []);
   
-
-
-
     useEffect(() => {
       // Function to update the current time every second
       const updateCurrentTime = () => {
@@ -163,16 +211,20 @@ export default function Chat() {
       // sending a peerjs message
       if (typeof message === "string"){
         const formattedTime = currentTime.format("YYYY-MM-DD HH:mm:ss");
-        setSentTime(String(formattedTime));
+        setMessageIndex(messageIndex + 1);
         setSentMessage({
           type: "sent",
           msg: message,
           date: formattedTime,
+          status: deliveryStatus,
+          messageIndex: messageIndex,
         });
         conn?.on("open", () => {
           conn.send({
             msg: message,
-            date: formattedTime
+            date: formattedTime,
+            status: deliveryStatus,
+            messageIndex: messageIndex,
           });
         });
       }
@@ -388,17 +440,28 @@ export default function Chat() {
               endCall();
               return;
             }
-            //checking if the incoming data is a message
-            console.log(data);
 
-            if (typeof data === "object" && "msg" in data && "date" in data) {
+            //checking what index of the message is received
+            if (typeof data === "number") {
+              console.log("Message Index received: ", data);
+              setIndexSeen(data);
+              
+            }
+
+            if (typeof data === "object" && "msg" in data && "date" in data && "status" in data && "messageIndex" in data) {
+              // if (messageIndex > 0){
+              //   setMessageIndex(messageIndex + 1)
+              // }
+              console.log(messageIndex+1)
               const incomingMessage: eachMessage = data;
               setReceivedMessage({
                 type:"received",
                 msg: incomingMessage.msg,
                 date: incomingMessage.date,
+                status: incomingMessage.status,
+                messageIndex: incomingMessage.messageIndex,
               });
-              setReceivedTime(String(incomingMessage.date));
+              send(incomingMessage.messageIndex);
               return;
             }
 
@@ -456,7 +519,7 @@ export default function Chat() {
 
         <div className="flex flex-col h-screen">
       <TopLeft />
-      <UserList onUserClick={userOnClick} lastMsg={lastMsg}/> 
+      <UserList onUserClick={userOnClick} lastMsg={lastMsg} lastMsgTime={lastMsgTime}/> 
       </div>
       {show &&
         <VideoPopUp
@@ -490,6 +553,10 @@ export default function Chat() {
         sendMessageFunction={send}
         lastMsg={lastMsg}
         setLastMsg={setLastMsg} 
+        lastMsgTime={lastMsgTime}
+        setLastMsgTime={setLastMsgTime}
+        messageIndex={messageIndex}
+        indexSeen={indexSeen}
       />
   </div>
   ) : (

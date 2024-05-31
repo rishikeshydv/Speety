@@ -159,9 +159,9 @@ export default function SignupPage() {
         <Image
           src="/speety_logo.png"
           alt="Speety Logo"
-          width={200}
+          width={160}
           height={100}
-          className=""
+          className="py-2"
         />
         {/* <h1 className="text-xl text-gray-400"><Typist> Begin the journey with us ...</Typist></h1> */}
         <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">

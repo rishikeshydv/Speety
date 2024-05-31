@@ -72,8 +72,6 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
    
 }, [clickedUser]);
 
-  //PushNotifications(user?.email as string,email,"msg",currentTime.format("YYYY-MM-DD HH:mm:ss"))
-
   return (
     <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-16 px-6">
     <div className="flex items-center space-x-2">
