@@ -12,7 +12,6 @@ interface Props {
     msgTime:string;
     profilePic:string;
     status:string;
-    messageIndex:number;
 }
 const NewProp1:React.FC<Props> = ({message,msgTime,profilePic, status}) => {
     const [updatedTime, setUpdatedTime] = useState<string>('')

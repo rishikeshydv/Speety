@@ -12,7 +12,6 @@ interface Props {
     msgTime:string;
     profilePic:string;
     status:string;
-    messageIndex:number;
 }
 
 const NewProp2:React.FC<Props> = ({message,msgTime,profilePic, status}) => {
