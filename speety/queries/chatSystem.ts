@@ -1,16 +1,12 @@
-import { collection, getDoc, getDocs, doc, updateDoc, addDoc, setDoc, arrayUnion } from "firebase/firestore";
+import { collection, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import moment from 'moment'; 
-
 
 interface eachMessage {
         type:string;
         msg: string;
         date: string;
         status: string;
-        messageIndex: number;
 }
-
 
 
 // get all the users
@@ -44,7 +40,7 @@ const getConnectedUsers = async (senderUser: string) => {
     }
 
    }
-   console.log(usersConnected);
+
   return usersConnected;
 
 };
@@ -65,55 +61,43 @@ const getChats = async (senderUser: string, receiverUser:string) => {
   };
 
 
-const updateChats = async (senderUser: string, receiverUser: string, messagesExchanged: eachMessage[]) => {
-  //we here get the name of teh receiverUser
-  let receiverName = "";
-const _usersRef = collection(db, "User_Info");
- const _userDocRef = doc(_usersRef, receiverUser);
- const _userSnapshot = await getDoc(_userDocRef);
- if (_userSnapshot.exists()){
-   const _retrievedData = _userSnapshot.data();
-  receiverName = _retrievedData["name"];
- }
+async function updateChats(senderUser:string, receiverUser:string, messagesExchanged:eachMessage[]) {
 
-  const messageRef = doc(db, "connectedHistory", senderUser);
-  const docSnapshot = await getDoc(messageRef);
-  if (docSnapshot.exists()) {
-    const data = docSnapshot.data();
-    const connectedKeys = Object.keys(data);
-    for (let i = 0; i < connectedKeys.length; i++) {
-      const key = connectedKeys[i];
-      if (key === receiverUser.slice(0,receiverUser.indexOf("."))) {
-        const entryRef = doc(db, "connectedHistory", senderUser);
-        await updateDoc(entryRef, {
-          [receiverUser.slice(0,receiverUser.indexOf("."))]:  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
-          {
-            messagesExchanged: messagesExchanged,
-            name: data[key].name,
-          },
-        });
-      }
-      else{
-        const entryRef = doc(db, "connectedHistory", senderUser);
-        await setDoc(entryRef, {
-          [receiverUser.slice(0,receiverUser.indexOf("."))]: {  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
-            messagesExchanged: messagesExchanged,
-            name: data[key].name,
-          },
-        });
-      }
+    // Get the name of the receiverUser
+    let receiverName = "";
+    const userDocRef = doc(db, "User_Info", receiverUser);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      const retrievedData = userSnapshot.data();
+      receiverName = retrievedData.name;
     }
-  }
-  else{
-    const entryRef = doc(db, "connectedHistory", senderUser);
-    await setDoc(entryRef, {
-      [receiverUser.slice(0,receiverUser.indexOf("."))]: {  //this is the email of the user as firebase does not allow special characters in the key such as dot(.)
-        messagesExchanged: messagesExchanged,
-        name: receiverName,
-      },
-    });
-  }
-};
+  
+    const receiverKey = receiverUser.split(".")[0];  // Extract key without dot
+    const messageRef = doc(db, "connectedHistory", senderUser);
+    const docSnapshot = await getDoc(messageRef);
+  
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data();
+      const existingEntry = data[receiverKey];
+  
+      // Update existing entry or create new entry if it does not exist
+      await updateDoc(messageRef, {
+        [receiverKey]: {
+          messagesExchanged: messagesExchanged,
+          name: existingEntry ? existingEntry.name : receiverName,
+        },
+      });
+    } else {
+      // Create new document with the chat entry
+      await setDoc(messageRef, {
+        [receiverKey]: {
+          messagesExchanged: messagesExchanged,
+          name: receiverName,
+        },
+      });
+    }
+  };
+  
 
 export { getConnectedUsers, getChats,updateChats };
 

@@ -10,13 +10,14 @@ import { auth, db } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Peer, { DataConnection } from "peerjs";
 import moment from "moment"; //use moment.js to get time/date in a good format
-
+import axios from "axios";
 
 //imports for location
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
 import VideoPopUp from "@/components/video/VideoPopUp";
 import { getDoc, doc } from "firebase/firestore";
+import { NextResponse } from "next/server";
 
 
 interface userLoc {
@@ -35,7 +36,6 @@ interface eachMessage {
   msg: string;
   date: string;
   status: string;
-  messageIndex: number;
 }
 
 export default function Chat() {
@@ -47,7 +47,6 @@ export default function Chat() {
     msg: "",
     date: "",
     status: "",
-    messageIndex: 0,
 
   });
   const [receivedMessage, setReceivedMessage] = useState<eachMessage>({
@@ -55,7 +54,6 @@ export default function Chat() {
     msg: "",
     date: "",
     status: "",
-    messageIndex: 0,
 
   });
   //chats
@@ -65,8 +63,7 @@ export default function Chat() {
   const [lastMsg,setLastMsg] = useState(""); //will be using this to maintain the last message in the userlist
   const [lastMsgTime,setLastMsgTime] = useState(""); //will be using this to maintain the last message time in the userlist 
   const [deliveryStatus, setDeliveryStatus] = useState<string>("sent"); //will be using this to maintain the delivery status of the message 
-  const [messageIndex, setMessageIndex] = useState<number>(0); //will be using this to maintain the latest/current index of the message
-  const [indexSeen,setIndexSeen] = useState<number>(0); //will be using this to maintain the index of the message that has been seen
+
   //video call
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -117,35 +114,6 @@ export default function Chat() {
   }
   },[clicked])
 
-  //the function below works with the message indexing
-  useEffect(() => {
-    const messageIndexFinder = async (senderEmail:string, receiverEmail:string) => {
-    const messageIndexDoc = doc(db,'connectedHistory',senderEmail)
-    const messageIndexSnapshot = await getDoc(messageIndexDoc)
-    if (messageIndexSnapshot.exists()) {
-      const data = messageIndexSnapshot.data()
-      const keys = Object.keys(data)
-      if (keys.length > 0){
-        for (let i=0; i<keys.length; i++){
-          const key = keys[i]
-          if (key ===  receiverEmail.slice(0, receiverEmail.indexOf("."))){
-            setMessageIndex((data[key].messagesExchanged).length)
-          }
-        }
-      }
-    }
-  }
-  if (user && user.email){
-    messageIndexFinder(user?.email as string, clicked as string);
-  }
-  return () => {
-    setMessageIndex(0);
-  }
-}
-  ,[user,clicked])
-
-  console.log("Message Index: ", messageIndex)
-
     //function to get the location of the user
     function locationUpdate() {
       //on clicking the location share button, there should be a popup
@@ -158,7 +126,8 @@ export default function Chat() {
           });    //connection stores 'conn' as a state
         });
       } else {
-        console.log("Geolocation is not supported by this browser.");
+        return;
+        //console.log("Geolocation is not supported by this browser.");
       }
     }
 
@@ -196,35 +165,46 @@ export default function Chat() {
       setClicked(clickedUser);
     }
 
+
     //function to send the message
-    const send = (message: any) => {
+    const send = async(message: any) => {
       if (!clicked) {
-        console.error("No user selected to send message to");
         return;
       }
+      // const response = await axios.post("/api/v1/message-push", {
+      //   from: user?.email,
+      //   to: clicked,
+      //   type: "sent",                              
+      //   msg: message,
+      //   date: currentTime.format("YYYY-MM-DD HH:mm:ss"),
+      //   status: deliveryStatus,
+      // },{
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // console.log(response);
       const conn = myPeer?.connect(clicked.slice(0, clicked.indexOf("@")));
       if (!conn) {
-        console.log(conn)
+        return;
+        //console.log(conn)
       }
       setConnection(conn as DataConnection);
       
       // sending a peerjs message
       if (typeof message === "string"){
         const formattedTime = currentTime.format("YYYY-MM-DD HH:mm:ss");
-        setMessageIndex(messageIndex + 1);
         setSentMessage({
           type: "sent",
           msg: message,
           date: formattedTime,
           status: deliveryStatus,
-          messageIndex: messageIndex,
         });
         conn?.on("open", () => {
           conn.send({
             msg: message,
             date: formattedTime,
             status: deliveryStatus,
-            messageIndex: messageIndex,
           });
         });
       }
@@ -237,7 +217,14 @@ export default function Chat() {
         conn?.on("open", () => {
           conn.send(position1);
         });
-    }}
+    }
+
+    if (typeof message === 'number'){
+      conn?.on("open", () => {
+        conn.send(message);
+      });
+    }
+  };
 
     //function to make a call to the remote peer
     const call = () => {
@@ -348,7 +335,8 @@ export default function Chat() {
       const conn = myPeer?.connect(clicked.slice(0, clicked.indexOf("@")));
       setConnection(conn as DataConnection);
       if (!conn) {
-        console.log(conn)
+        //console.log(conn)
+        return
       }
       }
       connection?.send("endCall");
@@ -428,12 +416,12 @@ export default function Chat() {
         peer.on("open", (id) => {
           setMyPeer(peer);
         });
-
         peer.on("connection", (conn:any) => {
           setConnection(conn);
           conn.on("data", (data: any) => {
+            //console.log("Received", data);
             if (data === null) {
-              console.log("Nothing reeived on Receiver End");
+            //  console.log("Nothing reeived on Receiver End");
               return;
             }
             if (data === "endCall") {
@@ -441,28 +429,15 @@ export default function Chat() {
               return;
             }
 
-            //checking what index of the message is received
-            if (typeof data === "number") {
-              console.log("Message Index received: ", data);
-              setIndexSeen(data);
-              
-            }
-
-            if (typeof data === "object" && "msg" in data && "date" in data && "status" in data && "messageIndex" in data) {
-              // if (messageIndex > 0){
-              //   setMessageIndex(messageIndex + 1)
-              // }
-              console.log(messageIndex+1)
+            if (typeof data === "object" && "msg" in data && "date" in data && "status" in data) {
               const incomingMessage: eachMessage = data;
               setReceivedMessage({
                 type:"received",
                 msg: incomingMessage.msg,
                 date: incomingMessage.date,
                 status: incomingMessage.status,
-                messageIndex: incomingMessage.messageIndex,
               });
-              send(incomingMessage.messageIndex);
-              return;
+              return
             }
 
             //checking if the incoming data is a location
@@ -490,7 +465,7 @@ export default function Chat() {
 
         //handling the call close
         peer.on("close", () => {
-          console.log("Peer connection closed");
+        //  console.log("Peer connection closed");
           callAccepted.current = false;
         });
       }
@@ -511,6 +486,7 @@ export default function Chat() {
         }
       };
     }, [myPeer, id]);
+
   return (
     <div className={`flex h-screen bg-white ${poppins.className}`}>
       <LeftmostBar userEmail={user?.email as string}/>
@@ -555,8 +531,6 @@ export default function Chat() {
         setLastMsg={setLastMsg} 
         lastMsgTime={lastMsgTime}
         setLastMsgTime={setLastMsgTime}
-        messageIndex={messageIndex}
-        indexSeen={indexSeen}
       />
   </div>
   ) : (

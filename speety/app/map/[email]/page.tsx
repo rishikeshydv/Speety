@@ -21,6 +21,7 @@ import FaceDeclinedSender from "@/components/face-detect/FaceDeclinedReceiver";
 import TimerStartConfirm from "@/components/timer/TimerStartConfirm";
 import ComparingImages from "@/components/face-detect/ComparingImages";
 
+
 interface LocationData {
   lat: number;
   lng: number;
@@ -68,7 +69,7 @@ const LocationMap = () => {
     null
   );
   const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false); //to check if the google maps script is loaded or not
-
+  const [initMapFunction, setInitMapFunction] = useState<Function | null>(null);
   const [senderUser, setSenderUser] = useState<string>("");
   const [receiverUser, setReceiverUser] = useState<string>("");
 
@@ -163,7 +164,12 @@ const LocationMap = () => {
   }, [destinationAddress]);
 
   useEffect(() => {
+
     const initializeMap = () => {
+      if (!google.maps.Map){
+        return; 
+      }
+
       const map = new google.maps.Map(googlemap.current as HTMLDivElement, {
         zoom: 4,
         center: position1.current,
@@ -228,15 +234,18 @@ const LocationMap = () => {
         },
       });
     };
+    setInitMapFunction(() => initializeMap);
+    // @ts-ignore
     if (!window.google) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&callback=initializeMap`;
+      script.type = "text/javascript";
+      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&loading=async&libraries=geometry,visualization&sensor=true`;
       script.async = true;
       script.defer = true;
-      script.addEventListener("load", initializeMap);
+      script.addEventListener("load", initializeMap); 
       document.body.appendChild(script);
     } else {
-      initializeMap(); // If Google Maps is already loaded
+        initializeMap(); // If Google Maps is already loaded
     }
   }, [senderUser, receiverUser, position1, position2]);
 
@@ -252,7 +261,8 @@ const LocationMap = () => {
                   directionsRendererRef.current as google.maps.DirectionsRenderer
                 ).setDirections(result);
               } else {
-                console.error("Failed to render directions:", status);
+                return;
+                //console.error("Failed to render directions:", status);
               }
             }
           );
@@ -294,7 +304,8 @@ const LocationMap = () => {
         clearInterval(intervalId);
       };
     } else {
-      console.log("Location Sharing Permission Denied. Please Retry Request.");
+        return;
+      //console.log("Location Sharing Permission Denied. Please Retry Request.");
     }
     // Cleanup
   }, [shareAllow]);
@@ -335,7 +346,7 @@ const LocationMap = () => {
     position1.current = message;
     if (connection && connection.open) {
       // connection.send(message);
-      console.log("Connection opened, sending message...");
+      //console.log("Connection opened, sending message...");
       connection.send(message);
     }
     if (markerSender.current) {
@@ -348,7 +359,7 @@ const LocationMap = () => {
     if (connection && connection.open) {
       // connection.send(message);
       connection.send("location-request");
-      console.log("Location Request sent");
+    //  console.log("Location Request sent");
     }
   };
 
@@ -366,7 +377,7 @@ const LocationMap = () => {
     if (connection && connection.open) {
       // connection.send(message);
       connection.send("face-capture-declined");
-      console.log("face-capture-declined");
+      //console.log("face-capture-declined");
     }
     setFaceCaptureReceived(false);
   };
@@ -376,7 +387,7 @@ const LocationMap = () => {
     if (connection && connection.open) {
       // connection.send(message);
       connection.send("face-capture-confirmed");
-      console.log("face-capture-confirmed");
+    //  console.log("face-capture-confirmed");
     }
     setFaceCaptureReceived(false);
   };
@@ -399,11 +410,11 @@ const LocationMap = () => {
       const conn_ = peer.connect(email.slice(0, email.indexOf("@")));
       // The peer that initiates the connection needs to handle data from the peer it connects to.
       conn_.on("open", () => {
-        console.log("Connection to receiver established");
+       // console.log("Connection to receiver established");
         setConnection(conn_);
       });
       conn_.on("data", (data: any) => {
-        console.log("Data received on receiver:", data);
+       // console.log("Data received on receiver:", data);
         if (data === "location-request") {
           setPopUpOpen(true);
         } else if (data === "face-capture-declined") {
@@ -422,15 +433,16 @@ const LocationMap = () => {
           setFaceCaptureReceived(true);
           // console.log('Blob Url Received', data);
         } else {
-          console.log("No data received");
+          return;
+          //console.log("No data received");
         }
       });
 
       peer.on("connection", (conn: any) => {
-        console.log("Receiver connected");
+        //console.log("Receiver connected");
         //The peer that receives a connection request needs to handle data from the initiating peer.
         conn.on("data", (data: any) => {
-          console.log("Data received on receiver:", data);
+         // console.log("Data received on receiver:", data);
           if (data === "location-request") {
             setPopUpOpen(true);
           } else if (data === "face-capture-declined") {
@@ -449,7 +461,8 @@ const LocationMap = () => {
             setFaceCaptureReceived(true);
             //console.log('Blob Url Received', data);
           } else {
-            console.log("No data received");
+            return;
+           // console.log("No data received");
           }
         });
       });
