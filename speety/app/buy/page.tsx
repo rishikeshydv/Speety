@@ -36,7 +36,7 @@ interface Property {
   };
 }
   //creating a cache object
- export const cache = new PresentListingCache(300000); //5 minutes
+ const cache = new PresentListingCache(300000); //5 minutes
 
 export default function Buy() {
   const [formData, setFormData] = useState({

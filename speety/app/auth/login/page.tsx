@@ -12,8 +12,8 @@ import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
 import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
-import Login from "@/firebase/auth/Login";
 import updateStatus from "@/queries/changeLoginStatus";
+import Login from "@/firebase/auth/login";
 
 interface SignInData {
   email: string;

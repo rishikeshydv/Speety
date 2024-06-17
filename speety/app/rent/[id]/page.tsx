@@ -10,7 +10,7 @@ import { CardContent, Card } from "@/components/ui/card"
 import poppins from "@/font/font";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { cache } from "../page";
+//import { cache } from "../page";
 import { useParams, useRouter } from "next/navigation";
 import { collection, query,getDocs, getDoc,doc } from "firebase/firestore";
 import { db } from "@/firebase/config";
@@ -109,6 +109,7 @@ export default function Property() {
 
   useEffect(() => {
     //retrieving the property from the cache
+    const cache = new Map();
     const getProperty = cache.get(propertyId);
     //fetching the property from the database if not found in the cache
      if (!getProperty) {
