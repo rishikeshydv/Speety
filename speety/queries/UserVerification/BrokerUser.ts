@@ -1,6 +1,6 @@
 import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-import Signup from "@/firebase/auth/Signup";
+import Signup from "@/firebase/auth/signup";
 
 
 const BrokerUser = async (email:string, name:string,confirmPassword:string, password:string,brokerId:string,driverLicense:string,faceCapture:string,role:string,date:string) => {
