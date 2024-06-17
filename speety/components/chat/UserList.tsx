@@ -37,6 +37,12 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) =>
     
   }, [user]); // Add user to the dependency array to trigger useEffect when user changes
 
+  //selecting the first user of the list automatically as clicked
+  useEffect(() => {
+    if (usersConnected.length > 0){
+      onUserClick(usersConnected[0][0]);
+    }
+  }, [usersConnected]);
 
   return (
   <div className="w-76 h-full rounded-2xl shadow-xs mb-3 mt-1 bg-gray-200">

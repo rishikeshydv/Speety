@@ -50,14 +50,14 @@ const LocationRequestPopup: React.FC<LocationRequestPopupProps> = ({email,shareA
           <Button
             className="px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             variant="outline"
-            onClick={() => {setPopUpOpen(false); setShareAllow(false)}}
+            onClick={() => {setPopUpOpen(!popUpOpen); setShareAllow(false)}}
           >
             Deny
           </Button>
           <Button className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-colors"
           onClick={()=>{
             setShareAllow(true);
-            setPopUpOpen(false);
+            setPopUpOpen(!popUpOpen);
           }}>
             Allow
           </Button>

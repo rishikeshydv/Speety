@@ -48,7 +48,7 @@ export default function Agent() {
 };
     const loadGoogleMapsScript = () => {
       const googleMapsScript = document.createElement('script');
-      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`;
       googleMapsScript.async = true;
       googleMapsScript.defer = true;
       googleMapsScript.addEventListener('load', initializeMap);
