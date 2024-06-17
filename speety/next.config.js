@@ -9,9 +9,10 @@ module.exports = (phase, { defaultConfig }) => {
             "fs": false,
             "net": false,
             "async_hooks": false,
-          }
+          },
         }
         return config
       },
+      
     }
   }

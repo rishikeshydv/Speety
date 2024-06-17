@@ -83,7 +83,7 @@ const LocationMap = () => {
   const [buttonColor, setButtonColor] = useState("bg-black");
 
   const [myPeer, setMyPeer] = useState<Peer | null>(null);
-  const [connection, setConnection] = useState<DataConnection | null>(null);
+  const connectionRef = useRef<DataConnection | null>(null);
   const [currentTime, setCurrentTime] = useState(moment());
   const [sentTime, setSentTime] = useState("");
   const [receivedTime, setReceivedTime] = useState("");
@@ -119,7 +119,7 @@ const LocationMap = () => {
       }
     };
     getReceiverUserInfo();
-  }, []);
+  }, [email]);
 
   function joinAddress(e: any) {
     e.preventDefault();
@@ -186,6 +186,13 @@ const LocationMap = () => {
 
       setGoogleMapsLoaded(true);
 
+      if (!position1){
+        return;
+      }
+      if (!position2){
+        return;
+      }
+
       markerSender.current = new google.maps.Marker({
         position: position1.current,
         map,
@@ -234,12 +241,10 @@ const LocationMap = () => {
         },
       });
     };
-    setInitMapFunction(() => initializeMap);
-    // @ts-ignore
     if (!window.google) {
       const script = document.createElement("script");
       script.type = "text/javascript";
-      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&loading=async&libraries=geometry,visualization&sensor=true`;
+      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&loading=async`;
       script.async = true;
       script.defer = true;
       script.addEventListener("load", initializeMap); 
@@ -344,10 +349,13 @@ const LocationMap = () => {
   const send = (message: LocationData) => {
     //setting the position of the sender
     position1.current = message;
-    if (connection && connection.open) {
-      // connection.send(message);
-      //console.log("Connection opened, sending message...");
-      connection.send(message);
+    if (!connectionRef.current) {
+      connectionRef.current = myPeer?.connect(email.slice(0, email.indexOf("@"))) as DataConnection;
+    }
+    if (connectionRef.current && connectionRef.current.open) {
+      // connectionRef.current.send(message);
+      //console.log("connectionRef.current opened, sending message...");
+      connectionRef.current.send(message);
     }
     if (markerSender.current) {
       markerSender.current.setPosition(message);
@@ -356,27 +364,36 @@ const LocationMap = () => {
 
   //function to send the location request
   const locationRequest = () => {
-    if (connection && connection.open) {
-      // connection.send(message);
-      connection.send("location-request");
+    if (!connectionRef.current) {
+      connectionRef.current = myPeer?.connect(email.slice(0, email.indexOf("@"))) as DataConnection;
+    }
+    if (connectionRef.current && connectionRef.current.open) {
+      // connectionRef.current.send(message);
+      connectionRef.current.send("location-request");
     //  console.log("Location Request sent");
     }
   };
 
   //function to send the face capture during face detection
   const faceCaptureSend = (blobUrl: string) => {
-    if (connection && connection.open) {
-      // connection.send(message);
-      connection.send(blobUrl);
+    if (!connectionRef.current) {
+      connectionRef.current = myPeer?.connect(email.slice(0, email.indexOf("@"))) as DataConnection;
+    }
+    if (connectionRef.current && connectionRef.current.open) {
+      // connectionRef.current.send(message);
+      connectionRef.current.send(blobUrl);
       //console.log(blobUrl)
     }
   };
 
   //function to send the the face varification declined
   const FaceCaptureDeclined = () => {
-    if (connection && connection.open) {
-      // connection.send(message);
-      connection.send("face-capture-declined");
+    if (!connectionRef.current) {
+      connectionRef.current = myPeer?.connect(email.slice(0, email.indexOf("@"))) as DataConnection;
+    }
+    if (connectionRef.current && connectionRef.current.open) {
+      // connectionRef.current.send(message);
+      connectionRef.current.send("face-capture-declined");
       //console.log("face-capture-declined");
     }
     setFaceCaptureReceived(false);
@@ -384,9 +401,12 @@ const LocationMap = () => {
 
   //function to send the the face varification verification
   const FaceCaptureConfirmed = () => {
-    if (connection && connection.open) {
-      // connection.send(message);
-      connection.send("face-capture-confirmed");
+    if (!connectionRef.current) {
+      connectionRef.current = myPeer?.connect(email.slice(0, email.indexOf("@"))) as DataConnection;
+    }
+    if (connectionRef.current && connectionRef.current.open) {
+      // connectionRef.current.send(message);
+      connectionRef.current.send("face-capture-confirmed");
     //  console.log("face-capture-confirmed");
     }
     setFaceCaptureReceived(false);
@@ -411,7 +431,7 @@ const LocationMap = () => {
       // The peer that initiates the connection needs to handle data from the peer it connects to.
       conn_.on("open", () => {
        // console.log("Connection to receiver established");
-        setConnection(conn_);
+        connectionRef.current = conn_;
       });
       conn_.on("data", (data: any) => {
        // console.log("Data received on receiver:", data);
@@ -444,7 +464,7 @@ const LocationMap = () => {
         conn.on("data", (data: any) => {
          // console.log("Data received on receiver:", data);
           if (data === "location-request") {
-            setPopUpOpen(true);
+            setPopUpOpen(!popUpOpen);
           } else if (data === "face-capture-declined") {
             setSenderFaceDeclined(true);
           } else if (data === "face-capture-confirmed") {
@@ -565,7 +585,8 @@ const LocationMap = () => {
             <Button
               className="flex items-center justify-center h-10 w-60 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50"
               variant="outline"
-              onClick={() => locationRequest()}
+              onClick={() => {
+                locationRequest();}}
             >
               <MdAddLocationAlt className="w-6 h-6 mr-2" />
               Request Location Access

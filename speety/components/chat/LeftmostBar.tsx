@@ -8,8 +8,10 @@ import { db } from "@/firebase/config";
 import React, { useEffect, useState } from 'react';
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-//import { main } from "@/services/faceDetection/FaceDetector";
-
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import { IoPeopleCircle } from "react-icons/io5";
+import { IoIosPersonAdd } from "react-icons/io";
+import Image from 'next/image';
 interface LeftmostBarProps {
   userEmail: string;
 }
@@ -48,33 +50,22 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
             <img
               src={userPic as string}
               alt="user_profile"
-              className="mt-10 rounded-full"
+              className="mt-10 rounded-3xl"
               width={40}
               height={40}
             />
           </div>
           <div className="flex flex-col items-center mt-8 py-10">
             <div>
-              <img
-                src="/msg.png"
-                alt="chat"
-                width={35}
-                height={35}
-              />
+              <EmailRoundedIcon className="xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
               <h1 className="text-white ml-1 mt-1 text-xs">Chat</h1>
             </div>
             <div className="mt-8">
-              <img src="/people.png" alt="people" width={30} height={30} />
+              <IoPeopleCircle  className="xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
               <h1 className="text-white text-xs mt-2 ">People</h1>
             </div>
             <div className="mt-8">
-              <img
-                src="/hourglass-not-done.png"
-                alt="requests"
-                width={35}
-                height={35}
-                className="ml-1"
-              />
+            <IoIosPersonAdd className="xl:ml-1 2xl:ml-1 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
               <h1 className="text-white text-xs mt-2">Request</h1>
             </div>
           </div>

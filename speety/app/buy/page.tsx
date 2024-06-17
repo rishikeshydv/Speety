@@ -57,6 +57,9 @@ export default function Buy() {
     event.preventDefault();
     //write a logic to retrieve the entries from database based on the form data
     return new Promise((resolve, reject) => {
+      if (formData.zip === "" || formData.priceLower === "" || formData.priceUpper === "" || formData.searchType === "" || formData.beds === "" || formData.baths === "" || formData.homeType === ""){
+          return;
+      }
       buyQ(
         formData.zip,
         formData.priceLower,
@@ -115,15 +118,15 @@ export default function Buy() {
   useEffect(() => {
     const initializeMap = () => {
       const _autocomplete = new window.google.maps.places.Autocomplete(
-        document.getElementById("autocomplete") as HTMLInputElement
-      );
-    };
+        document.getElementById('autocomplete') as HTMLInputElement
+        );
+};
     const loadGoogleMapsScript = () => {
-      const googleMapsScript = document.createElement("script");
-      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places&callback=initAutocomplete`;
+      const googleMapsScript = document.createElement('script');
+      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`;
       googleMapsScript.async = true;
       googleMapsScript.defer = true;
-      googleMapsScript.addEventListener("load", initializeMap);
+      googleMapsScript.addEventListener('load', initializeMap);
       document.body.appendChild(googleMapsScript);
     };
 
@@ -132,6 +135,8 @@ export default function Buy() {
       loadGoogleMapsScript();
     }
   }, []);
+
+  
   return (
     <div className={poppins.className}>
       <Header />
