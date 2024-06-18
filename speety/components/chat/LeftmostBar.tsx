@@ -46,14 +46,14 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
           </a>
         </div>
         <nav className="flex flex-col p-2">
-          <div className="flex flex-col items-center">
+          <div className="flex items-center">
+            <div className="relative w-10 h-10 mt-10 ml-5 rounded-full overflow-hidden">
             <img
               src={userPic as string}
               alt="user_profile"
-              className="mt-10 rounded-3xl"
-              width={40}
-              height={40}
+              className="object-cover w-full h-full"
             />
+            </div>
           </div>
           <div className="flex flex-col items-center mt-8 py-10">
             <div>
