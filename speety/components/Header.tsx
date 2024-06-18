@@ -111,7 +111,7 @@ export default function Header() {
             <img src="/speety_logo.png" onClick={()=>router.push("/")} alt="logo" style={{width:200}}/>
         </div>
         {user && (
-          <div className='absolute flex items-center justify-between shadow-sm px-4 top-4 right-1 bg-[#95D7AE] rounded-3xl'>
+          <div className='absolute flex items-center justify-between shadow-sm px-4 py-1 top-4 right-1 bg-[#87a3a3] rounded-3xl'>
              <button onClick={dashboardRedirect} className='flex font-bold  right-80 '>
              <img src={userPic} alt="pp" className='w-8 h-8 bg-gray-300 p-1 rounded-full'/>
               <p className='mt-2 ml-2 text-sm hover:text-md hover:underline'>{userName}</p>
@@ -241,7 +241,7 @@ notification.type === "chat" && notification.age === "new" ? (
           </div>
 )}
 </div>
-        <div className='w-screen h-12 bg-gray-400'>
+        <div className='w-screen h-12 bg-[#87a3a3]'>
             <ul className='font-bold flex items-center justify-center'>
                 <li className=' text-white hover:text-black hover:scale-125 text-xl mt-2'><a href='/buy'>BUY</a></li>
                 <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/rent'>RENT</a></li>
