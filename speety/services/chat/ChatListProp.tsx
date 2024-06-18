@@ -47,7 +47,7 @@ const ChatListProp: React.FC<ChatList> = ({
   } else {
     return (
       
-      <div className="flex items-start justify-start w-76 truncate h-16" onClick={()=>onUserClick(email)}>
+      <div className="flex items-start justify-start w-full truncate h-16" onClick={()=>onUserClick(email)}>
       <Button className="flex items-start justify-start w-full h-16 gap-4 " variant="outline">
         <Avatar className="w-11 h-11 border rounded-full mt-1">
           <AvatarImage alt="@" src={imgUrl} />

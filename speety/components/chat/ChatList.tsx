@@ -10,6 +10,7 @@ import { db } from "@/firebase/config";
 import { send } from "process";
 import NewProp1 from "@/services/chat/NewProp1";
 import NewProp2 from "@/services/chat/NewProp2";
+import axios from "axios";
 
 interface eachMessage {
   type: string;
@@ -92,15 +93,21 @@ const ChatList: React.FC<ChatListProps> = ({
       if (response.length === 0) {
         return;
       }
-      setMessagesExchanged(response);
+       //upon getting the messages from the database, we update the status of all the messages to "delivered"
+      //we only make changes in the messages exchanged, not in the database
+      const updatedMessages = response.map((msg) => ({
+        ...msg,
+        status: "delivered",
+      }));
+      setMessagesExchanged(updatedMessages);
       if (response.length > 0) {
         setLastMsg(response[response.length - 1].msg);
         setLastMsgTime(refineTime(response[response.length - 1].date));
       }
+
     };
     fetchMsgs();
   }, [senderEmail, receiverEmail]);
-
 
   // Update messagesExchanged when a new message is sent
   useEffect(() => {
@@ -119,27 +126,25 @@ const ChatList: React.FC<ChatListProps> = ({
     }
   }, [receivedMessage]);
 
-  // useEffect(() => {
-  //   // Update database only at the end of the chat
-  //   //We dont push after every new messages we get
-  //   //This saves a lot of costs
+  useEffect(() => {
+    const handleBeforeUnload = (event:any) => {
+      const data = JSON.stringify({
+        senderEmail,
+        receiverEmail,
+        messagesExchanged,
+      });
+      if (navigator){
+        navigator.sendBeacon("/api/v1/message-push", data);
+      }
+    };
 
-  //   const updateChatsAsync = async () => {
-  //     if (senderEmail && receiverEmail && messagesExchanged.length > 0){
-  //    await updateChats(senderEmail, receiverEmail, messagesExchanged)
-  //   }
-  //   };
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-  //   window.addEventListener("beforeunload",()=>{
-  //     updateChatsAsync();
-  //   });
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [messagesExchanged, senderEmail, receiverEmail]);
 
-  //   return () => {
-  //     window.removeEventListener("beforeunload", ()=>{
-  //       updateChatsAsync();
-  //     });
-  //   };
-  // }, [messagesExchanged, senderEmail, receiverEmail]);
 
   //the following is the logic for the Sendbar
   const [message, setMessage] = useState<string>("");

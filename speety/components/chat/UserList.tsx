@@ -16,7 +16,7 @@ interface UserListProps {
 
 const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) => {
   const [user] = useAuthState(auth);
-  const [usersConnected, setUsersConnected] = useState<string[][]>([]);
+  const [usersConnected, setUsersConnected] = useState<any[][]>([]);
   
   useEffect(() => {
     const fetchUsers = async () => {
@@ -34,8 +34,7 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) =>
   if (user && user?.email){
     fetchUsers();
   }
-    
-  }, [user]); // Add user to the dependency array to trigger useEffect when user changes
+}, [user]); // Add user to the dependency array to trigger useEffect when user changes
 
   //selecting the first user of the list automatically as clicked
   useEffect(() => {
@@ -48,7 +47,7 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) =>
   <div className="w-76 h-full rounded-2xl shadow-xs mb-3 mt-1 bg-gray-200">
   <div className="flex flex-col items-center">
   {usersConnected.length > 0 ? (
-  usersConnected.map(([_email,_name,_profilePic], index) => (
+  usersConnected.map(([_email,_name,_profilePic,newMsgStatus], index) => (
     <ChatListProp
       key={index}
       imgUrl={_profilePic} // replace with default avatar URL
@@ -56,7 +55,7 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) =>
       email={_email}
       lastMsg={lastMsg}
       lastMsgTime={lastMsgTime} // replace with actual last message time
-      newMsg={false}
+      newMsg={newMsgStatus}
       onUserClick={onUserClick}
     />
   ))
