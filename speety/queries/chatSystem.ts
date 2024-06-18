@@ -15,10 +15,11 @@ const getConnectedUsers = async (senderUser: string) => {
   if (!senderUser) {
     return;
   }
+  //making a list of emails
   const usersRef = collection(db, "connectedHistory");
   const userDocRef = doc(usersRef, senderUser);
   const userSnapshot = await getDoc(userDocRef);
-  let usersConnected: string[][] = [];
+  let usersConnected: any[][] = [];
   let tempEmails: string[] = [];  
 
   if (userSnapshot.exists()) {
@@ -30,6 +31,7 @@ const getConnectedUsers = async (senderUser: string) => {
     }
 }
 
+  //getting the name and profile pic of the users
    const _usersRef = collection(db, "User_Info");
    for (let i=0;i<tempEmails.length;i++){
     const _userDocRef = doc(_usersRef, tempEmails[i]);
@@ -39,6 +41,28 @@ const getConnectedUsers = async (senderUser: string) => {
       usersConnected.push([tempEmails[i],_retrievedData["name"],_retrievedData["profilePic"]]);
     }
 
+   }
+
+   //is the last message had "received" type and "sent" status, then its a new message
+   const newMsgDoc = doc(db, "connectedHistory", senderUser);
+   const newMsgSnapshot = await getDoc(newMsgDoc);
+   if (newMsgSnapshot.exists()) {
+    const newMsgData = newMsgSnapshot.data();
+    const keys = Object.keys(newMsgData);
+    for (let i=0;i<keys.length;i++){
+      const newKey = keys[i];
+      const eachUserMsg = newMsgData[newKey].messagesExchanged;
+      if (eachUserMsg.length > 0){
+        if (eachUserMsg[eachUserMsg.length-1].type === "received" && eachUserMsg[eachUserMsg.length-1].status === "sent"){
+          for (let j=0;j<usersConnected.length;j++){
+            if (usersConnected[j][0] === newKey+".com"){
+              usersConnected[j].push(true); // Convert boolean to string
+              break;
+            }
+          }
+        }
+      }
+    }
    }
 
   return usersConnected;
