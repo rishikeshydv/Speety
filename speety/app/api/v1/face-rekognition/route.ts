@@ -28,14 +28,17 @@ const params = {
     TargetImage: {
         Bytes: targetBuffer,
     },
-    SimilarityThreshold: 90,
+    SimilarityThreshold: 0,
 }
 //comparing the faces
 const command = new CompareFacesCommand(params);
 
 //getting the response
 const response = await client.send(command);
-console.log(response);
-return NextResponse.json(response);
+if(response.FaceMatches === undefined){
+    return NextResponse.json([]);
+}
+console.log(response.FaceMatches[0]['Similarity'] as any);
+return NextResponse.json(response.FaceMatches);
 
 }
