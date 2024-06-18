@@ -141,7 +141,36 @@ export default function Buy() {
     <div className={poppins.className}>
       <Header />
       <div className="">
-        <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#87a3a3] to-[#f6f6f6]">
+        <div className="bg-gray-200">
+        <img src="/wide1.jpg" alt="alt" className="object-cover w-full" style={{height:400}}/>
+          <section className="py-10 flex flex-col items-center justify-center absolute left-1/4 bottom-1/4">
+            {/* "Selling fast" */}
+            <div className="text-7xl font-bold flex items-center tracking-tighter text-[#16302B]">
+              <span>Buying your home</span>
+            </div>
+            {/* "Buying smart" with gradient text */}
+            <h1 className="text-7xl font-bold flex items-center mb-10 tracking-tighter">
+              <span className="text-[#16302B]">with</span>
+              &nbsp;
+              <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
+                confidence
+              </span>
+              <img
+                src="/sell_house.png"
+                width={120}
+                height={60}
+                className="mb-5 ml-5"
+                alt="Home"
+              />
+            </h1>
+            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#16302B] text-md mb-10">
+              <Typist>
+                Speety is making it simpler to buy your home and settle.
+              </Typist>
+            </div>
+          </section>
+        </div>
+        <div className="flex items-center justify-center p-4 bg-[#87a3a3]">
           {/* This div tag is for search bar  */}
           <form onSubmit={handleSubmit}>
             <input
@@ -236,37 +265,6 @@ export default function Buy() {
               Search
             </button>
           </form>
-        </div>
-
-
-        <div className="bg-gray-200">
-        <img src="/buyHome.jpg" alt="alt" className="aspect-video object-cover object-center w-full"/>
-          <section className="py-10 flex flex-col items-center justify-center absolute inset-0 top-60">
-            {/* "Selling fast" */}
-            <div className="text-7xl font-bold flex items-center tracking-tighter text-[#16302B]">
-              <span>Buying your home</span>
-            </div>
-            {/* "Buying smart" with gradient text */}
-            <h1 className="text-7xl font-bold flex items-center mb-10 tracking-tighter">
-              <span className="text-[#16302B]">with</span>
-              &nbsp;
-              <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
-                confidence
-              </span>
-              <img
-                src="/sell_house.png"
-                width={120}
-                height={60}
-                className="mb-5 ml-5"
-                alt="Home"
-              />
-            </h1>
-            <div className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#004F2D] text-md mb-10">
-              <Typist>
-                Speety is making it simpler to buy your home and settle.
-              </Typist>
-            </div>
-          </section>
         </div>
         {refinedList && (
           <section className="">
