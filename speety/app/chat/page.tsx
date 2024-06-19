@@ -46,7 +46,6 @@ export default function Chat() {
 
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
 
   const [sentMessage, setSentMessage] = useState<eachMessage>({

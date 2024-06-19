@@ -57,7 +57,6 @@ export default function Rent() {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
   const [formData, setFormData] = useState({
     zip: "",

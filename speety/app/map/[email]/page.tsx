@@ -32,7 +32,6 @@ const LocationMap = () => {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
 
   //handling pop up and location sharing permission

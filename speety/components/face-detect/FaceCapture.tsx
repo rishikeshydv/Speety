@@ -66,6 +66,7 @@ const FaceCapture:React.FC<FaceCaptureProps> = ({faceCaptureSend, faceCapture, s
         <Webcam
           audio={false}
           ref={webcamRef}
+          alt="webcam"
           screenshotFormat="image/jpeg"
           width={500}
           height={375}
@@ -78,6 +79,7 @@ const FaceCapture:React.FC<FaceCaptureProps> = ({faceCaptureSend, faceCapture, s
       ) : (
         <img
           src={imgSrc as string}
+          alt="captured image"
           width={500}
           height={375}
           style={{
