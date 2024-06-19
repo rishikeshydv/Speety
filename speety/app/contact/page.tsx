@@ -14,7 +14,6 @@ export default function Contact() {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
   return (
     <div className={poppins.className}>

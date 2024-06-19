@@ -35,7 +35,6 @@ export default function Component() {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
   //setting up state variables
   const [userVerificationList, setUserVerificationList] = useState<userVerify[]>([])

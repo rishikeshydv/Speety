@@ -46,7 +46,6 @@ export default function Component() {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
 
 const params = useParams();

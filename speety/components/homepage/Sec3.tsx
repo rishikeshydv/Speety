@@ -12,6 +12,7 @@ export default function Sec3() {
             <div className='mt-10 ml-10 px-10px flex items-center text-[#16302B]'>
                 <img 
                 src="/sparkle.png" 
+                alt='sparkle'
                 width={40}
                 height={5}
                 style={{ marginRight: '30px' }}/>

@@ -40,6 +40,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
         <img
           src={src}
           className={_className}
+          alt="video-call"
         />
 </button>
 {/* Popover for video-call */}
@@ -49,7 +50,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
           <PopoverContent align="end" style={{ width: "1200px", height: "700px" }} className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
-          <video ref={receiverVideoRef} style={{ width: "800", height: "500px" }} className=" bg-gray-100 rounded-xl" />
+          <video ref={receiverVideoRef} style={{ width: "800", height: "500px" }} className=" bg-gray-100 rounded-xl"/>
       </div>
       <div className="flex items-center justify-between p-2">
       <div className="flex flex-1 justify-center gap-2 ml-60">

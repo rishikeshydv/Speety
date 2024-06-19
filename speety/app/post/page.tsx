@@ -46,7 +46,6 @@ export default function PropertyPost() {
  const _uniqueId = uuidv4()
  if (!user) {
    router.push("/auth/login");
-   return <div>Not authorized</div>;
  }
 
 //storing all the image files

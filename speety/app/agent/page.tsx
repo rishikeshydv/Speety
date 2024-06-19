@@ -23,7 +23,6 @@ export default function Agent() {
   const router = useRouter();
   if (!user) {
     router.push("/auth/login");
-    return <div>Not authorized</div>;
   }
   const [zipVal, setZipVal] = useState<string>("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

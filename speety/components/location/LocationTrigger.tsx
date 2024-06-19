@@ -24,6 +24,7 @@ const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,clicked
       <img
         src={src}
         className={_className}
+        alt="location"
       />
 </button>
 {/* Popover for video-call */}
