@@ -69,7 +69,6 @@ const LocationMap = () => {
     null
   );
   const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false); //to check if the google maps script is loaded or not
-  const [initMapFunction, setInitMapFunction] = useState<Function | null>(null);
   const [senderUser, setSenderUser] = useState<string>("");
   const [receiverUser, setReceiverUser] = useState<string>("");
 
