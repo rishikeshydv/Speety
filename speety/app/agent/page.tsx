@@ -10,13 +10,21 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
-import Rating from '@mui/material/Rating';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 interface LocationData {
   lat: number;
   lng: number;
 }
 
 export default function Agent() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
   const [zipVal, setZipVal] = useState<string>("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setZipVal(event.target.value);

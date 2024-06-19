@@ -44,6 +44,10 @@ export default function PropertyPost() {
 
  const [user] = useAuthState(auth);
  const _uniqueId = uuidv4()
+ if (!user) {
+   router.push("/auth/login");
+   return <div>Not authorized</div>;
+ }
 
 //storing all the image files
   const handleImageChange = (event:any) => {

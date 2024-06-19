@@ -20,7 +20,7 @@ import FaceDeclinedReceiver from "@/components/face-detect/FaceDeclinedSender";
 import FaceDeclinedSender from "@/components/face-detect/FaceDeclinedReceiver";
 import TimerStartConfirm from "@/components/timer/TimerStartConfirm";
 import ComparingImages from "@/components/face-detect/ComparingImages";
-
+import { useRouter } from "next/navigation";
 
 interface LocationData {
   lat: number;
@@ -29,6 +29,11 @@ interface LocationData {
 const LocationMap = () => {
   const [user] = useAuthState(auth);
   const [id, setId] = useState<string>("");
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
 
   //handling pop up and location sharing permission
   const [shareAllow, setShareAllow] = useState(false);

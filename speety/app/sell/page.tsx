@@ -6,7 +6,16 @@ import Section4 from '@/components/sell/Section4'
 import React from 'react'
 import poppins from "@/font/font";
 import Footer from '@/components/Footer'
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 export default function Sell() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
   return (
     <div className={poppins.className}>
         <Header />

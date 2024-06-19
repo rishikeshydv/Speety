@@ -6,7 +6,16 @@ import { Ticket } from '@/components/contact/Ticket';
 import poppins from '@/font/font';
 import { set } from 'firebase/database';
 import React from 'react';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 export default function Contact() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
   return (
     <div className={poppins.className}>
 

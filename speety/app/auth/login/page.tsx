@@ -14,18 +14,22 @@ import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
 import updateStatus from "@/queries/changeLoginStatus";
 import Login from "@/firebase/auth/login";
-
+import PasswordReset from "@/components/ResetThankYou";
+import {sendPasswordResetEmail } from "firebase/auth";
+import ResetEmail from "@/components/ResetEmail";
 interface SignInData {
   email: string;
   password: string;
 }
-
 export default function SignInPage() {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const [err, setErr] = useState<string>("");
+  const [reset, setReset] = useState<boolean>(false);
+  const [resetDone, setResetDone] = useState<boolean>(false);
   
   const { register, handleSubmit,formState: { errors } } = useForm<SignInData>();
+
 
   const onSubmit:SubmitHandler<any> = async (data) => {
     const { email, password } = data;
@@ -51,18 +55,49 @@ export default function SignInPage() {
         router.push(`/dashboard/${email}`);
         });
 
+     
+
     } catch (error) {
       alert("Invalid email or password");
 
     }
   };
 
+  //logic to create a session timeout
+  // a user can login upto 1 hour only
+//   auth.onAuthStateChanged((user) => {
+//     let sessionTimeout = null;
+//     if (user===null) {
+//     // User is logged out.
+//     // Clear the session timeout.
+//     sessionTimeout && clearTimeout(sessionTimeout);
+//     sessionTimeout = null;
+//   }
+//   else{
+//     // User is logged in.
+//     // Set the session timeout for 1 hour
+//     user.getIdTokenResult().then((idTokenResult) => {
+//     const authTime = Number(idTokenResult.claims.auth_time) * 1000;
+//     const sessionDuration = 30000;
+//     const millisecondsUntilExpiration = authTime + sessionDuration - Date.now();
+//     sessionTimeout = setTimeout(() => {
+//       auth.signOut();
+//     }, millisecondsUntilExpiration);
+//   })
+// }
+//  });
   return (
     <div className={poppins.className}>
       <div className="flex">
         <div className={`bg-gray-800 h-screen w-1/2 flex items-center`}>
           <img src="/loginFamily.jpg" alt="alt" />
         </div>
+        {
+          reset && <ResetEmail setReset={setReset} setResetDone={setResetDone}/>
+        }
+        {
+          resetDone && <PasswordReset/>
+        }
 
         <div className="h-screen w-1/2 flex flex-col items-center justify-center">
           <Image
@@ -121,9 +156,9 @@ export default function SignInPage() {
               />
 
               {errors.password && <p className="text-red-500">Password is required.</p>}
-              <a href="#" className="mt-1 text-blue-700 text-sm">
+              <h1 className="mt-1 text-blue-700 text-sm" onClick={()=>setReset(true)}>
                 Forgot Password?
-              </a>
+              </h1>
               <p id="error_msg" className="text-md text-red-400 font-semibold">{err}</p>
               <button
               type="submit"

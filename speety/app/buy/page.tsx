@@ -14,6 +14,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import Link from "next/link"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "@/components/ui/pagination"
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 interface LocationData {
   lat: number;
   lng: number;
@@ -49,6 +52,13 @@ interface Property {
  const cache = new PresentListingCache(300000); //5 minutes
 
 export default function Buy() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
+  
   const [formData, setFormData] = useState({
     zip: "",
     searchType: "Buy",
