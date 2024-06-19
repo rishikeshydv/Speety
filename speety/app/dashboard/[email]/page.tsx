@@ -20,8 +20,9 @@ import { collection,getDoc,doc, setDoc, updateDoc} from "firebase/firestore";
 import { db } from "@/firebase/config";
 import moment from "moment"; //use moment.js to get time/date in a good format
 import getImageUrl from "@/queries/ImgVidUrls/getImageUrl"
-import { set } from "firebase/database"
-
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 
 interface Property {
   address: string;
@@ -41,6 +42,12 @@ interface Property {
 }
 
 export default function Component() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
 
 const params = useParams();
   const paramsEmail = decodeURIComponent(params.email as string);

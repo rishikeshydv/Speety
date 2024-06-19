@@ -14,6 +14,9 @@ import Header1 from "@/components/Tickets/Header1"
 import { useEffect, useState } from "react"
 import {collection, query, getDocs} from "firebase/firestore"; 
 import { db } from "@/firebase/config";
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 interface userVerify{
   brokerId: string;
   confirmPassword: string;
@@ -28,6 +31,12 @@ interface userVerify{
 }
 
 export default function Component() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
   //setting up state variables
   const [userVerificationList, setUserVerificationList] = useState<userVerify[]>([])
 

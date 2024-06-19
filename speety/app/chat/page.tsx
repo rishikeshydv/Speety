@@ -18,7 +18,7 @@ import DummyTopRight from "@/components/chat/DummyTopRight";
 import VideoPopUp from "@/components/video/VideoPopUp";
 import { getDoc, doc } from "firebase/firestore";
 import { NextResponse } from "next/server";
-
+import { useRouter } from "next/navigation";
 
 interface userLoc {
   email: string;
@@ -42,6 +42,13 @@ export default function Chat() {
   const [user] = useAuthState(auth);
   const [id, setId] = useState<string>("");
   const [clicked, setClicked] = useState("");
+  const router = useRouter();
+
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
+
   const [sentMessage, setSentMessage] = useState<eachMessage>({
     type: "",
     msg: "",

@@ -26,7 +26,8 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { collection, doc, query,getDocs, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { set } from "firebase/database";
-
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
 interface LocationData {
   lat: number;
   lng: number;
@@ -37,11 +38,18 @@ interface AgentInfo {
 }
 
 export default function Component() {
+
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+
+  if (!user) {
+    router.push("/auth/login");
+    return <div>Not authorized</div>;
+  }
+
   const params = useParams();
   const emailParams = decodeURIComponent(params.email as string);
   const mapRef = useRef(null);
-  const router = useRouter();
-
   const [agentEmails, setAgentEmails] = useState<string[]>([]);
   const [agentInfo, setAgentInfo] = useState<any>({});
   
