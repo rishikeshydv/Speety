@@ -15,13 +15,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-
 import ListingCard from "@/services/agent/ListingCard";
 import { useParams, useRouter } from 'next/navigation';
 import { auth } from "@/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment"; //use moment.js to get time/date in a good format
-import { useState,useEffect } from "react";
+import { useState,useEffect, useRef } from "react";
 import PushNotifications from "@/queries/Notifications/PushNotifications";
 import { collection,getDoc,doc} from "firebase/firestore"; 
 import { db } from "@/firebase/config";
@@ -30,8 +29,16 @@ import ReviewProp from "@/services/agent/ReviewProp";
 import Review from "@/components/review/Review";
 import ReviewSuccess from "@/components/review/ReviewSubmit";
 import IsUserConnected from "@/queries/IsUserConnected";
+import { Button } from "@/components/ui/button";
+import { add } from "date-fns";
+
 interface Review {
   [key: string]: string[];
+}
+
+interface LocationData {
+  lat: number;
+  lng: number;
 }
 
 interface Property {
@@ -93,6 +100,12 @@ export default function Component() {
   const reviewCompleteFunc = () => {
     setReviewComplete(!reviewComplete);
   }
+
+  //map UI
+  const markerDestination = useRef<google.maps.Marker>();
+  const googlemap = useRef<HTMLDivElement>();
+  const map_ = useRef<google.maps.Map>();
+  const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false); //to check if the google maps script is loaded or not
 
   let _presentListings: Property[] = [];
   let _soldListings: Property[] = [];
@@ -236,7 +249,7 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
       setReviews(updatedReviews);
     };
     appendProfilePics();
-  }, [reviews]);
+  }, []);
 
   const [currentTime, setCurrentTime] = useState(moment());
   useEffect(() => {
@@ -251,6 +264,99 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
+
+
+
+  //HANDLING MAPS
+  //making a list of addresses from presentListings using joinAddress function
+  const [addressList, setAddressList] = useState<string[]>([]);
+  const [addressLatLng, setAddressLatLng] = useState<LocationData[]>([]);
+  useEffect(() => {
+    if (presentListings) {
+      const addresses = presentListings.map((property) => {
+        return `${property.address}, ${property.city}, ${property.state}, ${property.zip}, "USA`;
+      });
+      setAddressList(addresses);
+    }
+  }, [presentListings]);
+
+  useEffect(() => {
+    const geocodeDestination = async (address: any): Promise<LocationData> => {
+      const myGeocoder = new google.maps.Geocoder();
+      return new Promise<LocationData>((resolve, reject) => {
+        myGeocoder.geocode({ address }, (results, status) => {
+          if (status === "OK" && results) {
+            const destinationLocation = {
+              lat: results[0].geometry.location.lat(),
+              lng: results[0].geometry.location.lng(),
+            };
+            resolve(destinationLocation);
+          } else {
+            reject(new Error("Geocode request failed."));
+          }
+        });
+      });
+    };
+
+//now we make a list of Latitudes and Longitudes of the addresses
+    const getLatLngList = async () => {
+      const latLngList = await Promise.all(
+        addressList.map(async (address) => {
+          return await geocodeDestination(address);
+        })
+      );
+      setAddressLatLng(latLngList);
+    };
+    if (addressList.length > 0) {
+      getLatLngList();
+    }
+  }, [addressList])
+
+
+  useEffect(() => {
+
+    const initializeMap = () => {
+      if (!google.maps.Map){
+        return; 
+      }
+
+//setting center as new york
+      const map = new google.maps.Map(googlemap.current as HTMLDivElement, {
+        zoom: 4,
+        center: addressLatLng[0],
+        mapId: "LocationTrackingMap",
+      });
+
+      map_.current = map;
+
+      setGoogleMapsLoaded(true);
+
+      //create a marker for each address in the list
+      addressLatLng.forEach((location, index) => {
+        const marker = new google.maps.Marker({
+          position: location,
+          map,
+          label: `${index + 1}`,
+          icon: {
+            url: "https://cdn-icons-png.flaticon.com/512/6830/6830146.png",
+            scaledSize: new google.maps.Size(40, 40),
+          },
+        });
+      });
+    };
+    if (!window.google) {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&loading=async&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", initializeMap); 
+      document.body.appendChild(script);
+    } else {
+        initializeMap(); // If Google Maps is already loaded
+    }
+  }, [addressLatLng]);
+
 
   return (
     <div className={poppins.className}>
@@ -401,6 +507,26 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
 
       </div>
     </Card>
+
+      {/* This is the Map section */}
+      <section className="flex flex-col items-center space-y-8 p-8 bg-gray-200 rounded-2xl">
+      <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
+      <div className="bg-white p-6 rounded-3xl">
+      <div className="w-full max-w-4xl shadow-lg" ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: "550px", width: "1000px" }}>
+      </div>
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <Button variant="outline" className="text-black hover:bg-white hover:text-primary">
+          Zoom In
+        </Button>
+        <Button variant="outline" className="text-black hover:bg-white hover:text-primary">
+          Zoom Out
+        </Button>
+      </div>
+    </section>
+
+
     {
       reviewComplete ? <ReviewSuccess reviewCompleteFunc={reviewCompleteFunc}/> : <Review name={name} reviewCompleteFunc={reviewCompleteFunc} agentEmail={emailParams}/>
     }

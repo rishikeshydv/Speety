@@ -4,8 +4,8 @@ import Typist from "react-typist-component";
 export default function Section1() {
   return (
     <div>
-      <img src="/sellHome.jpg" alt="alt" className='aspect-video object-cover object-center w-full' style={{height:650}}/>
-        <section className=' flex flex-col items-center justify-center absolute inset-0 mt-28'>
+      <img src="/wide3.jpg" alt="alt" className='aspect-video object-cover object-center w-full' style={{height:650}}/>
+        <section className=' flex flex-col items-center justify-center absolute left-1/4 bottom-1/4'>
         
   {/* "Selling fast" */}
   <div className="text-7xl tracking-tighter font-bold flex items-center">
@@ -27,7 +27,7 @@ export default function Section1() {
       alt="Home"
     />
   </h1>
-        <button className="py-1 px-4 border border-blue-200 border-opacity-20 text-[#84A07C] text-md mb-10">
+        <button className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-md mb-10">
     <Typist>Scail is making it simpler to sell your home and move forward.</Typist>
   </button>
         </section>

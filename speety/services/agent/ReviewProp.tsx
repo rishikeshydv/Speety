@@ -15,7 +15,7 @@ const ReviewProp:React.FC<Review> = ({name,stars,comment,date,profilePic}) => {
   return (
     <div className="p-4 bg-white dark:bg-gray-950 rounded-lg shadow-md">
     <div className="flex items-center gap-2">
-      <img src={profilePic} alt="" className="w-12 h-12 rounded-full"/>
+      <img src= {profilePic ? profilePic : "/placeholder.svg"} alt="" className="w-12 h-12 rounded-full"/>
       <div className="font-semibold text-md">{name}</div>
       <div className="text-sm text-gray-500 dark:text-gray-400"> <Rating name="read-only" value={stars} readOnly /></div>
     </div>
