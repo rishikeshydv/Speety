@@ -106,19 +106,19 @@ export default function Header() {
 
   return (
     <div className={poppins.className}>
-      <div className='flex items-center justify-center p-4'>
+      <div className='flex items-center justify-between xl:justify-center 2xl:justify-center  p-4'>
         <div className='flex items-center justify-center'>
-            <img src="/speety_logo.png" onClick={()=>router.push("/")} alt="logo" style={{width:200}}/>
+            <img src="/speety_logo.png" onClick={()=>router.push("/")} alt="logo" className=" h-8 w-14 xl:h-[80px] xl:w-[160px] 2xl:h-[80px] 2xl:w-[160px]"/>
         </div>
         {user && (
-          <div className='absolute flex items-center justify-between shadow-sm px-4 py-1 top-4 right-1 bg-[#87a3a3] rounded-3xl'>
+          <div className='absolute flex items-center justify-between shadow-sm px-2 xl:px-4 2xl:px-4 py-1 top-4 right-1 bg-[#87a3a3] rounded-3xl'> 
              <button onClick={dashboardRedirect} className='flex font-bold  right-80 '>
-             <img src={userPic} alt="pp" className='w-8 h-8 bg-gray-300 p-1 rounded-full'/>
-              <p className='mt-2 ml-2 text-sm hover:text-md hover:underline'>{userName}</p>
+             <img src={userPic} alt="pp" className='h-4 w-4 xl:w-8 xl:h-8 2xl:w-8 2xl:h-8 bg-gray-300 xl:p-1 2xl:p-1 rounded-full'/>
+              <p className='mt-0.5 ml-1 xl:mt-2 xl:ml-2 text-xs xl:text-sm 2xl:mt-2 2xl:ml-2 2xl:text-sm hover:text-md hover:underline'>{userName}</p>
               </button>
              <button onClick={()=>router.push('/chat')} className='ml-4'>
               {/* <img src="/speech-balloon.png" className='w-12 h-12 right-52'/> */}
-              <EmailRoundedIcon className='right-52' style={{width:25,height:25}}/>
+              <EmailRoundedIcon className='right-52 h-6 w-6 xl:w-[28px] xl:h-[28px] 2xl:w-[28px] 2xl:h-[28px]'/>
               </button>
 
           {/* For Notification */}
@@ -127,9 +127,9 @@ export default function Header() {
               <button onClick={()=>{}} className='ml-2'>
                 {
                   isNotification ? (
-                    <NotificationsActiveIcon className='right-40'style={{width:25,height:25}}/>
+                    <NotificationsActiveIcon className='right-40 h-6 w-6 xl:w-[28px] xl:h-[28px] 2xl:w-[28px] 2xl:h-[28px]'/>
                   ) : (
-                    <NotificationsIcon className='right-40'style={{width:25,height:25}}/>
+                    <NotificationsIcon className='right-40 h-6 w-6 xl:w-[28px] xl:h-[28px] 2xl:w-[28px] 2xl:h-[28px]'/>
                   )
                 }
               </button>
@@ -162,9 +162,9 @@ notification.type === "chat" && notification.age === "new" ? (
             <DropdownMenuTrigger>
               <button className='ml-2'>
                 {isMeeting ? (
-                  <EditCalendarIcon className="right-52" style={{width:25,height:25}}/>
+                  <EditCalendarIcon className="right-52 h-6 w-6 xl:w-[28px] xl:h-[28px] 2xl:w-[28px] 2xl:h-[28px]"/>
                 ) : (
-                <CalendarMonthIcon className="right-52" style={{width:25,height:25}}/>
+                <CalendarMonthIcon className="right-52 h-6 w-6 xl:w-[28px] xl:h-[28px] 2xl:w-[28px] 2xl:h-[28px]"/>
                 )}
                 </button>
               </DropdownMenuTrigger>
@@ -241,13 +241,13 @@ notification.type === "chat" && notification.age === "new" ? (
           </div>
 )}
 </div>
-        <div className='w-screen h-12 bg-[#87a3a3]'>
+        <div className='w-screen h-8 xl:h-12 2xl:h-12 bg-[#87a3a3]'>
             <ul className='font-bold flex items-center justify-center'>
-                <li className=' text-white hover:text-black hover:scale-125 text-xl mt-2'><a href='/buy'>BUY</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/rent'>RENT</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/sell'>SELL</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/agent'>AGENT</a></li>
-                <li className=' text-white hover:text-black hover:scale-125 text-xl ml-16 mt-2'><a href='/contact'>HELP</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xs xl:text-xl 2xl:text-xl mt-2'><a href='/buy'>BUY</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xs xl:text-xl 2xl:text-xl ml-6 xl:ml-16 2xl:ml-16 mt-2'><a href='/rent'>RENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xs xl:text-xl 2xl:text-xl ml-6 xl:ml-16 2xl:ml-16 mt-2'><a href='/sell'>SELL</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xs xl:text-xl 2xl:text-xl ml-6 xl:ml-16 2xl:ml-16 mt-2'><a href='/agent'>AGENT</a></li>
+                <li className=' text-white hover:text-black hover:scale-125 text-xs xl:text-xl 2xl:text-xl ml-6 xl:ml-16 2xl:ml-16 mt-2'><a href='/contact'>HELP</a></li>
             </ul>
         </div>
     </div>
