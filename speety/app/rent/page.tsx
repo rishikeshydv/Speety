@@ -333,14 +333,14 @@ const sortedResults = useMemo(() => {
 
         <div className="bg-gray-200">
         <img src="/wide1.jpg" alt="alt" className="aspect-video object-cover object-center w-full xl:h-[400px] 2xl:h-[900px]"/>
-          <section className="py-10 flex flex-col items-center justify-center absolute xl:left-1/4 xl:bottom-1/4 2xl:left-[1200px] 2xl:bottom-1/3">
+          <section className="py-10 flex flex-col items-center justify-center absolute bottom-[500px] left-1/4 xl:left-1/4 xl:bottom-1/4 2xl:left-[1200px] 2xl:bottom-1/3">
             {/* "Selling fast" */}
-            <div className="xl:text-7xl 2xl:text-9xl font-bold flex items-center tracking-tighter text-[#16302B]">
+            <div className="text-2xl xl:text-7xl 2xl:text-9xl font-bold flex items-center tracking-tighter text-[#16302B]">
               <span>Renting your home</span>
             </div>
 
             {/* "Buying smart" with gradient text */}
-            <h1 className="xl:text-7xl 2xl:text-9xl font-bold flex items-center mb-10 tracking-tighter">
+            <h1 className="text-2xl xl:text-7xl 2xl:text-9xl font-bold flex items-center xl:mb-10 2xl:mb-10 tracking-tighter">
               <span className="text-[#16302B]">with</span>
               &nbsp;
               <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
@@ -348,13 +348,11 @@ const sortedResults = useMemo(() => {
               </span>
               <img
                 src="/sell_house.png"
-                width={120}
-                height={60}
-                className="mb-5 ml-5"
+                className="ml-1 xl:ml-5 2xl:ml-5 w-8 h-8 xl:w-[100px] xl:h-[90px] 2xl:w-[100px] 2xl:h-[90px]"
                 alt="Home"
               />
             </h1>
-            <div className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-md xl:text-md 2xl:text-xl mb-10">
+            <div className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-[6px] xl:text-[16px] 2xl:text-[16px] mb-10">
               <Typist>
                 Speety is making it simpler to buy your home and settle.
               </Typist>
@@ -371,7 +369,7 @@ const sortedResults = useMemo(() => {
               name="zip"
               value={formData.zip}
               onChange={handleChange}
-              className="border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm"
+              className="border-gray-400 border-2 rounded-2xl h-10 w-40 pl-4 text-sm ml-2 xl:ml-0 2xl:ml-0"
             />
 
             <select

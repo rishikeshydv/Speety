@@ -5,8 +5,8 @@ import Image from '@/services/homepage/Image'
 export default function Sec2() {
   return (
     <div className="bg-gray-200">
-    <section className='py-10'>
-        <div className="card-container flex flex-row justify-center">
+    <section className='xl:py-10 2xl:py-10'>
+        <div className="card-container flex flex-col ml-20 xl:ml-0 2xl:ml-0 xl:flex-row 2xl:flex-row justify-center">
       <Card 
         imageSrc="/hourglass.png"
         title="Realtime Communication"
@@ -24,8 +24,8 @@ export default function Sec2() {
       />
     </div>
 
-    <div className='p-6'>
-      <Image src="/imgSample.png" alt="Your Image" />
+    <div className='xl:p-6 2xl:p-6'>
+      <Image src="/imgSample.png" alt="Your Image"/>
     </div>
 
         </section></div>

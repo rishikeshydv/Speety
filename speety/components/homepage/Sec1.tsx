@@ -75,7 +75,7 @@ export default function Sec1() {
       src="/sparkle.png"
       width={30}
       height={20}
-      className="xl:mb-5 2xl:mb-5 ml-5"
+      className="xl:mb-5 2xl:mb-5 ml-2 xl:ml-5 2xl:ml-5 h-3 w-3 xl:w-[30px] xl:h-[20px] 2xl:w-[30px] 2xl:h-[20px]"
       alt="Sparkle"
     />
   </h1>

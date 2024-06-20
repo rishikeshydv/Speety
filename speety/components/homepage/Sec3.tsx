@@ -15,8 +15,9 @@ export default function Sec3() {
                 alt='sparkle'
                 width={40}
                 height={5}
+                className='xl:w-16 xl:h-16 2xl:w-16 2xl:h-16'
                 style={{ marginRight: '30px' }}/>
-                <h1 className='text-5xl font-bold'>
+                <h1 className='text-2xl xl:text-5xl 2xl:text-5xl font-bold'>
                 Our Features
                 </h1>
             </div>
