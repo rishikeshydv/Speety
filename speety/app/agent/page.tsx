@@ -211,9 +211,9 @@ export default function Agent() {
     <div className={poppins.className}>
       <Header />
       <div>
-        <img src="/sellAgent.png" alt="alt" className="w-full"/>
-        <section className=" absolute inset-0 top-80">
-          <h1 className="text-7xl font-bold tracking-tighter text-center px-96">
+        <img src="/sellAgent.png" alt="alt" className="w-full xl:h-[1000px]"/>
+        <section className=" absolute inset-0 xl:top-80 2xl:top-96">
+          <h1 className="xl:text-7xl 2xl:text-9xl font-bold tracking-tighter text-center px-96">
             Sell traditionally with an{" "}
             <button className="bg-red-400 rounded-3xl px-6 py-4">agent</button>
           </h1>

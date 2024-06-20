@@ -160,7 +160,7 @@ const ChatList: React.FC<ChatListProps> = ({
   };
 
   return (
-    <div className="flex h-[calc(89%-0px)] flex-col mt-1">
+    <div className="flex xl:h-[calc(89%-0px)] 2xl:h-[calc(92%-0px)] flex-col mt-1">
       <div className="flex-1 bg-gray-200 rounded-lg p-4 overflow-scroll">
         {messagesExchanged.length > 0 ? (
           messagesExchanged.map((message, index) => {

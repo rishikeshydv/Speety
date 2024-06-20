@@ -318,14 +318,14 @@ const sortedResults = useMemo(() => {
       <Header />
       <div className="">
         <div className="bg-gray-200">
-        <img src="/wide1.jpg" alt="alt" className="object-cover w-full" style={{height:400}}/>
-          <section className="py-10 flex flex-col items-center justify-center absolute left-1/4 bottom-1/4">
+        <img src="/wide1.jpg" alt="alt" className="object-cover w-full xl:h-[400px] 2xl:h-[900px]"/>
+          <section className="py-10 flex flex-col items-center justify-center absolute xl:left-1/4 xl:bottom-1/4 2xl:left-[1200px] 2xl:bottom-1/3">
             {/* "Selling fast" */}
-            <div className="text-7xl font-bold flex items-center tracking-tighter text-[#16302B]">
+            <div className="xl:text-7xl 2xl:text-9xl font-bold flex items-center tracking-tighter text-[#16302B]">
               <span>Buying your home</span>
             </div>
             {/* "Buying smart" with gradient text */}
-            <h1 className="text-7xl font-bold flex items-center mb-10 tracking-tighter">
+            <h1 className="xl:text-7xl 2xl:text-9xl font-bold flex items-center mb-10 tracking-tighter">
               <span className="text-[#16302B]">with</span>
               &nbsp;
               <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
@@ -339,7 +339,7 @@ const sortedResults = useMemo(() => {
                 alt="Home"
               />
             </h1>
-            <div className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-md mb-10">
+            <div className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-md xl:text-md 2xl:text-xl mb-10">
               <Typist>
                 Speety is making it simpler to buy your home and settle.
               </Typist>
