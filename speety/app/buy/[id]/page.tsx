@@ -396,14 +396,12 @@ export default function Property() {
         <div className="order-1 md:order-2">
           <img
             alt="Property Image"
-            className="w-full h-[400px] md:h-[600px] object-cover rounded-lg"
-            height={400}
+            className="w-full h-[400px] md:h-[600px] object-cover rounded-lg xl:w-[600px] xl:h-[400px]"
             src={property?.imageUrl[0]}
             style={{
               aspectRatio: "600/400",
               objectFit: "cover",
             }}
-            width={600}
           />
           <div className="grid grid-cols-2 gap-4 mt-4">
             <img
