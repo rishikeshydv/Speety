@@ -9,7 +9,7 @@ import {
 export default function Section4() {
   return (
     <div><section className="bg-gray-200 py-40">
-        <h1 className="text-6xl font-bold text-center text-[#16302B]">Frequently Asked Questions</h1>
+        <h1 className="xl:text-6xl 2xl:text-9xl font-bold text-center text-[#16302B]">Frequently Asked Questions</h1>
         <div className="">
         <Accordion type="single" collapsible className="px-60 mt-16">
         <AccordionItem value="item-1">

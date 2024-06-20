@@ -47,10 +47,10 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
       </PopoverTrigger>
       {
         show && (
-          <PopoverContent align="end" style={{ width: "1200px", height: "700px" }} className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm" side="top">
+          <PopoverContent align="end" className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm xl:w-[1200px] xl:h-[700px] 2xl:w-[3000px] 2xl:h-[1200px]" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
-          <video ref={receiverVideoRef} style={{ width: "800", height: "500px" }} className=" bg-gray-100 rounded-xl"/>
+          <video ref={receiverVideoRef} className=" bg-gray-100 rounded-xl xl:w-[800px] xl:h-[500px] 2xl:w-[2300px] 2xl:h-[800px]"/>
       </div>
       <div className="flex items-center justify-between p-2">
       <div className="flex flex-1 justify-center gap-2 ml-60">
@@ -64,7 +64,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
           changeCallEndedState();
            }}/>
       </div>
-          <video ref={callerVideoRef  } style={{ width: "173px", height: "130px" }} className="w-100% bg-gray-100 rounded-3xl mr-4 mt-1"/>
+          <video ref={callerVideoRef  } className="w-100% bg-gray-100 rounded-3xl mr-4 mt-1 xl:w-[173px] xl:h-[130px] 2xl:w-[267px] 2xl:h-[200px]"/>
           </div>
     </div>
           </PopoverContent>

@@ -207,8 +207,8 @@ const LocationMap = () => {
           fontFamily: "Arial",
         },
         icon: {
-          url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
-          fillColor: "red",
+          url: "https://cdn-icons-png.flaticon.com/512/5556/5556468.png",
+          scaledSize: new google.maps.Size(40, 40),
         },
       });
 
@@ -223,8 +223,8 @@ const LocationMap = () => {
           fontFamily: "Arial",
         },
         icon: {
-          url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
-          fillColor: "blue",
+          url: "https://cdn-icons-png.flaticon.com/512/5556/5556520.png",
+          scaledSize: new google.maps.Size(40, 40),
         },
       });
 
@@ -239,8 +239,8 @@ const LocationMap = () => {
           fontFamily: "Arial",
         },
         icon: {
-          url: "https://maps.google.com/mapfiles/kml/shapes/ranger_station.png",
-          fillColor: "green",
+          url: "https://cdn.iconscout.com/icon/free/png-256/free-home-location-3013087-2510140.png",
+          scaledSize: new google.maps.Size(40, 40),
         },
       });
     };
@@ -565,18 +565,18 @@ const LocationMap = () => {
 
       <div className="text-center mt-10 py-4 px-10 rounded-full shadow-2xl bg-slate-400">
         <h1
-          className="text-3xl font-bold tracking-tighter"
+          className="xl:text-3xl 2xl:text-5xl font-bold tracking-tighter"
           onClick={() => setDestinationReached(true)}
         >
           Location Tracker
         </h1>
-        <p className="text-sm text-gray-500 leading-loose md:text-base dark:text-gray-400">
+        <p className="xl:text-sm 2xl:text-md text-gray-500 leading-loose dark:text-gray-400">
           Accessible. Customizable. Open Source.
         </p>
       </div>
-      <div className="flex gap-6 py-6">
+      <div className="flex xl:gap-6 2xl:gap-80 xl:py-6 2xl:py-28">
         <div className="flex flex-col gap-6 items-center">
-          <div className="flex gap-6">
+          <div className="flex xl:gap-6 2xl:gap-40">
             <Button
               className="flex items-center justify-center h-10 w-32 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50"
               variant="outline"
@@ -597,14 +597,13 @@ const LocationMap = () => {
           </div>
           {/* Destination Form Start*/}
           <div
-            className="mx-auto max-w-lg space-y-2 flex flex-col items-center justify-center bg-gray-100 px-6 rounded-3xl"
-            style={{ height: 400 }}
+            className="mx-auto space-y-2 xl:h-[400px] xl:w-[400px] 2xl:h-[600px] 2xl:w-[600px]  flex flex-col items-center justify-center bg-gray-100 xl:px-6 2xl:px-2 rounded-3xl"
           >
-            <h1 className="text-lg font-semibold">
+            <h1 className="xl:text-lg 2xl:text-2xl font-semibold 2xl:mb-12">
               Enter Destination Location
             </h1>
             <div className="">
-              <div className="space-y-2">
+              <div className="space-y-2 2xl:mb-4">
                 <Label htmlFor="street-address" className="text-sm">
                   Street Address
                 </Label>
@@ -619,8 +618,8 @@ const LocationMap = () => {
                   }}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-4 2xl:mb-4">
+                <div className="space-y-2 mb-4">
                   <Label htmlFor="city" className="text-sm">
                     City
                   </Label>
@@ -635,7 +634,7 @@ const LocationMap = () => {
                     }}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 2xl:mb-4">
                   <Label htmlFor="state" className="text-sm">
                     State/Province
                   </Label>
@@ -651,7 +650,7 @@ const LocationMap = () => {
                   />
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 2xl:mb-4">
                 <Label htmlFor="zip" className="text-sm">
                   Postal/ZIP code
                 </Label>
@@ -666,7 +665,7 @@ const LocationMap = () => {
                   }}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 2xl:mb-4">
                 <Label htmlFor="country" className="text-sm">
                   Country
                 </Label>
@@ -704,7 +703,7 @@ const LocationMap = () => {
         <div className="bg-white p-6 rounded-3xl">
           <div
             ref={googlemap as React.RefObject<HTMLDivElement>}
-            style={{ height: "550px", width: "1000px" }}
+            className="xl:w-[1000px] xl:h-[550px] 2xl:w-[1700px] 2xl:h-[900px] shadow-2xl"
           ></div>
         </div>
       </div>
