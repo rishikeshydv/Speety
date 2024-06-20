@@ -4,7 +4,7 @@
 * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
 */
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Separator } from "@/components/ui/separator"
 import { CardContent, Card } from "@/components/ui/card"
 import poppins from "@/font/font";
@@ -19,6 +19,11 @@ import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import Link from "next/link"
 import { Button } from "@/components/ui/button";
 import TourUI from "@/components/virtual-tour/TourUI";
+
+interface LocationData {
+  lat: number;
+  lng: number;
+}
 
 interface Property {
   address: string;
@@ -131,6 +136,87 @@ export default function Property() {
       getAgentProfileImage(property.listerEmail);
     }
   }, [property]);
+
+  //TODO: Implement the following features
+ //HANDLING MAPS
+ const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
+ const panorama = useRef<HTMLDivElement>(null);
+ const map_ = useRef<google.maps.Map | null>(null);
+ //making a list of addresses from presentListings using joinAddress function
+ const fullAddressLatLng = useRef<LocationData>({ lat: 0, lng: 0 });
+
+ useEffect(() => {
+
+   const geocodeDestination = async (address: any): Promise<LocationData> => {
+     const myGeocoder = new google.maps.Geocoder();
+     return new Promise<LocationData>((resolve, reject) => {
+       myGeocoder.geocode({ address }, (results, status) => {
+         if (status === "OK" && results) {
+           const destinationLocation = {
+             lat: results[0].geometry.location.lat(),
+             lng: results[0].geometry.location.lng(),
+           };
+           resolve(destinationLocation);
+         } else {
+           reject(new Error("Geocode request failed."));
+         }
+       });
+     });
+   };
+
+//now we make a list of Latitudes and Longitudes of the addresses
+   const getLatLngList = async () => {
+    if (fullAddress){
+      try{
+        const returnLatLng = await geocodeDestination(fullAddress as string);
+        fullAddressLatLng.current = {
+          lat: returnLatLng.lat,
+          lng: returnLatLng.lng,
+        };
+      } catch (e){
+        console.error(e);
+      }
+    }
+   };
+    getLatLngList();   
+ }, [fullAddress])
+
+
+ useEffect(() => {
+
+   const initializeMap = () => {
+     if (!google.maps.Map){
+       return; 
+     }
+
+          //setting up a panorama
+      const panorama_ = new google.maps.StreetViewPanorama(
+        panorama.current as HTMLDivElement,
+        {
+          position: fullAddressLatLng.current,
+          pov: {
+            heading: 34,
+            pitch: 10,
+          },
+        }
+      );
+
+     setGoogleMapsLoaded(true);
+
+   };
+   if (!window.google) {
+     const script = document.createElement("script");
+     script.type = "text/javascript";
+     script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&libraries=places`;
+     script.async = true;
+     script.defer = true;
+     script.addEventListener("load", initializeMap); 
+     document.body.appendChild(script);
+   } else {
+       initializeMap(); // If Google Maps is already loaded
+   }
+ }, [fullAddressLatLng.current]);
+
 
 
 

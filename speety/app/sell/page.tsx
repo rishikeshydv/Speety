@@ -14,9 +14,9 @@ import { useRouter } from "next/navigation";
 export default function Sell() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
   return (
     <div className={poppins.className}>
         <Header />

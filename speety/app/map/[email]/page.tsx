@@ -30,9 +30,9 @@ const LocationMap = () => {
   const [user] = useAuthState(auth);
   const [id, setId] = useState<string>("");
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
 
   //handling pop up and location sharing permission
   const [shareAllow, setShareAllow] = useState(false);

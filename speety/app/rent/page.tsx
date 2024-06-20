@@ -55,9 +55,9 @@ interface Property {
 export default function Rent() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
   const [formData, setFormData] = useState({
     zip: "",
     searchType: "Rent",

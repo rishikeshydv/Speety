@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import InsideMenus from "./InsideMenus"
 import InsideVideo from "./InsideVideo"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import DummyMenus from "./DummyMenus"
 
 
@@ -25,85 +25,87 @@ interface LocationData {
 
 const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
   const [insideView, setInsideView] = useState(true)
-  const [lng, setLng] = useState(0)
-  const [lat, setLat] = useState(0)
   const [customWidth, setCustomWidth] = useState(720)
-  const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState(false); //to check if the google maps script is loaded or not
   const [marginLeft, setMarginLeft] = useState("ml-20")
-  useEffect(() => {
-    const geocodeDestination = async (address: any): Promise<LocationData> => {
-      const myGeocoder = new google.maps.Geocoder();
-      return new Promise<LocationData>((resolve, reject) => {
-        myGeocoder.geocode({ address }, (results, status) => {
-          if (status === "OK" && results) {
-            const destinationLocation = {
-              lat: results[0].geometry.location.lat(),
-              lng: results[0].geometry.location.lng(),
-            };
-            resolve(destinationLocation);
-          } else {
-            reject(new Error("Geocode request failed."));
-          }
-        });
-      });
-    };
+  //TODO: Implement the following features
+ //HANDLING MAPS
+ const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
+ const panorama = useRef<HTMLDivElement>(null);
+ const map_ = useRef<google.maps.Map | null>(null);
+ //making a list of addresses from presentListings using joinAddress function
+ const fullAddressLatLng = useRef<LocationData>({ lat: 0, lng: 0 });
 
-    const updateDestination = async () => {
-      if (propertyAddress) {
-        try {
-          const location = await geocodeDestination(propertyAddress);
-          setLat(location.lat);
-          setLng(location.lng);
-        } catch (error) {
-          console.error("Error updating destination marker:", error);
-        }
+ useEffect(() => {
+
+   const geocodeDestination = async (address: any): Promise<LocationData> => {
+     const myGeocoder = new google.maps.Geocoder();
+     return new Promise<LocationData>((resolve, reject) => {
+       myGeocoder.geocode({ address }, (results, status) => {
+         if (status === "OK" && results) {
+           const destinationLocation = {
+             lat: results[0].geometry.location.lat(),
+             lng: results[0].geometry.location.lng(),
+           };
+           resolve(destinationLocation);
+         } else {
+           reject(new Error("Geocode request failed."));
+         }
+       });
+     });
+   };
+
+//now we make a list of Latitudes and Longitudes of the addresses
+   const getLatLngList = async () => {
+    if (propertyAddress){
+      try{
+        const returnLatLng = await geocodeDestination(propertyAddress as string);
+        fullAddressLatLng.current = {
+          lat: returnLatLng.lat,
+          lng: returnLatLng.lng,
+        };
+      } catch (e){
+        console.error(e);
       }
-    };
-    updateDestination(); 
-  },[propertyAddress])
+    }
+   };
+    getLatLngList();   
+ }, [propertyAddress])
 
-  useEffect(() => {
-//    setGoogleMapsLoaded(true);
-    const initializeMap = () => {
-      const map = new google.maps.Map(
-        document.getElementById("outside-virtual-tour") as HTMLElement,
+
+ useEffect(() => {
+
+   const initializeMap = () => {
+     if (!google.maps.Map){
+       return; 
+     }
+
+          //setting up a panorama
+      const panorama_ = new google.maps.StreetViewPanorama(
+        panorama.current as HTMLDivElement,
         {
-          center: {
-            lat: lat,
-            lng: lng,
+          position: fullAddressLatLng.current,
+          pov: {
+            heading: 34,
+            pitch: 10,
           },
-          zoom: 14,
         }
       );
 
-      // const panorama = new google.maps.StreetViewPanorama(
-      //   document.getElementById("outside-virtual-tour") as HTMLElement,
-      //   {
-      //     position: {
-      //       lat: lat,
-      //       lng: lng,
-      //     },
-      //     pov: {
-      //       heading: 34,
-      //       pitch: 10,
-      //     },
-      //   }
-      // );
-      // map.setStreetView(panorama);
-    if (!window.google) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&callback=initializeMap`;
-      script.async = true;
-      script.defer = true;
-      script.addEventListener("load", initializeMap);
-      document.body.appendChild(script);
-    } else {
-      if (!insideView){
-        initializeMap();
-      }
-    }
-  }
-  }, [lat, lng, insideView]);
+     setGoogleMapsLoaded(true);
+
+   };
+   if (!window.google) {
+     const script = document.createElement("script");
+     script.type = "text/javascript";
+     script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&libraries=places`;
+     script.async = true;
+     script.defer = true;
+     script.addEventListener("load", initializeMap); 
+     document.body.appendChild(script);
+   } else {
+       initializeMap(); // If Google Maps is already loaded
+   }
+ }, [fullAddressLatLng.current]);
 
   return (
 <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50">
@@ -136,8 +138,8 @@ const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
       insideView ? (
         <InsideVideo />
       ) : (
-        <div id = 'outside-virtual-tour' className="aspect-video bg-gray-300 dark:bg-gray-800 rounded-lg overflow-hidden" style={{height:520, width:790}}>
-      </div>
+        <div className="w-full max-w-4xl shadow-lg" ref={panorama as React.RefObject<HTMLDivElement>} style={{ height: "520px", width: "790px" }}>
+        </div>
       )
 
     }

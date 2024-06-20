@@ -33,9 +33,9 @@ interface userVerify{
 export default function Component() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
   //setting up state variables
   const [userVerificationList, setUserVerificationList] = useState<userVerify[]>([])
 
