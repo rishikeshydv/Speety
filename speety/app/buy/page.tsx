@@ -54,9 +54,9 @@ interface Property {
 export default function Buy() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
   
   const [formData, setFormData] = useState({
     zip: "",

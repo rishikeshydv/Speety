@@ -44,9 +44,9 @@ export default function Chat() {
   const [clicked, setClicked] = useState("");
   const router = useRouter();
 
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
 
   const [sentMessage, setSentMessage] = useState<eachMessage>({
     type: "",

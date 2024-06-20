@@ -21,9 +21,9 @@ interface LocationData {
 export default function Agent() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  if (!user) {
-    router.push("/auth/login");
-  }
+  // if (!user) {
+  //   router.push("/auth/login");
+  // }
   const [zipVal, setZipVal] = useState<string>("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setZipVal(event.target.value);
