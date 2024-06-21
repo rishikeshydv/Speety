@@ -13,7 +13,7 @@ export default function Footer() {
     <li className='mr-4'><AiOutlineMail size="30px" /></li>
   </ul>
   
-  <div className='flex flex-col xl:flex-row 2xl:flex-row gap-6 xl:gap-0 2xl:gap-0'>
+  <div className='flex flex-col md:flex-row xl:flex-row 2xl:flex-row gap-6 xl:gap-0 2xl:gap-0'>
     <div className="mr-20 xl:ml-8 xl:mr-8 2xl:ml-8 2xl:mr-8">
     <Bottom 
       title="Resources"

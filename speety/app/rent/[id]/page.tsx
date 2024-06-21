@@ -4,7 +4,7 @@
 * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
 */
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Separator } from "@/components/ui/separator"
 import { CardContent, Card } from "@/components/ui/card"
 import poppins from "@/font/font";
@@ -18,7 +18,12 @@ import { set } from "firebase/database";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import Link from "next/link"
 import { Button } from "@/components/ui/button";
+import TourUI from "@/components/virtual-tour/TourUI";
 
+interface LocationData {
+  lat: number;
+  lng: number;
+}
 interface Property {
   address: string;
   apartment: string;
@@ -54,8 +59,13 @@ export default function Property() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [profileImage, setProfileImage] = useState("");
+  const [showVirtualTour, setShowVirtualTour] = useState(false);
+  const [fullAddress, setFullAddress] = useState("");
 
   const router = useRouter();
+  useEffect(() => {
+    setFullAddress(`${property?.address}, ${property?.city}, ${property?.state}, ${property?.zip}`);
+    }, [property]);
 
   async function fetchProperty() {
     const q = query(
@@ -125,10 +135,98 @@ export default function Property() {
     }
   }, [property]);
 
+
+  //TODO: Implement the following features
+ //HANDLING MAPS
+ const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
+ const panorama = useRef<HTMLDivElement>(null);
+ const map_ = useRef<google.maps.Map | null>(null);
+ //making a list of addresses from presentListings using joinAddress function
+ const fullAddressLatLng = useRef<LocationData>({ lat: 0, lng: 0 });
+
+ useEffect(() => {
+
+   const geocodeDestination = async (address: any): Promise<LocationData> => {
+     const myGeocoder = new google.maps.Geocoder();
+     return new Promise<LocationData>((resolve, reject) => {
+       myGeocoder.geocode({ address }, (results, status) => {
+         if (status === "OK" && results) {
+           const destinationLocation = {
+             lat: results[0].geometry.location.lat(),
+             lng: results[0].geometry.location.lng(),
+           };
+           resolve(destinationLocation);
+         } else {
+           reject(new Error("Geocode request failed."));
+         }
+       });
+     });
+   };
+
+//now we make a list of Latitudes and Longitudes of the addresses
+   const getLatLngList = async () => {
+    if (fullAddress){
+      try{
+        const returnLatLng = await geocodeDestination(fullAddress as string);
+        fullAddressLatLng.current = {
+          lat: returnLatLng.lat,
+          lng: returnLatLng.lng,
+        };
+      } catch (e){
+        console.error(e);
+      }
+    }
+   };
+    getLatLngList();   
+ }, [fullAddress])
+
+
+ useEffect(() => {
+
+   const initializeMap = () => {
+     if (!google.maps.Map){
+       return; 
+     }
+
+          //setting up a panorama
+      const panorama_ = new google.maps.StreetViewPanorama(
+        panorama.current as HTMLDivElement,
+        {
+          position: fullAddressLatLng.current,
+          pov: {
+            heading: 34,
+            pitch: 10,
+          },
+        }
+      );
+
+     setGoogleMapsLoaded(true);
+
+   };
+   if (!window.google) {
+     const script = document.createElement("script");
+     script.type = "text/javascript";
+     script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&libraries=places`;
+     script.async = true;
+     script.defer = true;
+     script.addEventListener("load", initializeMap); 
+     document.body.appendChild(script);
+   } else {
+       initializeMap(); // If Google Maps is already loaded
+   }
+ }, [fullAddressLatLng.current]);
+
+
+
   return (
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-40 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 xl:px-40 2xl:px-40 px-6 py-6">
+      {
+          showVirtualTour ? (
+            <TourUI propertyAddress={fullAddress as string} />
+          ) : null
+        }
         <div className="order-2 md:order-1">
           <div className="grid gap-2">
             <div>
@@ -251,7 +349,7 @@ export default function Property() {
             <p className="my-2 font-bold text-3xl tracking-tighter">Listed by:</p>
       <div className="container p-6">
         <div className="space-y-6">
-          <div className="flex items-start justify-start gap-40">
+          <div className="flex flex-col xl:flex-row 2xl:flex-row items-start justify-start gap-6 xl:gap-40 2xl:gap-40">
             <div className="flex items-start justify-start space-x-4" onClick={handleRoute}>
               <Avatar className="h-8 w-8">
                 <AvatarImage alt="Agent" src={profileImage} />
@@ -351,10 +449,17 @@ export default function Property() {
               width={300}
             />
           </div>
+          <div className="my-2 flex items-end justify-end">
+          <Button onClick={()=>{
+            setShowVirtualTour(true);
+          }}>
+          Virtual Tour
+        </Button>
+        </div> 
         </div>
       </div>
 
-      <div className="mt-8 px-40">
+      <div className="mt-8 px-6 xl:px-40 2xl:px-40">
         <h2 className="text-3xl font-bold tracking-tighter">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>

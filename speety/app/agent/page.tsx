@@ -211,18 +211,18 @@ export default function Agent() {
     <div className={poppins.className}>
       <Header />
       <div>
-        <img src="/sellAgent.png" alt="alt" className="w-full xl:h-[1000px]"/>
-        <section className=" absolute inset-0 xl:top-80 2xl:top-96">
-          <h1 className="xl:text-7xl 2xl:text-9xl font-bold tracking-tighter text-center px-96">
+        <img src="/sellAgent.png" alt="alt" className="w-full xl:h-[700px] 2xl:h-[1000px]"/>
+        <section className=" absolute inset-0 top-28 xl:top-80 2xl:top-96">
+          <h1 className="text-2xl xl:text-7xl 2xl:text-9xl font-bold tracking-tighter text-center px-20 xl:px-96 2xl:px-96">
             Sell traditionally with an{" "}
-            <button className="bg-red-400 rounded-3xl px-6 py-4">agent</button>
+            <button className="bg-red-400 rounded-3xl px-3 xl:px-6 xl:py-4 2xl:px-6 2xl:py-4">agent</button>
           </h1>
-          <div className="flex flex-col items-center justify-center mt-20">
+          <div className="flex flex-col items-center justify-center mt-4 xl:mt-20 2xl:mt-20">
             <input
               id="autocomplete"
               type="text"
               placeholder="Enter a zip code ..."
-              className={`bottom-20 h-16 w-1/4 bg-gray-100 text rounded-3xl text-center text-xl`}
+              className={`xl:bottom-20 2xl:bottom-20 px-4 h-6 w-1/4 xl:h-16 xl:w-1/4 2xl:h-16 2xl:w-1/4 bg-gray-100 text rounded-3xl text-center text-[10px] xl:text-xl 2xl:text-xl`}
               value={zipVal}
               onChange={handleChange}
               onKeyDown={(e) => {
@@ -232,7 +232,7 @@ export default function Agent() {
               }}
             />
             <button
-              className={` text-white bg-black rounded-2xl px-4 h-16 w-60 text-xl font-bold uppercase mt-16`}
+              className={` text-white bg-black rounded-2xl px-4 xl:h-16 xl:w-60 2xl:h-16 2xl:w-60 text-[10px] xl:text-xl 2xl:text-xl font-bold uppercase mt-2 xl:mt-16 2xl:mt-16`}
               onClick={handleSubmit}
             >
               Find an agent
@@ -327,10 +327,10 @@ export default function Agent() {
       </Pagination>
     </div>
     {/* This is the Map section */}
-    <section className="flex flex-col items-center space-y-8 py-8 bg-gray-200 rounded-2xl my-6">
+    <section className="flex flex-col items-center space-y-8 py-8 xl:bg-gray-200 2xl:bg-gray-200 rounded-2xl my-6">
       <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
-      <div className="bg-white p-6 rounded-3xl">
-      <div className="w-full max-w-4xl shadow-lg" ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: "550px", width: "1000px" }}>
+      <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl">
+      <div className="w-[350px] h-[600px] shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
       </div>
       </div>
 

@@ -223,7 +223,7 @@ export default function Property() {
   return (
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-40 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 xl:px-40 2xl:px-40 px-6 py-6">
         {
           showVirtualTour ? (
             <TourUI propertyAddress={fullAddress as string} />
@@ -351,7 +351,7 @@ export default function Property() {
             <p className="my-2 font-bold text-3xl tracking-tighter">Listed by:</p>
       <div className="container p-6">
         <div className="space-y-6">
-          <div className="flex items-start justify-start gap-40">
+          <div className="flex flex-col xl:flex-row 2xl:flex-row items-start justify-start gap-6 xl:gap-40 2xl:gap-40">
             <div className="flex items-start justify-start space-x-4" onClick={handleRoute}>
               <Avatar className="h-8 w-8">
                 <AvatarImage alt="Agent" src={profileImage} />
@@ -396,7 +396,7 @@ export default function Property() {
         <div className="order-1 md:order-2">
           <img
             alt="Property Image"
-            className="w-full h-[400px] md:h-[600px] object-cover rounded-lg xl:w-[600px] xl:h-[400px]"
+            className="object-cover rounded-lg w-[400px] h-[300px] xl:w-[800px] xl:h-[600px] 2xl:w-[800px] 2xl:h-[600px]"
             src={property?.imageUrl[0]}
             style={{
               aspectRatio: "600/400",
@@ -459,7 +459,7 @@ export default function Property() {
         </div>
       </div>
 
-      <div className="mt-8 px-40">
+      <div className="mt-8 xl:px-40 2xl:px-40 px-6">
         <h2 className="text-3xl font-bold tracking-tighter">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>

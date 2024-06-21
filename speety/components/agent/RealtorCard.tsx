@@ -16,7 +16,7 @@ interface RealtorCardProps {
 
 const RealtorCard:React.FC<RealtorCardProps> = ({name,phone,email,website,address}) => {
   return (
-    <Card className="p-20 shadow-md">
+    <Card className="xl:p-20 2xl:p-20 shadow-md">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Contact Details</CardTitle>
       </CardHeader>
