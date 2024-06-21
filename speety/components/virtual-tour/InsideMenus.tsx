@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from "@/components/ui/button"
 export default function InsideMenus() {
   return (
-    <div className="bg-gray-100 dark:bg-gray-950 hidden md:flex flex-col gap-4 text-gray-900 dark:text-gray-50 px-2 py-40" style={{width:150}}>
+    <div className="bg-gray-100 dark:bg-gray-950 hidden xl:flex 2xl:flex flex-col gap-4 text-gray-900 dark:text-gray-50 px-2 xl:py-40 2xl:py-40 w-40px xl:w-[150px] 2xl:w-[150px]">
     <div className="grid gap-2">
       <Button
         className="justify-start gap-2 px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"

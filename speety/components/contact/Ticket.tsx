@@ -41,7 +41,7 @@ export function Ticket() {
     }
   };
   return (
-    <section className="w-full py-12 lg:py-24 bg-gray-200">
+    <section className="w-full py-20 lg:py-24 bg-gray-200">
       <div className="mx-auto grid max-w-6xl px-4 gap-10 lg:grid-cols-2 lg:px-6 lg:gap-40">
         <div>
         <div className="space-y-10">
@@ -72,16 +72,16 @@ export function Ticket() {
             </div>
           </div>
         </div>
-        <div className="mt-10 mr-20">
+        <div className="mt-6 xl:mt-10 xl:mr-20 2xl:mt-10 2xl:mr-20"> 
           <AIBot />
           </div>
         </div>
 
         {/* Start of Ticket Form */}
-        <div className="space-y-8 bg-gray-400 p-10 rounded-3xl w-full mt-32" style={{height:650}}>
+        <div className="space-y-8 bg-[#87a3a3] py-8 px-6 xl:p-10 2xl:p-10 rounded-3xl w-full xl:mt-32 2xl:mt-32" style={{height:650}}>
       <div className="space-y-2">
-        <h2 className="text-4xl font-bold">Submit a ticket</h2>
-        <p className="text-gray-500 text-lg dark:text-gray-400">
+        <h2 className="text-2xl xl:text-4xl 2xl:text-4xl font-bold">Submit a ticket</h2>
+        <p className="text-gray-500 text-xs xl:text-lg 2xl:text-lg dark:text-gray-400">
           Please fill out the form below and we&apos;ll get back to you as soon as possible.
         </p>
       </div>
@@ -117,7 +117,7 @@ export function Ticket() {
           <Label htmlFor="message" className="text-lg font-semibold">Message</Label>
           <Textarea className="min-h-[100px] text-sm" id="message" placeholder="Enter your message" value={message} onChange={(e)=>{setMessage(e.target.value)}}/>
         </div>
-        <Button className="mx-auto text-sm ml-36" onClick={()=>{sendEmail}}>Submit</Button>
+        <Button className="mx-auto text-sm ml-24 xl:ml-36 2xl:ml-36" onClick={()=>{sendEmail}}>Submit</Button>
       </div>
     </div>
 

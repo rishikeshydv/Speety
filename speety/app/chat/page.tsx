@@ -11,7 +11,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Peer, { DataConnection } from "peerjs";
 import moment from "moment"; //use moment.js to get time/date in a good format
 import axios from "axios";
-
 //imports for location
 import DummyChatList from "@/components/chat/DummyChatList";
 import DummyTopRight from "@/components/chat/DummyTopRight";
@@ -494,12 +493,12 @@ export default function Chat() {
     }, [myPeer, id]);
 
   return (
-    <div className={`flex h-screen bg-white ${poppins.className}`}>
+    <div className={`flex h-[930px] xl:h-screen 2xl:h-screen bg-white ${poppins.className}`}>
       <LeftmostBar userEmail={user?.email as string}/>
       <main className="flex-1">
-        <div className="flex h-[calc(104%-59px)]">
+        <div className="flex h-[calc(107%-59px)] xl:h-[calc(104%-59px)] 2xl:h-[calc(104%-59px)]">
 
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col xl:h-screen 2xl:h-screen">
       <TopLeft />
       <UserList onUserClick={userOnClick} lastMsg={lastMsg} lastMsgTime={lastMsgTime}/> 
       </div>

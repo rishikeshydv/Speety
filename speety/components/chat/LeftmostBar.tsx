@@ -47,7 +47,7 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
         </div>
         <nav className="flex flex-col p-2">
           <div className="flex items-center">
-            <div className="relative w-10 h-10 mt-10 ml-5 rounded-full overflow-hidden">
+            <div className="relative w-10 h-10 mt-10 ml-1 xl:ml-5 2xl:ml-5 rounded-full overflow-hidden">
             <img
               src={userPic as string}
               alt="user_profile"
@@ -57,15 +57,15 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
           </div>
           <div className="flex flex-col items-center mt-8 py-10">
             <div>
-              <EmailRoundedIcon className="xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
+              <EmailRoundedIcon className="w-8 h-8 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
               <h1 className="text-white ml-1 mt-1 text-xs">Chat</h1>
             </div>
             <div className="mt-8">
-              <IoPeopleCircle  className="xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
-              <h1 className="text-white text-xs mt-2 ">People</h1>
+              <IoPeopleCircle  className="w-8 h-8 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12 ml-1 xl:ml-0 2xl:ml-0"/>
+              <h1 className="text-white text-xs mt-2">People</h1>
             </div>
             <div className="mt-8">
-            <IoIosPersonAdd className="xl:ml-1 2xl:ml-1 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
+            <IoIosPersonAdd className="w-8 h-8 ml-2 xl:ml-1 2xl:ml-1 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12 "/>
               <h1 className="text-white text-xs mt-2">Request</h1>
             </div>
           </div>

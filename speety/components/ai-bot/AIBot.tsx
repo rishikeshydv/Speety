@@ -61,7 +61,7 @@ useEffect(() => {
 }, [user]);
   return (
     <Card key="1" className="max-w-[400px] rounded-2xl w-full mx-auto bg-white overflow-hidden border-0 shadow-lg">
-      <CardHeader className="bg-gray-400 py-4 px-6 flex items-center">
+      <CardHeader className="bg-[#87a3a3] py-4 px-6 flex items-center">
         <Avatar className="w-16 h-16">
           <AvatarImage alt="AI Bot" src="/Scailbot.png" />
           <AvatarFallback>

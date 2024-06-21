@@ -598,8 +598,8 @@ const sortedResults = useMemo(() => {
           </section>
 <section className="flex flex-col items-center space-y-8 py-8 bg-gray-200 rounded-2xl my-6">
       <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
-      <div className="bg-white p-6 rounded-3xl">
-      <div className="w-[50px] h-[50px] max-w-4xl shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>} style={{ height: "550px", width: "1000px" }}>
+      <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl">
+      <div className="w-[350px] h-[600px] shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
       </div>
       </div>
 

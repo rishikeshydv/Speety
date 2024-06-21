@@ -47,13 +47,13 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
       </PopoverTrigger>
       {
         show && (
-          <PopoverContent align="end" className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm xl:w-[1200px] xl:h-[700px] 2xl:w-[3000px] 2xl:h-[1200px]" side="top">
+          <PopoverContent align="end" className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm w-[700px] h-[700px] xl:w-[1200px] xl:h-[700px] 2xl:w-[3000px] 2xl:h-[1200px]" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
-          <video ref={receiverVideoRef} className=" bg-gray-100 rounded-xl xl:w-[800px] xl:h-[500px] 2xl:w-[2300px] 2xl:h-[800px]"/>
+          <video ref={receiverVideoRef} className=" bg-gray-100 rounded-xl w-[600px] h-[350px] xl:w-[800px] xl:h-[500px] 2xl:w-[2300px] 2xl:h-[800px]"/>
       </div>
       <div className="flex items-center justify-between p-2">
-      <div className="flex flex-1 justify-center gap-2 ml-60">
+      <div className="flex flex-1 justify-center gap-2 ml-20 xl:ml-60 2xl:ml-60">
       <VideoOffIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
         <MicIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
         <ScreenShareIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
@@ -64,7 +64,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
           changeCallEndedState();
            }}/>
       </div>
-          <video ref={callerVideoRef  } className="w-100% bg-gray-100 rounded-3xl mr-4 mt-1 xl:w-[173px] xl:h-[130px] 2xl:w-[267px] 2xl:h-[200px]"/>
+          <video ref={callerVideoRef  } className="w-100% bg-gray-100 rounded-3xl mr-4 mt-1 w-[130px] h-[98px] xl:w-[173px] xl:h-[130px] 2xl:w-[267px] 2xl:h-[200px]"/>
           </div>
     </div>
           </PopoverContent>

@@ -509,7 +509,7 @@ const LocationMap = () => {
 
   return (
     <div
-      className={`flex flex-col w-full h-screen items-center ${poppins.className} bg-gray-200`}
+      className={`flex flex-col px-10 xl:px-0 2xl:px-0 w-full h-screen items-center ${poppins.className} bg-gray-200`}
     >
       {/* location request pop-up */}
       {popUpOpen && (
@@ -574,11 +574,11 @@ const LocationMap = () => {
           Accessible. Customizable. Open Source.
         </p>
       </div>
-      <div className="flex xl:gap-6 2xl:gap-80 xl:py-6 2xl:py-28">
+      <div className="flex flex-col xl:flex-row 2xl:flex-row xl:gap-6 2xl:gap-80 xl:py-6 2xl:py-28">
         <div className="flex flex-col gap-6 items-center">
-          <div className="flex xl:gap-6 2xl:gap-40">
+          <div className="flex gap-2 xl:gap-6 2xl:gap-40">
             <Button
-              className="flex items-center justify-center h-10 w-32 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50"
+              className="flex items-center justify-center h-10 xl:w-32 2xl:w-32 mt-6 xl:mt-16 2xl:mt-16 text-xs xl:text-sm 2xl:text-sm font-bold rounded-3xl bg-slate-400/50"
               variant="outline"
               onClick={handleRefresh}
             >
@@ -586,7 +586,7 @@ const LocationMap = () => {
               Locate Me
             </Button>
             <Button
-              className="flex items-center justify-center h-10 w-60 mt-16 text-sm font-bold rounded-3xl bg-slate-400/50"
+              className="flex items-center justify-center h-10 xl:w-60 2xl:w-60 mt-6 xl:mt-16 2xl:mt-16 text-xs xl:text-sm 2xl:text-sm font-bold rounded-3xl bg-slate-400/50"
               variant="outline"
               onClick={() => {
                 locationRequest();}}
@@ -597,7 +597,7 @@ const LocationMap = () => {
           </div>
           {/* Destination Form Start*/}
           <div
-            className="mx-auto space-y-2 xl:h-[400px] xl:w-[400px] 2xl:h-[600px] 2xl:w-[600px]  flex flex-col items-center justify-center bg-gray-100 xl:px-6 2xl:px-2 rounded-3xl"
+            className="mx-auto space-y-2 xl:h-[400px] xl:w-[400px] 2xl:h-[600px] 2xl:w-[600px]  flex flex-col items-center justify-center bg-gray-100 px-4 py-2 xl:px-6 2xl:px-2 rounded-3xl"
           >
             <h1 className="xl:text-lg 2xl:text-2xl font-semibold 2xl:mb-12">
               Enter Destination Location
@@ -700,10 +700,10 @@ const LocationMap = () => {
         </div>
 
         {/* Map Start */}
-        <div className="bg-white p-6 rounded-3xl">
+        <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl my-10 xl:my-0 2xl:my-0">
           <div
             ref={googlemap as React.RefObject<HTMLDivElement>}
-            className="xl:w-[1000px] xl:h-[550px] 2xl:w-[1700px] 2xl:h-[900px] shadow-2xl"
+            className=" w-full h-[600px] xl:w-[1000px] xl:h-[550px] 2xl:w-[1700px] 2xl:h-[900px] shadow-2xl"
           ></div>
         </div>
       </div>
