@@ -6,18 +6,18 @@ export default function Sec5() {
       <section className="mt-20 py-2">
         {/* This DIV will put the slogan at the center */}
         <div className="text-center">
-          <h1 className="text-7xl font-bold text-[#16302B] mb-10">
+          <h1 className="text-2xl xl:text-7xl 2xl:text-7xl font-bold text-[#16302B] mb-4 xl:mb-10 2xl:mb-10">
             <span>How is it </span>
             <button className="py-1 px-4 border border-blue-200 border-opacity-20 bg-pink-200 rounded-xl">
               useful?
             </button>
           </h1>
-          <h2 className="text-lg px-20 py-2 text-[#84A07C]">
+          <h2 className="text-xs xl:text-lg 2xl:text-lg px-20 py-2 text-[#84A07C]">
           In today&apos;s fast-paced world, staying connected and getting things done quickly is more important than ever.
           </h2>
         </div>
         {/* This DIV tag will add 4 vertical boxes */}
-        <div className="flex flex-row items-center justify-center gap-10 py-4">
+        <div className="flex flex-col xl:flex-row 2xl:flex-row items-center justify-center gap-4 xl:gap-10 py-4">
           <VerticalBox 
           promptUrl="/broker.svg" 
           title="Brokers" 
