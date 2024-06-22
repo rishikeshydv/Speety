@@ -144,6 +144,7 @@ export default function Rent() {
       googleMapsScript.defer = true;
       googleMapsScript.addEventListener("load", initializeMap);
       document.body.appendChild(googleMapsScript);
+      
     };
 
     // Check if the Google Maps script has already been loaded
