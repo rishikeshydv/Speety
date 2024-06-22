@@ -8,7 +8,7 @@ export async function POST(req:NextRequest) {
     try {
         const meetingInfo = await req.json();
       const { data, error } = await resend.emails.send({
-          from: "info@scail.it",
+          from: "scail.helpdesk@gmail.com",
           to: meetingInfo.receiver,
           subject: "🗓️ Your have a meeting scheduled!",
           react: MeetingTemplate({ sender:meetingInfo.sender,date:meetingInfo.date })

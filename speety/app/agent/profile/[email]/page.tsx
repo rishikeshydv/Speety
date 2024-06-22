@@ -347,7 +347,7 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
     if (!window.google) {
       const script = document.createElement("script");
       script.type = "text/javascript";
-      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=AIzaSyAvamq-1AR2paooKX-Hq7LvyyfIbwNsVVU&loading=async&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async&libraries=places`;
       script.async = true;
       script.defer = true;
       script.addEventListener("load", initializeMap); 
