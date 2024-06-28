@@ -7,7 +7,7 @@ const getVideoUrl = async (file:File)=> {
 const storage = getStorage(app);
 
 // Create a reference to a particular folder
-const storageRef = ref(storage, 'propertyPostedVideos/'+file.name);
+const storageRef = ref(storage, 'frontend-vids/'+file.name);
 
 // 'file' comes from the Blob or File API
     // Upload the Blob to Firebase Storage
