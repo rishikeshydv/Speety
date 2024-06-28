@@ -459,7 +459,7 @@ export default function Property() {
         </div>
       </div>
 
-      <div className="mt-8 xl:px-40 2xl:px-40 px-6">
+      <div className="mt-8 xl:px-40 2xl:px-40 px-6 mb-6">
         <h2 className="text-3xl font-bold tracking-tighter">Similar Homes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           <Card>

@@ -63,7 +63,7 @@ useEffect(() => {
     <Card key="1" className="max-w-[400px] rounded-2xl w-full mx-auto bg-white overflow-hidden border-0 shadow-lg">
       <CardHeader className="bg-[#87a3a3] py-4 px-6 flex items-center">
         <Avatar className="w-16 h-16">
-          <AvatarImage alt="AI Bot" src="/Scailbot.png" />
+          <AvatarImage alt="AI Bot" src="/svgs/13.png" className="p-1"/>
           <AvatarFallback>
             <XIcon className="" />
           </AvatarFallback>

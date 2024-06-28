@@ -413,9 +413,9 @@ export default function Chat() {
     useEffect(() => {
       if (!myPeer && id) {
         const peer = new Peer(id, {
-          host: "localhost",
+          host: process.env.NEXT_PUBLIC_HOST_NAME!,
           port: 9000,
-          path: "/myapp",
+          path: process.env.NEXT_PUBLIC_PATH!,
         });
 
         peer.on("open", (id) => {
@@ -493,12 +493,12 @@ export default function Chat() {
     }, [myPeer, id]);
 
   return (
-    <div className={`flex h-[930px] xl:h-screen 2xl:h-screen bg-white ${poppins.className}`}>
+    <div className={`flex h-[940px] md:h-[1090px] xl:h-screen bg-white ${poppins.className}`}>
       <LeftmostBar userEmail={user?.email as string}/>
       <main className="flex-1">
         <div className="flex h-[calc(107%-59px)] xl:h-[calc(104%-59px)] 2xl:h-[calc(104%-59px)]">
 
-        <div className="flex flex-col xl:h-screen 2xl:h-screen">
+        <div className="flex flex-col ml-2 md:ml-2 lg:ml-0 xl:ml-0 2xl:ml-0 xl:h-screen 2xl:h-screen">
       <TopLeft />
       <UserList onUserClick={userOnClick} lastMsg={lastMsg} lastMsgTime={lastMsgTime}/> 
       </div>

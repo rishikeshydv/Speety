@@ -12,11 +12,11 @@
 }
 
 .verticalBox:hover {
-  background-color:#439A86; /* Change title color to yellow on hover */
+  background-color:#E6EFE9; /* Change title color to yellow on hover */
 }
 
 .image {
-  width: 30%; /* Make the image fill the container */
+  width: 50%; /* Make the image fill the container */
   height: auto; /* Maintain aspect ratio */
   border-radius: 8px; /* Add border radius */
   margin-bottom: 10px; /* Add margin below the image */

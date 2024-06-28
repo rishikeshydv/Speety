@@ -332,34 +332,23 @@ const sortedResults = useMemo(() => {
       <Header />
       <div className="">
 
-        <div className="bg-gray-200">
-        <img src="/wide1.jpg" alt="alt" className="aspect-video object-cover object-center w-full xl:h-[400px] 2xl:h-[900px]"/>
-          <section className="py-10 flex flex-col items-center justify-center absolute bottom-[500px] left-1/4 xl:left-1/4 xl:bottom-1/4 2xl:left-[1200px] 2xl:bottom-1/3">
-            {/* "Selling fast" */}
-            <div className="text-2xl xl:text-7xl 2xl:text-9xl font-bold flex items-center tracking-tighter text-[#16302B]">
-              <span>Renting your home</span>
-            </div>
+      <div className="flex items-center justify-center gap-6 md:gap-20">
 
-            {/* "Buying smart" with gradient text */}
-            <h1 className="text-2xl xl:text-7xl 2xl:text-9xl font-bold flex items-center xl:mb-10 2xl:mb-10 tracking-tighter">
-              <span className="text-[#16302B]">with</span>
-              &nbsp;
-              <span className="text-transparent bg-gradient-to-r from-[#90A955] to-[#397367] bg-clip-text">
-                confidence
-              </span>
-              <img
-                src="/sell_house.png"
-                className="ml-1 xl:ml-5 2xl:ml-5 w-8 h-8 xl:w-[100px] xl:h-[90px] 2xl:w-[100px] 2xl:h-[90px]"
-                alt="Home"
-              />
-            </h1>
-            <div className="py-1 px-4 border font-semibold tracking-tighter border-blue-200 border-opacity-20 text-[#16302B] text-[6px] xl:text-[16px] 2xl:text-[16px] mb-10">
-              <Typist>
-                Speety is making it simpler to buy your home and settle.
-              </Typist>
-            </div>
-          </section>
-        </div>
+<div className="flex flex-col md:flex-row items-center justify-between gap-8 xl:gap-20 px-4 py-12 xl:px-6 md:py-16 lg:px-8 lg:py-20">
+<div className="flex-1 space-y-4 max-w-md md:max-w-xl">
+<div className="text-3xl font-bold sm:text-4xl md:text-6xl xl:text-7xl text-gray-400">Renting your house with <h1 className="text-[#397367] text-3xl font-bold sm:text-4xl md:text-6xl xl:text-7xl">confidence</h1></div>
+<p className="text-muted-foreground text-xs md:text-lg tracking-tight">
+  Renting a property is a big decision. We are here to help you make the right choice.
+  Our website provides you with the best options for renting your home. We have a wide range of properties.
+  We help you find the best property that suits your needs. We provide you with the best experience in renting your home.
+</p>
+</div>
+<video className="flex-1 md:w-[600px] h-full overflow-hidden [background:linear-gradient(45deg,#172033,theme(colors.slate.800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.slate.300/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border" autoPlay muted playsInline>
+          <source src="/vids/1.mov" />
+        </video>
+</div>
+
+</div>
       
                 <div className="flex items-center justify-center p-4 bg-[#87a3a3]">
         <form onSubmit={handleSubmit}>
@@ -612,10 +601,28 @@ const sortedResults = useMemo(() => {
             </div>
           </section>
           
-          <section className="flex flex-col items-center space-y-8 py-8 bg-gray-200 rounded-2xl my-6">
-      <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
+          <section className="flex flex-col items-center space-y-8 py-8 bg-gray-200 rounded-2xl">
+      
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-12 md:px-6 md:py-16 lg:px-8 lg:py-20">
+      <div className="flex-1 space-y-4 max-w-xl">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-[#397367]">Locate Your Property</h1>
+        <p className="text-muted-foreground md:text-lg">
+        We have made it easier for you to locate each property on the website.
+  Each search result is marked on the map below. To have a closer look into
+  the location of the property, you can click on the property to view the virtual tour
+  of the property. We provide you with the best experience in buying your home.
+        </p>
+      </div>
+      <img
+        src="/svgs/14.png"
+        width={600}
+        height={400}
+        alt="Unleash Your Creativity"
+        className="flex-1 md:max-w-[500px] object-cover"
+      />
+    </div>
       <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl">
-      <div className="w-[350px] h-[600px] shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
+      <div className="w-[350px] h-[600px] shadow-lg md:w-[700px] md:h-[550px] xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
       </div>
       </div>
 

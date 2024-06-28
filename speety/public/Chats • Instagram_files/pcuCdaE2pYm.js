@@ -1,0 +1,3 @@
+;/*FB_PKG_DELIM*/
+
+__d("LSSetBotResponseInfo",[],(function(a,b,c,d,e,f){function a(){var a=arguments,b=a[a.length-1],c=[];return b.sequence([function(c){return b.forEach(b.filter(b.db.table(12).fetch([[[a[1]]],"messageId"]),function(c){return b.i64.eq(c.threadKey,a[0])&&c.messageId===a[1]}),function(b){var c=b.update;b.item;return c({botResponseId:a[2],metadataDataclass:a[3]})})},function(a){return b.resolve(c)}])}e.exports=a}),null);

@@ -1,0 +1,4 @@
+;/*FB_PKG_DELIM*/
+
+__d("useVideoPlayerControllerSubscription",["VideoPlayerHooks","react"],(function(a,b,c,d,e,f,g){"use strict";var h,i;b=h||d("react");var j=b.useEffect,k=b.useLayoutEffect,l=b.useRef,m=b.useState;function a(a){var b=(i||(i=d("VideoPlayerHooks"))).useController(),c=m(function(){return a(b,null)}),e=c[0],f=c[1],g=l(a);k(function(){g.current=a},[a]);j(function(){f(function(a){return g.current(b,a)});var a=b.subscribe(function(){f(function(a){return g.current(b,a)})});return function(){a.remove()}},[b]);return e}g["default"]=a}),98);
+__d("useDeferredModuleOnReady",["react"],(function(a,b,c,d,e,f,g){"use strict";var h;b=h||d("react");var i=b.useEffect,j=b.useState;function a(b){var c=j(function(){return b.getModuleIfRequireable()}),a=c[0],d=c[1];i(function(){if(a!=null)return;var c=b.onReady(function(a){d(function(){return a})});return function(){c.remove()}},[b,a]);return a}g["default"]=a}),98);

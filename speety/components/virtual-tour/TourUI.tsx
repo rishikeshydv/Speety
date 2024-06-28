@@ -29,8 +29,8 @@ const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
   const [customWidth, setCustomWidth] = useState(720)
   const [marginLeft, setMarginLeft] = useState("ml-20")
 
-  const [divClassname, setDivClassname] = useState("flex flex-col ml-1 w-[350px] h-[500px] xl:h-[700px] xl:w-[720px] 2xl:h-[700px] 2xl:w-[720px]")
-  const [h1Classname, setH1Classname] = useState("text-xl xl:text-5xl 2xl:text-5xl tracking-tighter font-bold xl:ml-20")
+  const [divClassname, setDivClassname] = useState("flex flex-col ml-1 w-[350px] h-[500px] md:h-[700px] md:w-[700px] xl:h-[700px] xl:w-[720px] 2xl:h-[700px] 2xl:w-[720px]")
+  const [h1Classname, setH1Classname] = useState("text-xl md:text-5xl 2xl:text-5xl tracking-tighter font-bold md:ml-20 xl:ml-20")
   //TODO: Implement the following features
  //HANDLING MAPS
  const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
@@ -113,7 +113,7 @@ const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
 
   return (
 <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50">
-  <div className="grid md:grid-cols-[130px_1fr] w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg p-2 xl:p-6 2xl:p-6 rounded-3xl">
+  <div className="grid md:grid-cols-[130px_1fr] w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg p-2 xl:p-6 2xl:p-6 rounded-3xl md:mx-10 lg:mx-0 xl:mx-0 2xl:mx-0">
     {/* For inside menus, there must be options for view of different areas */}
     {
       insideView ? (
@@ -130,8 +130,8 @@ const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
         <h1 className={`${h1Classname}`}>Scail Virtual Tour</h1>
         <div className="flex items-center space-x-2">
           <Switch id="change-view" onClick={()=>{
-            setDivClassname(insideView ? "flex flex-col ml-1 w-[350px] h-[500px] xl:h-[700px] xl:w-[840px] 2xl:h-[700px] 2xl:w-[840px]" : "flex flex-col ml-1 w-[350px] h-[500px] xl:w-[720px] xl:h-[700px] 2xl:h-[700px] 2xl:w-[720px]")
-            setH1Classname(insideView ? "text-xl xl:text-5xl 2xl:text-5xl tracking-tighter font-bold xl:ml-52 2xl:ml-52" : "text-xl xl:text-5xl 2xl:text-5xl tracking-tighter font-bold xl:ml-20 2xl:ml-20")
+            setDivClassname(insideView ? "flex flex-col ml-1 w-[350px] h-[500px] md:h-[740px] md:w-[700px] xl:h-[700px] xl:w-[840px] 2xl:h-[700px] 2xl:w-[840px]" : "flex flex-col ml-1 w-[350px] h-[500px] md:h-[700px] md:w-[700px] xl:w-[720px] xl:h-[700px] 2xl:h-[700px] 2xl:w-[720px]")
+            setH1Classname(insideView ? "text-xl md:text-5xl 2xl:text-5xl tracking-tighter font-bold md:ml-20 xl:ml-52 2xl:ml-52" : "text-xl md:text-5xl 2xl:text-5xl tracking-tighter font-bold md:ml-20 xl:ml-20 2xl:ml-20")
             setInsideView(!insideView)
           }}/>
           <Label htmlFor="dark-mode">Switch View</Label>
@@ -142,7 +142,7 @@ const TourUI:React.FC<TourUIProps> = ({propertyAddress}) => {
       insideView ? (
         <InsideVideo />
       ) : (
-        <div className="w-full h-full xl:w-[790px] xl:h-[520px] max-w-4xl shadow-lg" ref={panorama as React.RefObject<HTMLDivElement>}>
+        <div className="w-full h-full md:w-[660px] md:h-[520px] xl:w-[790px] xl:h-[520px] max-w-4xl shadow-lg" ref={panorama as React.RefObject<HTMLDivElement>}>
         </div>
       )
 

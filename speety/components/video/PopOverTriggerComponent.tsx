@@ -7,7 +7,8 @@
 import React, {useState, useEffect} from "react"
 import { PopoverTrigger, PopoverContent, Popover } from "@/components/ui/popover"
 import VideoEnded from "./VideoEnded";
-
+import { FaVideo } from "react-icons/fa6";
+import { FaLocationArrow } from "react-icons/fa";
 interface PopOverComponentProps {
   src: string;
   _className: string;
@@ -37,23 +38,19 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
         videoOnClick();
         setShow(true);
         }}>
-        <img
-          src={src}
-          className={_className}
-          alt="video-call"
-        />
+        <FaVideo className="h-4 w-4 md:h-9 md:w-9"/>
 </button>
 {/* Popover for video-call */}
       </PopoverTrigger>
       {
         show && (
-          <PopoverContent align="end" className="flex-col bg-gray-600 rounded-2xl backdrop-blur-sm w-[700px] h-[700px] xl:w-[1200px] xl:h-[700px] 2xl:w-[3000px] 2xl:h-[1200px]" side="top">
+          <PopoverContent align="end" className="flex-col bg-[#E6EFE9] bg-opacity-75 rounded-2xl mr-40 md:mr-0 ml-0 md:ml-8 xl:ml-0 2xl:ml-0 backdrop-blur-sm w-[300px] h-[700px] md:w-[750px] md:h-[940px] xl:w-[1200px] xl:h-[700px] 2xl:w-[3000px] 2xl:h-[1200px]" side="top">
                 <div className="flex w-full h-full flex-col py-10">
       <div className="flex-grow flex items-center justify-center">
-          <video ref={receiverVideoRef} className=" bg-gray-100 rounded-xl w-[600px] h-[350px] xl:w-[800px] xl:h-[500px] 2xl:w-[2300px] 2xl:h-[800px]"/>
+          <video ref={receiverVideoRef} className=" bg-gray-100 rounded-xl w-[240px] h-[350px] md:w-[600px] md:h-[350px] xl:w-[800px] xl:h-[500px] 2xl:w-[2300px] 2xl:h-[800px]"/>
       </div>
-      <div className="flex items-center justify-between p-2">
-      <div className="flex flex-1 justify-center gap-2 ml-20 xl:ml-60 2xl:ml-60">
+      <div className="flex flex-col md:flex-row items-center justify-between p-2 gap-10 md:gap-0">
+      <div className="flex flex-1 justify-center gap-2 md:ml-20 xl:ml-60 2xl:ml-60">
       <VideoOffIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
         <MicIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />
         <ScreenShareIcon className="mx-2 h-12 w-12 rounded-full bg-white p-3 text-gray-600" />

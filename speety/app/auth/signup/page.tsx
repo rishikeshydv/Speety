@@ -152,8 +152,9 @@ export default function SignupPage() {
 
   return (
     <div className={poppins.className}>
+      <img src="/adobe/6.jpeg" alt="img" className="w-screen h-screen"/>
       <div
-        className={`fixed bottom-16 top-16 left-1/4 right-1/4 flex flex-col items-center justify-center bg-gray-100 shadow-sm rounded-2xl`}
+        className={`fixed bottom-14 top-14 left-1/4 right-1/4 flex flex-col items-center justify-center bg-gray-200 bg-opacity-60 shadow-sm rounded-2xl py-4`}
       >
         {/* This div is for the right side of the page */}
         <Image
@@ -164,22 +165,22 @@ export default function SignupPage() {
           className="py-2"
         />
         {/* <h1 className="text-xl text-gray-400"><Typist> Begin the journey with us ...</Typist></h1> */}
-        <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+        <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <AiFillGoogleCircle className="w-8 h-8 ml-3" />
-                <p className="ml-5 py-2">Continue with Google</p>
+                <AiFillGoogleCircle className="w-8 h-8 ml-3 text-white" />
+                <p className="ml-5 py-2 text-white">Continue with Google</p>
               </div>
             </button>
-            <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <AiFillYahoo className="w-8 h-8 ml-4" />
-                <p className="ml-4 py-2">Continue with Yahoo</p>
+                <AiFillYahoo className="w-8 h-8 ml-4 text-white" />
+                <p className="ml-4 py-2 text-white">Continue with Yahoo</p>
               </div>
             </button>
-            <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <FaMicrosoft className="w-6 h-6 ml-4" />
-                <p className="ml-5 py-2">Continue with Microsoft</p>
+                <FaMicrosoft className="w-6 h-6 ml-4 text-white" />
+                <p className="ml-5 py-2 text-white">Continue with Microsoft</p>
               </div>
             </button>
         <div className="flex flex-row gap-2 items-center">
@@ -367,7 +368,7 @@ export default function SignupPage() {
             <button
               type="submit"
               id="signupButton"
-              className="bg-gray-900 text-white rounded-md h-10 w-60 font-bold text-md"
+              className="bg-[#397367] text-white rounded-md h-10 w-60 font-bold text-md"
             >
               Get Started
             </button>
@@ -376,7 +377,7 @@ export default function SignupPage() {
           </form>
           <h3 className="mt-2 text-center text-sm">
             Already have an account?{" "}
-            <a href="/auth/login" className="text-blue-600 font-bold">
+            <a href="/auth/login" className="text-[#397367] font-bold">
               Login!
             </a>
           </h3>

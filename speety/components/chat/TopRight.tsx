@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 //imports for video call
 import PopoverTriggerComponent from "@/components/video/PopOverTriggerComponent";
 import LocationTrigger from "../location/LocationTrigger";
-
+import { FaCalendarAlt } from "react-icons/fa";
 //imports for calendar
 import {
   Popover,
@@ -73,7 +73,7 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
 }, [clickedUser]);
 
   return (
-    <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-16 px-6">
+    <div className="flex justify-between bg-gray-200 rounded-2xl mt-2 h-16 px-6 md:w-[calc(93%-0px)] xl:w-[calc(100%-0px)] 2xl:w-[calc(100%-0px)]">
     <div className="flex items-center space-x-2">
       <button>
         <img
@@ -91,7 +91,7 @@ const TopRight:React.FC<TopRightProps> = ({callerRef,receiverRef,videoOnClick, c
     </div>
 
 {/* Video Call Component */}
-    <div className="flex items-center">
+    <div className="flex items-center gap-3 md:gap-6">
     <PopoverTriggerComponent src="/facetime.png" _className="w-12 h-14 rounded-full" videoOnClick={videoOnClick} callerVideoRef={callerRef} receiverVideoRef={receiverRef} endCall={endCall} callAccepted={callAccepted} sendEndCallMessage={sendEndCallMessage} changeCallEndedState={changeCallEndedState} callEndedState={callEndedState}/>
 
     {/* Location Component */}
@@ -104,11 +104,7 @@ clickedUser={clickedUser}
 {/* Calender Element */}
 <Popover>
   <PopoverTrigger onClick={()=>setShow(true)}>
-  <img
-          src="/calendar-icon.webp"
-          alt="Image description"
-          className="w-10 h-10 mb-1 rounded-full"
-        />
+  <FaCalendarAlt className="h-4 w-4 md:h-7 md:w-7 mb-2"/>
   </PopoverTrigger>
 
 {show && (

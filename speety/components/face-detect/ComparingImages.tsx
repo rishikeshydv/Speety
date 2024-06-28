@@ -54,6 +54,30 @@ const ComparingImages:React.FC<ComparingImagesProps> = ({userEmail, blobUrl, fac
         compareImages()
       }
     }, [blobUrl, userPic])
+
+    const [count, setCount] = useState<number>(0);
+
+    // Adding animated counter animation to the matching percentage
+    useEffect(() => {
+      if (!faceMatch) return;
+      
+      let start = 0;
+      const duration = 2; // duration in seconds
+      const increment = Math.ceil(faceMatch / (duration * 60)); // approximately 60 FPS
+      
+      const timer = setInterval(() => {
+        start = Math.min(start + increment, faceMatch);
+        setCount(start);
+        
+        if (start >= faceMatch) {
+          clearInterval(timer);
+        }
+      }, 1000 / 60); // run at approximately 60 FPS
+      
+      return () => clearInterval(timer); // clean up the interval on component unmount
+    }, [faceMatch]);
+    
+    
     
   return (
 <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50">
@@ -90,7 +114,7 @@ const ComparingImages:React.FC<ComparingImagesProps> = ({userEmail, blobUrl, fac
     <div className="flex flex-col items-center justify-center gap-4 mt-8">
       <h1 className="font-bold tracking-tighter text-xl">Confirming Identity</h1>
     <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-    <h1 className="font-bold tracking-tighter text-6xl">{faceMatch.toFixed(2)}%</h1>
+    <h1 className="font-bold tracking-tighter text-6xl">{count.toFixed(0)}%</h1>
     <div className="flex gap-6">
             <Button
         className="bg-green-400 hover:bg-green-500 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-lg transition-colors duration-300 ease-in-out"

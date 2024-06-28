@@ -419,9 +419,9 @@ const LocationMap = () => {
   useEffect(() => {
     if (!myPeer && id) {
       const peer = new Peer(id.slice(0, id.indexOf("@")), {
-        host: "localhost",
+        host: process.env.NEXT_PUBLIC_HOST_PUBLIC_ADDRESS!,
         port: 9000,
-        path: "/myapp",
+        path: process.env.NEXT_PUBLIC_PATH!,
       });
 
       setMyPeer(peer);
@@ -509,7 +509,7 @@ const LocationMap = () => {
 
   return (
     <div
-      className={`flex flex-col px-10 xl:px-0 2xl:px-0 w-full h-screen items-center ${poppins.className} bg-gray-200`}
+      className={`flex flex-col px-10 xl:px-0 2xl:px-0 w-full h-full items-center ${poppins.className} bg-gray-200`}
     >
       {/* location request pop-up */}
       {popUpOpen && (
@@ -563,14 +563,14 @@ const LocationMap = () => {
       {/* identity confirm pop-up to start the timer */}
       {identityConfirm && <TimerStartConfirm />}
 
-      <div className="text-center mt-10 py-4 px-10 rounded-full shadow-2xl bg-slate-400">
+      <div className="text-center mt-10 p-3 md:py-4 md:px-10 rounded-full shadow-2xl bg-gray-400/50">
         <h1
-          className="xl:text-3xl 2xl:text-5xl font-bold tracking-tighter"
+          className="text-md md:text-3xl 2xl:text-5xl font-bold tracking-tighter"
           onClick={() => setDestinationReached(true)}
         >
           Location Tracker
         </h1>
-        <p className="xl:text-sm 2xl:text-md text-gray-500 leading-loose dark:text-gray-400">
+        <p className="text-xs md:text-sm 2xl:text-md text-gray-500 leading-loose dark:text-gray-200">
           Accessible. Customizable. Open Source.
         </p>
       </div>

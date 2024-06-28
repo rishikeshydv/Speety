@@ -27,7 +27,7 @@ const ListingCard:React.FC<ListingProp>=({ propertyId,address,price,bedrooms,bat
   const router = useRouter();
   return (
 <div
-className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-2"
+className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:bg-[#E6EFE9] hover:translate-y-[-5px]"
 >
 <img
   src={image}
@@ -39,7 +39,7 @@ className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl t
 <div className="absolute top-4 right-4 rounded-full bg-white/80 px-3 py-1 text-sm font-semibold">
   ${Number(price).toLocaleString()}
 </div>
-<div className="bg-white p-4 dark:bg-gray-950">
+<div className="bg-white hover:bg-[#E6EFE9] p-4 dark:bg-gray-950">
   <h3 className="font-bold text-lg">{address}</h3>
   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
     <BedIcon className="w-4 h-4" />

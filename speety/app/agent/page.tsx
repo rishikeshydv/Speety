@@ -211,18 +211,18 @@ export default function Agent() {
     <div className={poppins.className}>
       <Header />
       <div>
-        <img src="/sellAgent.png" alt="alt" className="w-full xl:h-[700px] 2xl:h-[1000px]"/>
-        <section className=" absolute inset-0 top-28 xl:top-80 2xl:top-96">
-          <h1 className="text-2xl xl:text-7xl 2xl:text-9xl font-bold tracking-tighter text-center px-20 xl:px-96 2xl:px-96">
+        <img src="/adobe/4.jpeg" alt="alt" className="w-full h-full 2xl:h-screen"/>
+        <section className="absolute top-28 right-20 md:right-60 xl:right-96 2xl:right-96 md:top-48 xl:top-72 2xl:top-96">
+          <h1 className="text-white text-2xl md:text-6xl xl:text-7xl 2xl:text-9xl font-bold tracking-tighter px-20 xl:px-80 2xl:px-[1200px]">
             Sell traditionally with an{" "}
-            <button className="bg-red-400 rounded-3xl px-3 xl:px-6 xl:py-4 2xl:px-6 2xl:py-4">agent</button>
+            <button className="bg-[#397367] text-white rounded-3xl px-3 xl:px-6 xl:py-4 2xl:px-6 2xl:py-4">agent</button>
           </h1>
-          <div className="flex flex-col items-center justify-center mt-4 xl:mt-20 2xl:mt-20">
+          <div className="flex flex-col items-start justify-start mt-2 md:mt-6 xl:mt-10 2xl:mt-10 px-20 xl:px-80 2xl:px-[1200px]">
             <input
               id="autocomplete"
               type="text"
               placeholder="Enter a zip code ..."
-              className={`xl:bottom-20 2xl:bottom-20 px-4 h-6 w-1/4 xl:h-16 xl:w-1/4 2xl:h-16 2xl:w-1/4 bg-gray-100 text rounded-3xl text-center text-[10px] xl:text-xl 2xl:text-xl`}
+              className={`px-4 h-4 w-20 md:h-10 md:w-40 xl:h-16 xl:w-1/2 2xl:h-16  text-center text-[10px] md:text-sm xl:text-xl 2xl:text-xl [background:linear-gradient(90deg,#ffffff,theme(colors.white)_100%,#ffffff)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.white/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border`}
               value={zipVal}
               onChange={handleChange}
               onKeyDown={(e) => {
@@ -232,7 +232,7 @@ export default function Agent() {
               }}
             />
             <button
-              className={` text-white bg-black rounded-2xl px-4 xl:h-16 xl:w-60 2xl:h-16 2xl:w-60 text-[10px] xl:text-xl 2xl:text-xl font-bold uppercase mt-2 xl:mt-16 2xl:mt-16`}
+              className={` text-[#397367] h-4 w-20 bg-white rounded-2xl px-2 md:h-10 md:w-40 xl:h-16 xl:w-60 2xl:h-16 2xl:w-60 text-[8px] md:text-sm xl:text-xl 2xl:text-xl font-bold uppercase mt-2 xl:mt-6 2xl:mt-6 2xl:ml-16`}
               onClick={handleSubmit}
             >
               Find an agent
@@ -328,7 +328,25 @@ export default function Agent() {
     </div>
     {/* This is the Map section */}
     <section className="flex flex-col items-center space-y-8 py-8 xl:bg-gray-200 2xl:bg-gray-200 rounded-2xl my-6">
-      <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
+      
+    <div className="flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-12 md:px-6 md:py-16 lg:px-8 lg:py-20">
+      <div className="flex-1 space-y-4 max-w-xl">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-[#397367]">Locate Your Agent</h1>
+        <p className="text-muted-foreground md:text-lg">
+        We have made it easier for you to locate each agent on the website.
+  Each search result is marked on the map below. To have a closer look into
+  the agent of the property, you can click on the agent. We provide you with the best experience in buying your home.
+        </p>
+      </div>
+      <img
+        src="/svgs/14.png"
+        width={600}
+        height={400}
+        alt="Unleash Your Creativity"
+        className="flex-1 max-w-[500px] object-cover"
+      />
+    </div>
+
       <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl">
       <div className="w-[350px] h-[600px] shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
       </div>

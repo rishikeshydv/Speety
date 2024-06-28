@@ -509,10 +509,28 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
     </Card>
 
       {/* This is the Map section */}
-      <section className="flex flex-col items-center space-y-8 p-8 bg-gray-200 rounded-2xl">
-      <h1 className="text-5xl tracking-tight font-bold text-black drop-shadow-md">Scail Map&nbsp;🗺️</h1>
+      <section className="flex flex-col items-center space-y-8 py-8 bg-gray-200 rounded-2xl">
+      <div className="flex gap-6 md:gap-20">
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-12 md:px-6 md:py-16 lg:px-8 lg:py-20">
+      <div className="flex-1 space-y-4 max-w-xl">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-[#397367]">Locate Your Agent</h1>
+        <p className="text-muted-foreground md:text-lg">
+        We have made it easier for you to locate each agent on the website.
+  Each search result is marked on the map below. 
+        </p>
+      </div>
+      <img
+        src="/svgs/14.png"
+        width={600}
+        height={400}
+        alt="Unleash Your Creativity"
+        className="flex-1 md:max-w-[500px] object-cover"
+      />
+    </div>
+      </div>
       <div className="bg-white p-3 xl:p-6 2xl:p-6 rounded-3xl">
-      <div className="w-[350px] h-[600px] shadow-lg xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
+      <div className="w-[350px] h-[600px] shadow-lg md:w-[700px] md:h-[550px] xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={googlemap as React.RefObject<HTMLDivElement>}>
       </div>
       </div>
 
@@ -525,8 +543,6 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
         </Button>
       </div>
     </section>
-
-
     {
       reviewComplete ? <ReviewSuccess reviewCompleteFunc={reviewCompleteFunc}/> : <Review name={name} reviewCompleteFunc={reviewCompleteFunc} agentEmail={emailParams}/>
     }

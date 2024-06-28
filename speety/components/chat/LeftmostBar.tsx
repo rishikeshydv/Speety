@@ -33,21 +33,19 @@ const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
    
 }, [userEmail]);
   return (
-<aside className="w-24 bg-black text-white rounded-3xl my-2 mx-2">
+<aside className="hidden lg:block w-24 bg-black text-white rounded-3xl my-2 mx-2">
         <div className="flex items-center justify-center h-40 border-b border-gray-800">
           <a href={`/dashboard/${user?.email}`}>
             <img
-              src="/speety_logo_revert.png"
+              src="/speety_logo.png"
               alt="Speety Logo"
-              width={75}
-              height={90}
-              className="ml-1 mt-10"
+              className="ml-1 mt-10 w-[40px] xl:w-[75px]"
             />
           </a>
         </div>
         <nav className="flex flex-col p-2">
           <div className="flex items-center">
-            <div className="relative w-10 h-10 mt-10 ml-1 xl:ml-5 2xl:ml-5 rounded-full overflow-hidden">
+            <div className="relative w-10 h-10 mt-16 xl:mt-10 ml-1 xl:ml-5 2xl:ml-5 rounded-full overflow-hidden">
             <img
               src={userPic as string}
               alt="user_profile"

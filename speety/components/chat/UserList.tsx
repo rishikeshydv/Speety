@@ -44,7 +44,7 @@ const UserList:React.FC<UserListProps> = ({onUserClick,lastMsg, lastMsgTime}) =>
   }, [usersConnected]);
 
   return (
-  <div className="w-76 h-full rounded-2xl shadow-xs mb-3 mt-1 bg-gray-200">
+  <div className="w-56 h-[calc(77%-0px)] md:w-[220px] lg:w-[220px] xl:w-[300px] md:h-[calc(90%-0px)] lg:h-[calc(90%-0px)] xl:h-[calc(89%-0px)] 2xl:h-[calc(94%-0px)] rounded-2xl shadow-xs mb-3 mt-1 bg-gray-200">
   <div className="flex flex-col items-center">
   {usersConnected.length > 0 ? (
   usersConnected.map(([_email,_name,_profilePic,newMsgStatus], index) => (

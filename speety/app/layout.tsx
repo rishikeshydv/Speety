@@ -4,7 +4,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'scail.it 🏡',
+  title: 'Scail: Property, Investment, and More',
   description: 'Where Real Estate Flourish',
   manifest:"/manifest.json",
   icons:{

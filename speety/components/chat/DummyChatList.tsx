@@ -5,7 +5,7 @@ const DummyChatList = () => {
 
 
   return (
-    <div className="flex h-[calc(89%-0px)] flex-col mt-1">
+    <div className="flex h-[calc(89%-0px)] flex-col mt-1 w-[calc(100%-0px)] h-[calc(74%-0px)] md:h-[calc(88%-0px)] xl:h-[calc(89%-0px)] 2xl:h-[calc(92%-0px)] md:w-[calc(93%-0px)] xl:w-[calc(100%-0px)] 2xl:w-[calc(100%-0px)]">
     <div className="flex-1 bg-gray-200 rounded-lg p-4 overflow-scroll">
               </div>
 

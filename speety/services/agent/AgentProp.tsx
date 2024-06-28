@@ -31,7 +31,7 @@ const AgentProp:React.FC<Agent> = ({photoUrl,name,stars,phone,reviewCount,compan
       height={200}
       className="w-full h-48 object-cover"
     />
-    <div className="p-4 bg-slate-200">
+    <div className="p-4 bg-[#E6EFE9] hover:bg-slate-200">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">{name}</h3>
         <div className="flex items-center">

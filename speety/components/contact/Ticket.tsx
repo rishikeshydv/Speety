@@ -41,12 +41,12 @@ export function Ticket() {
     }
   };
   return (
-    <section className="w-full py-20 lg:py-24 bg-gray-200">
+    <section className="w-full py-20 lg:py-24 bg-white">
       <div className="mx-auto grid max-w-6xl px-4 gap-10 lg:grid-cols-2 lg:px-6 lg:gap-40">
         <div>
         <div className="space-y-10">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold">Need Help?</h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-[#004346]">Need Help?</h1>
             <p className="text-gray-500 text-md dark:text-gray-400">
               We&apos;re here to help. Fill out the form below or contact us using the information below.
             </p>
@@ -55,20 +55,20 @@ export function Ticket() {
             <div className="space-y-2">
               <h3 className="text-xl font-semibold">Address</h3>
               <p className="text-md text-gray-500 dark:text-gray-400">
-                548 Market St #23060, San Francisco, CA 94104-5401, United States
+              505 Tahiti Dr, Granbury, TX, 76048, United States
               </p>
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-semibold">Phone</h3>
-              <p className="text-md text-gray-500 dark:text-gray-400">+1 415-555-1212</p>
+              <p className="text-md text-gray-500 dark:text-gray-400">+1 855-604 (8709)</p>
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-semibold">Email</h3>
-              <p className="text-md text-gray-500 dark:text-gray-400">contact@example.com</p>
+              <p className="text-md text-gray-500 dark:text-gray-400">helpdesk@scail.it</p>
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-semibold">Office hours</h3>
-              <p className="text-md text-gray-500 dark:text-gray-400">Mon - Fri: 9:00 AM - 5:00 PM (PST)</p>
+              <p className="text-md text-gray-500 dark:text-gray-400">Mon - Sunday: 9:00 AM - 5:00 PM (NYC Time)</p>
             </div>
           </div>
         </div>
@@ -78,9 +78,9 @@ export function Ticket() {
         </div>
 
         {/* Start of Ticket Form */}
-        <div className="space-y-8 bg-[#87a3a3] py-8 px-6 xl:p-10 2xl:p-10 rounded-3xl w-full xl:mt-32 2xl:mt-32" style={{height:650}}>
+        <div className="space-y-8 bg-gray-200 py-8 px-6 md:p-10 rounded-3xl w-full xl:mt-32 2xl:mt-32" style={{height:650}}>
       <div className="space-y-2">
-        <h2 className="text-2xl xl:text-4xl 2xl:text-4xl font-bold">Submit a ticket</h2>
+        <h2 className="text-2xl xl:text-4xl 2xl:text-4xl font-bold text-[#004346]">Submit a ticket</h2>
         <p className="text-gray-500 text-xs xl:text-lg 2xl:text-lg dark:text-gray-400">
           Please fill out the form below and we&apos;ll get back to you as soon as possible.
         </p>
@@ -117,7 +117,7 @@ export function Ticket() {
           <Label htmlFor="message" className="text-lg font-semibold">Message</Label>
           <Textarea className="min-h-[100px] text-sm" id="message" placeholder="Enter your message" value={message} onChange={(e)=>{setMessage(e.target.value)}}/>
         </div>
-        <Button className="mx-auto text-sm ml-24 xl:ml-36 2xl:ml-36" onClick={()=>{sendEmail}}>Submit</Button>
+        <Button className="mx-auto text-sm ml-24 md:ml-80 xl:ml-36 2xl:ml-36 bg-[#004346]" onClick={()=>{sendEmail}}>Submit</Button>
       </div>
     </div>
 

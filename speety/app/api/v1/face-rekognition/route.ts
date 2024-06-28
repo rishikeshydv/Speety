@@ -1,7 +1,8 @@
 import {RekognitionClient, CompareFacesCommand} from '@aws-sdk/client-rekognition';
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const config = {
     region: process.env.NEXT_PUBLIC_AWS_REGION!,
     credentials: {

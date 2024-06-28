@@ -107,26 +107,26 @@ export default function SignInPage() {
             height={130}
             className="py-4"
           />
-          <h1 className="text-md text-gray-400">
+          <h1 className="text-md text-black">
             <Typist> Begin the journey with us ...</Typist>
           </h1>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
-            <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <AiFillGoogleCircle className="w-8 h-8 ml-3" />
-                <p className="ml-5">Continue with Google</p>
+                <AiFillGoogleCircle className="w-8 h-8 ml-3 text-white" />
+                <p className="ml-5 text-white">Continue with Google</p>
               </div>
             </button>
-            <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <AiFillYahoo className="w-8 h-8 ml-4" />
-                <p className="ml-4">Continue with Yahoo</p>
+                <AiFillYahoo className="w-8 h-8 ml-4 text-white" />
+                <p className="ml-4 text-white">Continue with Yahoo</p>
               </div>
             </button>
-            <button className="bg-gray-300 rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
               <div className="flex flex-row items-center">
-                <FaMicrosoft className="w-6 h-6 ml-4" />
-                <p className="ml-5">Continue with Microsoft</p>
+                <FaMicrosoft className="w-6 h-6 ml-4 text-white" />
+                <p className="ml-5 text-white">Continue with Microsoft</p>
               </div>
             </button>
             <div className="flex flex-row gap-2 items-center">
@@ -156,19 +156,19 @@ export default function SignInPage() {
               />
 
               {errors.password && <p className="text-red-500">Password is required.</p>}
-              <h1 className="mt-1 text-blue-700 text-sm" onClick={()=>setReset(true)}>
+              <h1 className="mt-1 text-[#397367] text-sm font-bold" onClick={()=>setReset(true)}>
                 Forgot Password?
               </h1>
               <p id="error_msg" className="text-md text-red-400 font-semibold">{err}</p>
               <button
               type="submit"
-                className="bg-gray-900 text-white mt-2 rounded-md h-10 w-96 font-bold text-md"
+                className="bg-[#397367] text-white mt-2 rounded-md h-10 w-96 font-bold text-md"
               >
                 Continue
               </button>
               <h3 className="mt-2 text-center text-md">
                 Don&apos;t have an account yet?{" "}
-                <a href="/auth/signup" className="text-blue-600">
+                <a href="/auth/signup" className="text-[#397367] font-bold tracking-tight underline">
                   Sign up!
                 </a>
               </h3>

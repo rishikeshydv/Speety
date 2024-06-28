@@ -165,7 +165,7 @@ const Review:React.FC<ReviewProps> = ({name,reviewCompleteFunc, agentEmail}) => 
     <section className="bg-gray-100 py-12 dark:bg-gray-800">
       <div className="container mx-auto max-w-2xl px-4">
         <div className="space-y-4">
-          <h2 className="text-4xl font-bold">Leave a Review</h2>
+          <h2 className="text-4xl font-bold">Leave a Review&nbsp;👋</h2>
           <div className="flex">
           <h1 className="text-gray-500 dark:text-gray-400 tracking tighter">
             We&apos;d love to hear your thoughts! Share your experience with&nbsp;

@@ -29,7 +29,7 @@ const MessageProp1:React.FC<MsgProp> = ({message,msgTime,profilePic}) => {
 
 
   return (
-            <div className="flex items-st art justify-start mt-1 w-28 h-auto rounded-2xl">
+            <div className="flex items-start justify-start mt-1 w-28 h-auto rounded-2xl">
       <Avatar className="w-10 h-10 p-0.5 border rounded-full mt-1">
       <AvatarImage alt="@jessica" src={profilePic} />
       <AvatarFallback>J</AvatarFallback>

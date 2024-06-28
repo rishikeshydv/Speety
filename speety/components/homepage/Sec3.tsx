@@ -2,31 +2,32 @@ import React from 'react'
 import Feature from '@/services/homepage/feature'
 import Image from '@/services/homepage/Image'
 import { Card, CardTitle, CardDescription } from "@/components/ui/card"
+
 export default function Sec3() {
   return (
     <div>
-        <section className='py-10'>
+        <section className='py-4 md:py-10'>
             {/* This DIV creates a left and right column */}
             <div className='flex'>
-            <div className='w-1/2 p-4'>
+            <div className='w-1/2 p-1 md:p-4'>
             {/* This Div will create a title and a sparkle on the left */}
-            <div className='mt-10 ml-10 xl:px-10 2xl:px-10 flex items-center text-[#16302B]'>
+            <div className='mt-10 md:ml-10 md:px-10 flex items-center text-[#16302B]'>
                 <img 
                 src="/sparkle.png" 
                 alt='sparkle'
                 width={40}
                 height={5}
-                className='xl:w-16 xl:h-16 2xl:w-16 2xl:h-16'
-                style={{ marginRight: '30px' }}/>
-                <h1 className='text-2xl xl:text-5xl 2xl:text-5xl font-bold'>
+                className='w-6 h-6 xl:w-16 xl:h-16 2xl:w-16 2xl:h-16 mr-[6px] md:mr-[30px]'
+                />
+                <h1 className='text-[#004346] text-2xl md:text-5xl xl:text-7xl 2xl:text-7xl font-bold'>
                 Our Features
                 </h1>
             </div>
             <hr className='border border-gray-300 w-30 mt-5 ml-5'/> {/* Horizontal line */}
             {/* The div following would create 3 features of the app */}
             <section className="grid gap-6 p-4 xl:gap-10 xl:p-10 sm:grid-cols-1 md:grid-cols-1 lg:p-8">
-      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 px-6 py-16 shadow-muted border-hidden">
-        <img src="/bulb.png" alt="" className='w-8 h-8 xl:w-16 xl:h-16 2xl:w-16 2xl:h-16'/>
+      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 p-3 md:px-6 md:py-16 shadow-md border-muted bg-[#A2D3C2] bg-opacity-20 hover:bg-opacity-30 hover:translate-y-[5px]">
+        <img src="/svgs/5.png" alt="" className='w-8 h-8 xl:w-24 xl:h-24 2xl:w-24 2xl:h-24'/>
         <CardTitle className='xl:text-2xl 2xl:text-2xl'>Organized Workflow</CardTitle>
         <CardDescription className='xl:px-6 2xl:px-6 xl:text-center 2xl:text-center text-xs xl:text-lg 2xl:text-lg'>
         Ditch the spreadsheets! Our platform lets brokers see all their agents and clients in one place. 
@@ -35,8 +36,8 @@ export default function Sec3() {
             everyone to focus on what matters - closing deals.
         </CardDescription>
       </Card>
-      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 px-6 py-16 shadow-muted border-hidden">
-        <img src="/cam.png" alt="" className='w-10 h-10 xl:w-16 xl:h-16 2xl:w-16 2xl:h-16'/>
+      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 p-3 md:px-6 md:py-16 shadow-md border-muted bg-[#A2D3C2] bg-opacity-20 hover:bg-opacity-30 hover:translate-y-[5px]">
+        <img src="/svgs/6.png" alt="" className='w-10 h-10 xl:w-36 xl:h-28 2xl:w-36 2xl:h-28'/>
         <CardTitle className='xl:text-2xl 2xl:text-2xl'>Feature-Based Customization</CardTitle>
         <CardDescription className='xl:px-6 2xl:px-6 xl:text-center 2xl:text-center text-xs xl:text-lg 2xl:text-lg'>
         Speety is designed to be flexible and customizable. Agents can choose the features they need and
@@ -44,9 +45,9 @@ export default function Sec3() {
             intuitive, so agents can start using it.
         </CardDescription>
       </Card>
-      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 px-6 py-16 shadow-muted border-hidden">
-        <img src="/bell_.png" alt="" className='w-10 h-10 xl:w-16 xl:h-16 2xl:w-16 2xl:h-16'/>
-        <CardTitle className='text-2xl'>Easy Getting Started</CardTitle>
+      <Card className="flex flex-col items-start xl:items-center 2xl:items-center gap-4 p-3 md:px-6 md:py-16 shadow-md border-muted bg-[#A2D3C2] bg-opacity-20 hover:bg-opacity-30 hover:translate-y-[5px]">
+        <img src="/svgs/7.png" alt="" className='w-10 h-10 xl:w-40 xl:h-40 2xl:w-24 2xl:h-24'/>
+        <CardTitle className='xl:text-2xl 2xl:text-2xl'>Easy Getting Started</CardTitle>
         <CardDescription className='xl:px-6 2xl:px-6 xl:text-center 2xl:text-center text-xs xl:text-lg 2xl:text-lg'>
         An agent can get started in minutes by signing up, inviting their clients and most importantly importing
             their previous listings. Our platform is designed to be user-friendly and intuitive, so agents can start using it.
@@ -55,28 +56,9 @@ export default function Sec3() {
     </section>
             </div>
             {/* Here, I will be adding an image at the right */}
-            <div className='flex flex-col my-[400px] xl:my-[0px] 2xl:my-[0px] gap-6 xl:px-10 2xl:px-10 w-1/2 p-4'>
-              <div className='shadow-lg rounded-2xl xl:p-2 2xl:p-2'>
-              <img
-            src="/brokerOrganize.png"
-            alt="animation" 
-            />
-              </div>
-
-            <div className='shadow-lg rounded-2xl xl:p-2 2xl:p-2 my-96 xl:my-0 2xl:my-0'>
-            <img
-            src="/import.png"
-            alt="animation" 
-            />
-            </div>
-
-            <div className='shadow-lg rounded-2xl xl:p-2 2xl:p-2'>
-             <img
-            src="/features.png"
-            alt="animation" 
-            />
-            </div>
-            </div>
+          <div className='px-4'>
+            <img src="/adobe/2.jpeg" alt="img-right" className='w-[700px] h-full md:h-full md:w-[1000px] 2xl:w-[1650px] 2xl:h-[1400px] overflow-hidden rounded-3xl shadow-xl'/>
+          </div>
             </div>
         </section>
     </div>
