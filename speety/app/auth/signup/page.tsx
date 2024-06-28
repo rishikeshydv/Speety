@@ -279,14 +279,13 @@ export default function SignupPage() {
                   className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
                 />
               </div>
-              <div className="relative mt-7">
+              <div className="relative xl:mt-7">
                 <Popover>
                   <PopoverTrigger className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-200 px-4">
                     <MdCamera className="h-7 w-7 mb-1 mr-2" />
                   </PopoverTrigger>
                   <PopoverContent
-                    style={{ width: 400, height: 250 }}
-                    className="mr-10 mt-6 bg-gray-300 rounded-3xl"
+                    className="mb:40 mr-10 mt-6 bg-gray-300 rounded-3xl md:w-[400px] md:h-[250px]"
                   >
                      {showCamera ? (
                       <div className="flex flex-col items-center justify-center gap-1">
@@ -294,12 +293,11 @@ export default function SignupPage() {
                       audio={false}
                       ref={webcamRef}
                       screenshotFormat="image/jpeg"
-                      width={400}
-                      height={200}
-                      className="rounded-3xl"
+                      className="rounded-3xl md:w-[400px] md:h-[200px]"
                     />
                     <button onClick={capturePhoto} className="bg-gray-400 p-2 rounded-full">
-                      <MdCamera className="h-8 w-8"/></button>
+                      <MdCamera className="h-8 w-8"/>
+                    </button>
                       </div>
 
                     ):(

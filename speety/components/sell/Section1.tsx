@@ -43,7 +43,9 @@ Selling a property is a big decision. We are here to help you make the right cho
 </p>
 </div>
 <video className="flex-1 xl:max-w-[550px] 2xl:max-w-[900px] h-full overflow-hidden [background:linear-gradient(45deg,#172033,theme(colors.slate.800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.slate.300/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border" autoPlay muted playsInline>
-          <source src={process.env.NEXT_PUBLIC_VID2} />
+          <source 
+                    src="https://firebasestorage.googleapis.com/v0/b/speety-2175.appspot.com/o/frontend-vids%2F2.mp4?alt=media&token=49dbe7b7-30b8-481b-8028-54e2bf00b05f"
+          />
         </video>
 </div>
 

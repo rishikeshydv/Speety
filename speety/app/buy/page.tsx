@@ -332,7 +332,9 @@ const sortedResults = useMemo(() => {
 </p>
 </div>
 <video className="flex-1 md:w-[600px] h-full overflow-hidden [background:linear-gradient(45deg,#172033,theme(colors.slate.800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.slate.300/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border" autoPlay muted playsInline>
-          <source src={process.env.NEXT_PUBLIC_VID1}  />
+          <source 
+                    src="https://firebasestorage.googleapis.com/v0/b/speety-2175.appspot.com/o/frontend-vids%2F1.mp4?alt=media&token=544c6031-7927-4982-ba30-57a4f39f095d"
+          />
         </video>
 </div>
 
