@@ -152,9 +152,9 @@ export default function SignupPage() {
 
   return (
     <div className={poppins.className}>
-      <img src="/adobe/6.jpeg" alt="img" className="w-screen h-screen"/>
+      <img src="/adobe/6.jpeg" alt="img" className="w-screen h-screen hidden md:block"/>
       <div
-        className={`fixed bottom-14 top-14 left-1/4 right-1/4 flex flex-col items-center justify-center bg-gray-200 bg-opacity-60 shadow-sm rounded-2xl py-4`}
+        className={`md:fixed md:bottom-14 md:top-14 md:left-10 md:right-10 lg:bottom-14 lg:top-14 lg:left-1/4 lg:right-1/4 flex flex-col items-center justify-center bg-gray-200 bg-opacity-60 shadow-sm rounded-2xl py-4`}
       >
         {/* This div is for the right side of the page */}
         <Image
@@ -189,9 +189,9 @@ export default function SignupPage() {
           <p className="text-gray-500 text-lg mt-3 ">Or</p>
           <hr className="border-1 border-gray-400 mt-3 flex-grow w-44" />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center justify-center ml-20">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-            <div className="flex mt-1 gap-8">
+            <div className="flex flex-col md:flex-row mt-1 gap-8">
               <div>
                 <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
                   Email
@@ -223,7 +223,7 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <div className="flex gap-8">
+            <div className="flex flex-col md:flex-row gap-8">
               <div>
                 <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800 py-2">
                   Role
@@ -266,7 +266,7 @@ export default function SignupPage() {
                 </>
               ) : null}
             </div>
-            <div className="flex gap-8">
+            <div className="flex flex-col md:flex-row gap-8">
             <div className="relative flex items-center">
               <div className="flex flex-col">
                 <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
@@ -332,7 +332,7 @@ export default function SignupPage() {
             </div>
             </div>
 
-            <div className="flex mt-4 gap-8">
+            <div className="flex flex-col md:flex-row mt-4 gap-8">
               <div>
                 <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
                   Password
@@ -364,7 +364,7 @@ export default function SignupPage() {
               </div>
             </div>
             <p className="px-1 py-2 text-sm"> • Password must be atleast 6 characters.</p>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center mr-20">
             <button
               type="submit"
               id="signupButton"
@@ -375,7 +375,7 @@ export default function SignupPage() {
             </div>
 
           </form>
-          <h3 className="mt-2 text-center text-sm">
+          <h3 className="mt-2 text-center text-sm mr-20">
             Already have an account?{" "}
             <a href="/auth/login" className="text-[#397367] font-bold">
               Login!

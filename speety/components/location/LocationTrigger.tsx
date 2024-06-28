@@ -23,7 +23,7 @@ const LocationTrigger:React.FC<PopOverComponentProps> = ({src,_className,clicked
     <Popover>
     <PopoverTrigger asChild>
     <button>
-    <FaLocationDot className="h-4 w-4 md:h-7 md:w-8"/>
+    <FaLocationDot className="h-6 w-6 md:h-7 md:w-8"/>
 </button>
 {/* Popover for video-call */}
     </PopoverTrigger>

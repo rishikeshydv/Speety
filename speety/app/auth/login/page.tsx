@@ -89,8 +89,8 @@ export default function SignInPage() {
   return (
     <div className={poppins.className}>
       <div className="flex">
-        <div className={`bg-gray-800 h-screen w-1/2 flex items-center`}>
-          <img src="/loginFamily.jpg" alt="alt" />
+        <div className={`bg-gray-800 h-screen w-1/2 hidden md:block`}>
+          <img src="/loginFamily.jpg" alt="alt" className="md:w-full md:h-full lg:w-auto lg:h-auto"/>
         </div>
         {
           reset && <ResetEmail setReset={setReset} setResetDone={setResetDone}/>
@@ -99,7 +99,7 @@ export default function SignInPage() {
           resetDone && <PasswordReset/>
         }
 
-        <div className="h-screen w-1/2 flex flex-col items-center justify-center">
+        <div className="h-screen w-1/2 flex flex-col items-center justify-center ml-20 md:ml-0">
           <Image
             src="/speety_logo.png"
             alt="Speety Logo"
@@ -142,7 +142,7 @@ export default function SignInPage() {
                 type="text"
                 required
                 {...register("email")}
-                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-sm"
+                className="rounded-md bg-gray-200 md:h-10 md:w-96 px-4 text-sm"
               />
               {errors.email && <p className="text-red-500">Email is required.</p>}
               <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
@@ -152,7 +152,7 @@ export default function SignInPage() {
                 type="password"
                 required
                 {...register("password")}
-                className="rounded-md bg-gray-200 h-10 w-96 px-4 text-sm"
+                className="rounded-md bg-gray-200 md:h-10 md:w-96 px-4 text-sm"
               />
 
               {errors.password && <p className="text-red-500">Password is required.</p>}
@@ -162,7 +162,7 @@ export default function SignInPage() {
               <p id="error_msg" className="text-md text-red-400 font-semibold">{err}</p>
               <button
               type="submit"
-                className="bg-[#397367] text-white mt-2 rounded-md h-10 w-96 font-bold text-md"
+                className="bg-[#397367] text-white mt-2 rounded-md md:h-10 md:w-96 font-bold text-md"
               >
                 Continue
               </button>

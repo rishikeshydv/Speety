@@ -104,7 +104,7 @@ clickedUser={clickedUser}
 {/* Calender Element */}
 <Popover>
   <PopoverTrigger onClick={()=>setShow(true)}>
-  <FaCalendarAlt className="h-4 w-4 md:h-7 md:w-7 mb-2"/>
+  <FaCalendarAlt className="h-6 w-6 md:h-7 md:w-7 mb-2"/>
   </PopoverTrigger>
 
 {show && (

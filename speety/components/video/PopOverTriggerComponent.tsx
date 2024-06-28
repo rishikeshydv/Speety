@@ -38,7 +38,7 @@ const PopoverTriggerComponent:React.FC<PopOverComponentProps> = ({src,_className
         videoOnClick();
         setShow(true);
         }}>
-        <FaVideo className="h-4 w-4 md:h-9 md:w-9"/>
+        <FaVideo className="h-7 w-8 md:h-9 md:w-9"/>
 </button>
 {/* Popover for video-call */}
       </PopoverTrigger>

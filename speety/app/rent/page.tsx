@@ -344,7 +344,7 @@ const sortedResults = useMemo(() => {
 </p>
 </div>
 <video className="flex-1 md:w-[600px] h-full overflow-hidden [background:linear-gradient(45deg,#172033,theme(colors.slate.800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.slate.300/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border" autoPlay muted playsInline>
-          <source src="/vids/1.mov" />
+          <source src="/vids/1.mp4" />
         </video>
 </div>
 
