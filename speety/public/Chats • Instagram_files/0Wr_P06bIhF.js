@@ -1,0 +1,3 @@
+;/*FB_PKG_DELIM*/
+
+__d("IGDSInsightsPanoOutlineIcon.react",["IGDSSVGIconBase.react","react"],(function(a,b,c,d,e,f,g){"use strict";var h,i=h||d("react");function a(a){return i.jsxs(c("IGDSSVGIconBase.react"),babelHelpers["extends"]({},a,{viewBox:"0 0 24 24",children:[i.jsx("rect",{fill:"none",height:"9.091",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"2",width:"6.667",x:"2",y:"12.909"}),i.jsx("rect",{fill:"none",height:"14.545",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"2",width:"6.667",x:"15.333",y:"7.455"}),i.jsx("rect",{fill:"none",height:"20",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"2",width:"6.667",x:"8.667",y:"2"})]}))}a.displayName=a.name+" [from "+f.id+"]";b=i.memo(a);g["default"]=b}),98);

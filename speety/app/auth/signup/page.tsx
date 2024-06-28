@@ -1,119 +1,388 @@
 "use client";
-import signup from "@/firebase/auth/signup";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { setDoc, doc } from "firebase/firestore";
-import { auth } from "@/firebase/config";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { db } from "@/firebase/config";
+import { useCallback, useState, useRef, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import poppins from "@/font/font";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { AiFillYahoo } from "react-icons/ai";
 import { FaMicrosoft } from "react-icons/fa6";
-
 import Image from "next/image";
+import Webcam from "react-webcam";
+import { MdCamera } from "react-icons/md";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import AddTicket from "@/queries/UserVerification/AddTicket";
+import { uuidv4 } from "@firebase/util";  
+import getImageUrl from "@/queries/ImgVidUrls/getImageUrl";
+import GetBlobUrl from "@/queries/ImgVidUrls/GetBlobUrl";
+
+interface SignupData {
+  name: string;
+  email: string;
+  role: string;
+  id: string;
+  driverLicense: File;
+  password: string;
+  confirmPassword: string;
+}
 
 export default function SignupPage() {
-
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupData>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const router = useRouter();
-  const [user] = useAuthState(auth);
+
+  //uuidv4
+  var uniqueId = uuidv4()
+
+  //today's date
+  const today = new Date();
+  const month = today.getMonth()+1;
+  const year = today.getFullYear();
+  const date = today. getDate();
+  const currentDate = month + "/" + date + "/" + year;
 
 
-  const createUserInDB = async (
-    name: string,
-    email: string,
-    role: string
-  ) => {
+  //to watch the value of the USER role
+  const [role_, setRole_] = useState<string>("");
 
-    try {
-      const userDocRef = doc(db, "User_Info", email); // Use email as the document ID
-      await setDoc(userDocRef, {
-        name: name,
-        role: role
-      });
-    } catch (error) {
-      console.log(error);
+  //to capture the photo
+  const webcamRef = useRef<Webcam>(null);
+  const [imgSrc, setImgSrc] = useState<string | null>(null);  //this is the BLOB URL of the captured image
+  const [showCamera, setShowCamera] = useState(true);
+  const [captureText,setCaptureText]=useState<string>("Add a profile picture");
+
+  //the following is the firebase storage URL for the captured image
+  const [faceCaptureUrl, setFaceCaptureUrl] = useState<string | null>(null);
+  const [driverLicense, setDriverLicense] = useState<File | null>(null); //this is the file of the driver's license [image
+  const [driver, setDriver] = useState<string>("");
+  const [tempId, setTempId] = useState<string>("NA"); //buyer/renter does not have brokerId, so we use this to deal with the brokerId
+
+  const capturePhoto = useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setImgSrc(imageSrc);
+
+      setShowCamera(false); // Hide camera after capturing photo
     }
-  };
-  const onSubmit = useCallback(async (data: any) => {
-    try {
-      const { email,name, password, confirmedPassword } =
-        data;
+  }, [webcamRef]);
 
-      if (password !== confirmedPassword) {
+  //to retake photo
+  const retakePhoto = useCallback(() => {
+    setImgSrc(null);
+    setShowCamera(true); 
+  }, []);
+
+  //to confirm the photo
+  const confirmPhoto = () => {    
+  setCaptureText("Profile Picture Added");
+  alert("Photo added successfully");
+    return new Promise((resolve, reject) => {
+      GetBlobUrl(uniqueId,imgSrc as string)
+      .then((faceUrl) => {
+        setFaceCaptureUrl(faceUrl);
+        resolve(faceUrl);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    }
+    ); 
+  }
+
+  //to confirm the driver's license
+  useEffect(() => {
+    if (!driverLicense) {
+      return;
+    }
+
+  const confirmDriver = () => {    
+    return new Promise((resolve, reject) => {
+      getImageUrl(driverLicense as File)
+      .then((driverUrl) => {
+        setDriver(driverUrl);
+        resolve(driverUrl);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    }
+    ); 
+  }
+  confirmDriver();
+    }, [driverLicense]);
+
+
+  const onSubmit: SubmitHandler<SignupData> =  async (data) => {
+    try {
+      var {
+        email,
+        name,
+        role,
+        id,
+        password,
+        confirmPassword,
+      } = data;
+
+        if (!id){
+          id=tempId;
+        }
+
+      if (password !== confirmPassword) {
         // show message to user that passwords do not match
         setErrorMsg("Passwords do not match");
         return;
       }
+        await AddTicket(email, name, password, confirmPassword, id, driver, faceCaptureUrl as string, role,currentDate);
+        router.push(`/auth/verify/${email}`);
 
-      //const { userCredential, error } = await signup(email, password);
-      signup(email, password).then
-      (() => {
-       createUserInDB(name, email,"client");
-      }).then(() => {
-        router.push(`/dashboard/${email}`);
-      })
-
-
-      // if (!userCredential) {
-      //   setErrorMsg("Something went wrong. Please try again later.");
-      // }
-      console.log(user);
-      // Store user in database
     } catch (error) {
       console.log(error);
+
       setErrorMsg("Something went wrong. Please try again later.");
     }
-  }, []);
+
+}
+
   return (
     <div className={poppins.className}>
-        <div className={`fixed bottom-32 top-32 left-1/3 right-1/3 flex flex-col items-center justify-center bg-gray-100 shadow-sm rounded-2xl`}>{/* This div is for the right side of the page */}
-      <Image
-            src="/speety_logo.png"
-            alt="Speety Logo"
-            width={250}
-            height={130}
-            className=""
-          />
-          {/* <h1 className="text-xl text-gray-400"><Typist> Begin the journey with us ...</Typist></h1> */}
-        <button className="bg-gray-300 rounded-xl w-96 h-16 mt-4 text-2xl font-bold"><div className="flex flex-row items-center px-5"><AiFillGoogleCircle className="w-12 h-12"/><p className="ml-5">Continue with Google</p></div></button>
-        <button className="bg-gray-300 rounded-xl w-96 h-16 mt-2 text-2xl font-bold"><div className="flex flex-row items-center px-5"><AiFillYahoo className="w-16 h-16"/><p className="ml-2">Continue with Yahoo</p></div></button>
-        <button className="bg-gray-300 rounded-xl w-96 h-16 mt-2 text-2xl font-bold"><div className="flex flex-row items-center px-5"><FaMicrosoft className="w-10 h-10"/><p className="ml-2">Continue with Microsoft</p></div></button>
+      <img src="/adobe/6.jpeg" alt="img" className="w-screen h-screen hidden md:block"/>
+      <div
+        className={`md:fixed md:bottom-14 md:top-14 md:left-10 md:right-10 lg:bottom-14 lg:top-14 lg:left-1/4 lg:right-1/4 flex flex-col items-center justify-center bg-gray-200 bg-opacity-60 shadow-sm rounded-2xl py-4`}
+      >
+        {/* This div is for the right side of the page */}
+        <Image
+          src="/speety_logo.png"
+          alt="Speety Logo"
+          width={160}
+          height={100}
+          className="py-2"
+        />
+        {/* <h1 className="text-xl text-gray-400"><Typist> Begin the journey with us ...</Typist></h1> */}
+        <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+              <div className="flex flex-row items-center">
+                <AiFillGoogleCircle className="w-8 h-8 ml-3 text-white" />
+                <p className="ml-5 py-2 text-white">Continue with Google</p>
+              </div>
+            </button>
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+              <div className="flex flex-row items-center">
+                <AiFillYahoo className="w-8 h-8 ml-4 text-white" />
+                <p className="ml-4 py-2 text-white">Continue with Yahoo</p>
+              </div>
+            </button>
+            <button className="bg-[#397367] rounded-xl w-72 h-10 mt-2 text-lg font-bold">
+              <div className="flex flex-row items-center">
+                <FaMicrosoft className="w-6 h-6 ml-4 text-white" />
+                <p className="ml-5 py-2 text-white">Continue with Microsoft</p>
+              </div>
+            </button>
         <div className="flex flex-row gap-2 items-center">
-            {/* This is for the horizontal line */}
-            <hr className="mt-3 border-gray-400 border-2 flex-grow w-44"/>
-            <p className="text-gray-500 text-xl mt-3 ">Or</p>
-            <hr className="border-2 border-gray-400 mt-3 flex-grow w-44"/>
+          {/* This is for the horizontal line */}
+          <hr className="mt-3 border-gray-400 border-1 flex-grow w-44" />
+          <p className="text-gray-500 text-lg mt-3 ">Or</p>
+          <hr className="border-1 border-gray-400 mt-3 flex-grow w-44" />
         </div>
-        <div className="flex flex-col">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Email</label>
-        <input type="text" required {...register("email")} className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4" />
-        {errors.email && <p className="text-red-500">Email is required.</p>}
+        <div className="flex flex-col items-center justify-center ml-20">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            <div className="flex flex-col md:flex-row mt-1 gap-8">
+              <div>
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  required
+                  {...register("email")}
+                  className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                />
+                {errors.email && (
+                  <p className="text-red-500">Email is required.</p>
+                )}
+              </div>
 
-        <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Name</label>
-        <input type="text" required {...register("name")} className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4" />
-        {errors.name && <p className="text-red-500">Name is required.</p>}
+              <div>
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  {...register("name")}
+                  className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                />
+                {errors.name && (
+                  <p className="text-red-500">Name is required.</p>
+                )}
+              </div>
+            </div>
 
-        <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Password</label>
-        <input type="password" required {...register("password")} className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4" />
-        {errors.password && <p className="text-red-500">Password is required.</p>}
+            <div className="flex flex-col md:flex-row gap-8">
+              <div>
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800 py-2">
+                  Role
+                </label>
+                <select
+                  {...register("role")}
+                  value={role_}
+                  onChange={(e) => {
+                    setRole_(e.target.value);
+                  }}
+                  name="searchType"
+                  className=" rounded-md h-10 w-72 text-md pl-4 text-gray-800 bg-gray-200"
+                >
+                  <option value="Buyer/Renter">Buyer/Renter</option>
+                  <option value="Broker">Broker</option>
+                  <option value="Agent">Agent</option>
+                </select>
+                {errors.role && (
+                  <p className="text-red-500">Role is required.</p>
+                )}
+              </div>
 
-        <label className="block uppercase tracking-wide text-lg font-semibold text-gray-800">Confirm Password</label>
-        <input type="password" required {...register("confirmPassword")} className="rounded-md bg-gray-200 h-16 w-96 text-2xl px-4" />
-        {errors.confirmPassword && <p className="text-red-500">Please confirm your password.</p>}
+              {role_ === "Broker" || role_ === "Agent" ? (
+                <>
+                  <div className="py-4">
+                    <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                      Broker Id
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      defaultValue="NA"
+                      {...register("id")}
+                      className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                    />
+                    {errors.id && (
+                      <p className="text-red-500">Broker ID is required.</p>
+                    )}
+                  </div>
+                </>
+              ) : null}
+            </div>
+            <div className="flex flex-col md:flex-row gap-8">
+            <div className="relative flex items-center">
+              <div className="flex flex-col">
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                  Capture Face
+                </label>
+                <input
+                  placeholder={captureText}
+                  type="text"
+                  readOnly
+                  className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                />
+              </div>
+              <div className="relative mt-7">
+                <Popover>
+                  <PopoverTrigger className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-200 px-4">
+                    <MdCamera className="h-7 w-7 mb-1 mr-2" />
+                  </PopoverTrigger>
+                  <PopoverContent
+                    style={{ width: 400, height: 250 }}
+                    className="mr-10 mt-6 bg-gray-300 rounded-3xl"
+                  >
+                     {showCamera ? (
+                      <div className="flex flex-col items-center justify-center gap-1">
+                      <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      width={400}
+                      height={200}
+                      className="rounded-3xl"
+                    />
+                    <button onClick={capturePhoto} className="bg-gray-400 p-2 rounded-full">
+                      <MdCamera className="h-8 w-8"/></button>
+                      </div>
 
-        <p id="login_status" className="py-3"></p>
-        <p className="text-gray-500">Password must be 8 characters in length. </p>
-        <p className="text-gray-500">Must contain an uppercase letter, a lowercase </p>
-        <p className="text-gray-500">letter, one number and one special character.</p>
-        <button type="submit" id="signupButton" className="bg-gray-900 text-white mt-2 rounded-md h-12 w-96 font-bold text-xl">Get Started</button>
-        </form>
-        <h3 className="mt-2 text-center text-xl">Already have an account <a href="#" className="text-blue-600">Login!</a></h3>
+                    ):(
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <img src={imgSrc as string} alt="Captured Image" className="rounded-3xl"/>
+                        <div className="flex gap-6">
+                        <button onClick={confirmPhoto} className="bg-gray-100 p-2 rounded-3xl font-bold text-xl"><img className="w-8 h-8" src="/confirm.png" alt="confirm" /></button>
+             
+                        <button onClick={retakePhoto} className="bg-gray-100 p-2 rounded-3xl font-bold text-xl"><img className="w-8 h-8" src="/retake.webp" alt="retake" /></button>
+                        </div>
+                      </div>
+                    
+                    )}
+                    
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            <div>
+              <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                Driver&apos;s License
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                required
+                onChange={(e) => {setDriverLicense(e.target.files![0])}}
+                className="rounded-md text-sm font-semibold h-16 w-96 py-4"
+              />
+            </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row mt-4 gap-8">
+              <div>
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  {...register("password")}
+                  className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                />
+                {errors.password && (
+                  <p className="text-red-500">Password is required.</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block uppercase tracking-wide text-sm font-semibold text-gray-800">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  {...register("confirmPassword")}
+                  className="rounded-md bg-gray-200 h-10 w-72 text-md px-4"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-red-500">Please confirm your password.</p>
+                )}
+              </div>
+            </div>
+            <p className="px-1 py-2 text-sm"> • Password must be atleast 6 characters.</p>
+            <div className="flex items-center justify-center mr-20">
+            <button
+              type="submit"
+              id="signupButton"
+              className="bg-[#397367] text-white rounded-md h-10 w-60 font-bold text-md"
+            >
+              Get Started
+            </button>
+            </div>
+
+          </form>
+          <h3 className="mt-2 text-center text-sm mr-20">
+            Already have an account?{" "}
+            <a href="/auth/login" className="text-[#397367] font-bold">
+              Login!
+            </a>
+          </h3>
         </div>
       </div>
-    </div> );
+    </div>
+  );
 }

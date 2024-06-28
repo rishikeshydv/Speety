@@ -1,0 +1,34 @@
+# Node modules
+node_modules
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Git repository
+.git
+.gitignore
+
+# Docker configuration
+.dockerignore
+Dockerfile
+Dockerfile.*
+
+# Temporary files
+tmp/
+temp/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+
+# IDE/editor configuration
+.vscode/
+.idea/
+
+# Coverage reports
+coverage/

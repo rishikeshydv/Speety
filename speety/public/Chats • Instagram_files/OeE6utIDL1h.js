@@ -1,0 +1,3 @@
+;/*FB_PKG_DELIM*/
+
+__d("FXFetaAutoMigrationPromptDialogRootQuery$Parameters.instagram",["FXFetaAutoMigrationPromptDialogRootQuery_instagramRelayOperation"],(function(a,b,c,d,e,f){"use strict";a={kind:"PreloadableConcreteRequest",params:{id:b("FXFetaAutoMigrationPromptDialogRootQuery_instagramRelayOperation"),metadata:{},name:"FXFetaAutoMigrationPromptDialogRootQuery",operationKind:"query",text:null}};e.exports=a}),null);

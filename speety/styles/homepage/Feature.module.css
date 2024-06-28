@@ -1,5 +1,5 @@
 .card {
-  width:fit-content;
+
   height: 350px;
   padding: 40px;
   display: flex; /* Use flexbox */
@@ -19,16 +19,16 @@
   
   .title {
     margin-top: 10px;
-    font-size: 26px;
+    font-size: 18px;
     font-weight: bold;
     text-align: center; /* Center the text */
   }
   
   .description {
     margin-top: 5px;
-    font-size: 20px;
+    font-size: 14px;
     color: gray;
     width:100;
-    text-align: justify;
+    text-align: center;
   }
   

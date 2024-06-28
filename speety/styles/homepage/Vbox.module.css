@@ -5,30 +5,30 @@
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow effect */
 
   
 }
 
-.verticalBox:hover .title {
-  color:gold; /* Change title color to yellow on hover */
+.verticalBox:hover {
+  background-color:#E6EFE9; /* Change title color to yellow on hover */
 }
 
 .image {
-  width: 70%; /* Make the image fill the container */
+  width: 50%; /* Make the image fill the container */
   height: auto; /* Maintain aspect ratio */
   border-radius: 8px; /* Add border radius */
   margin-bottom: 10px; /* Add margin below the image */
 }
 
 .title {
-  font-size: 1.5rem; /* Adjust font size as needed */
+  font-size: 1rem; /* Adjust font size as needed */
   font-weight: bold;
   color: #333; /* Adjust text color as needed */
   margin-bottom: 10px; /* Add margin below the title */
 }
 
 .points {
-  font-size: 20px;
+  font-size: 14px;
   }

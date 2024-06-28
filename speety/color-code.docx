@@ -1,0 +1,10 @@
+black
+white
+green - [#397367] and different shades of green
+
+Other Good Shades:
+[#A2D3C2]
+[#508991]
+[#004346]
+[#E6EFE9]
+bg-gradient-to-r from-[#90A955] to-[#397367] text-transparent bg-clip-text

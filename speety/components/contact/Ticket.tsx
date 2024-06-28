@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { useState } from "react"
+import AIBot from "../ai-bot/AIBot"
 
 export function Ticket() {
   const [name, setName] = useState('')
@@ -40,63 +41,69 @@ export function Ticket() {
     }
   };
   return (
-    <section className="w-full py-12 lg:py-24 bg-gray-200">
+    <section className="w-full py-20 lg:py-24 bg-white">
       <div className="mx-auto grid max-w-6xl px-4 gap-10 lg:grid-cols-2 lg:px-6 lg:gap-40">
+        <div>
         <div className="space-y-10">
           <div className="space-y-2">
-            <h1 className="text-6xl font-bold">Need Help?</h1>
-            <p className="text-gray-500 text-2xl dark:text-gray-400">
+            <h1 className="text-2xl md:text-4xl font-bold text-[#004346]">Need Help?</h1>
+            <p className="text-gray-500 text-md dark:text-gray-400">
               We&apos;re here to help. Fill out the form below or contact us using the information below.
             </p>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <h3 className="text-3xl font-semibold">Address</h3>
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                548 Market St #23060, San Francisco, CA 94104-5401, United States
+              <h3 className="text-xl font-semibold">Address</h3>
+              <p className="text-md text-gray-500 dark:text-gray-400">
+              505 Tahiti Dr, Granbury, TX, 76048, United States
               </p>
             </div>
             <div className="space-y-2">
-              <h3 className="text-3xl font-semibold">Phone</h3>
-              <p className="text-lg text-gray-500 dark:text-gray-400">+1 415-555-1212</p>
+              <h3 className="text-xl font-semibold">Phone</h3>
+              <p className="text-md text-gray-500 dark:text-gray-400">+1 855-604 (8709)</p>
             </div>
             <div className="space-y-2">
-              <h3 className="text-3xl font-semibold">Email</h3>
-              <p className="text-lg text-gray-500 dark:text-gray-400">contact@example.com</p>
+              <h3 className="text-xl font-semibold">Email</h3>
+              <p className="text-md text-gray-500 dark:text-gray-400">helpdesk@scail.it</p>
             </div>
             <div className="space-y-2">
-              <h3 className="text-3xl font-semibold">Office hours</h3>
-              <p className="text-lg text-gray-500 dark:text-gray-400">Mon - Fri: 9:00 AM - 5:00 PM (PST)</p>
+              <h3 className="text-xl font-semibold">Office hours</h3>
+              <p className="text-md text-gray-500 dark:text-gray-400">Mon - Sunday: 9:00 AM - 5:00 PM (NYC Time)</p>
             </div>
           </div>
         </div>
+        <div className="mt-6 xl:mt-10 xl:mr-20 2xl:mt-10 2xl:mr-20"> 
+          <AIBot />
+          </div>
+        </div>
+
         {/* Start of Ticket Form */}
-        <div className="space-y-8 bg-gray-400 p-10 rounded-3xl w-full">
+        <div className="space-y-8 bg-gray-200 py-8 px-6 md:p-10 rounded-3xl w-full xl:mt-32 2xl:mt-32" style={{height:650}}>
       <div className="space-y-2">
-        <h2 className="text-6xl font-bold">Submit a ticket</h2>
-        <p className="text-gray-500 text-2xl dark:text-gray-400">
+        <h2 className="text-2xl xl:text-4xl 2xl:text-4xl font-bold text-[#004346]">Submit a ticket</h2>
+        <p className="text-gray-500 text-xs xl:text-lg 2xl:text-lg dark:text-gray-400">
           Please fill out the form below and we&apos;ll get back to you as soon as possible.
         </p>
       </div>
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-2xl font-semibold">Name</Label>
-            <Input id="name" placeholder="Enter your name" className="text-lg" value={name} onChange={(e)=>{setName(e.target.value)}}/>
+            <Label htmlFor="name" className="text-lg font-semibold">Name</Label>
+            <Input id="name" placeholder="Enter your name" className="text-sm" value={name} onChange={(e)=>{setName(e.target.value)}}/>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-2xl font-semibold">Email</Label>
-            <Input id="email" placeholder="Enter your email" type="email" className="text-lg" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
+            <Label htmlFor="email" className="text-lg font-semibold">Email</Label>
+            <Input id="email" placeholder="Enter your email" type="email" className="text-sm" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="subject" className="text-2xl font-semibold">Subject</Label>
-          <Input id="subject" placeholder="Enter the subject" className="text-lg" value={subject} onChange={(e)=>{setSubject(e.target.value)}}/>
+          <Label htmlFor="subject" className="text-lg font-semibold">Subject</Label>
+          <Input id="subject" placeholder="Enter the subject" className="text-sm" value={subject} onChange={(e)=>{setSubject(e.target.value)}}/>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="category" className="text-2xl font-semibold">Category</Label>
+          <Label htmlFor="category" className="text-lg font-semibold">Category</Label>
           <Select>
-            <SelectTrigger id="category" className="text-xl">
+            <SelectTrigger id="category" className="text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -107,10 +114,10 @@ export function Ticket() {
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="message" className="text-2xl font-semibold">Message</Label>
-          <Textarea className="min-h-[100px] text-lg" id="message" placeholder="Enter your message" value={message} onChange={(e)=>{setMessage(e.target.value)}}/>
+          <Label htmlFor="message" className="text-lg font-semibold">Message</Label>
+          <Textarea className="min-h-[100px] text-sm" id="message" placeholder="Enter your message" value={message} onChange={(e)=>{setMessage(e.target.value)}}/>
         </div>
-        <Button className="mx-auto text-lg ml-36" onClick={()=>{sendEmail}}>Submit</Button>
+        <Button className="mx-auto text-sm ml-24 md:ml-80 xl:ml-36 2xl:ml-36 bg-[#004346]" onClick={()=>{sendEmail}}>Submit</Button>
       </div>
     </div>
 

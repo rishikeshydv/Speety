@@ -1,19 +1,19 @@
-.card {
-  width: 340px;
-  height: 350px;
-  padding: 40px;
-  border-radius: 50px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-10px);
-  transition: transform 0.3s ease;
-  margin-right: 20px; /* Add margin between cards */
-  margin-top: 80px;
-  display: flex; /* Use flexbox */
-  flex-direction: column; /* Stack items vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
-}
+  .card {
+    width: 240px;
+    height: 250px;
+    padding: 20px;
+    border-radius: 50px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+    margin-right: 60px; /* Add margin between cards */
+    margin-top: 80px;
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+  }
 
 .card:last-child {
   margin-right: 0; /* Remove margin from the last card to prevent extra space */
@@ -21,7 +21,7 @@
 
 .card:hover {
   transform: translateY(-5px);
-  background-color: aliceblue;
+  background-color: #439A86;
 }
 
 .image {
@@ -32,13 +32,13 @@
 
 .title {
   margin-top: 10px;
-  font-size: 26px;
+  font-size: 14px;
   font-weight: bold;
   text-align: center; /* Center the text */
 }
 
 .description {
   margin-top: 5px;
-  font-size: 20px;
+  font-size: 10px;
   text-align: center; /* Center the text */
 }

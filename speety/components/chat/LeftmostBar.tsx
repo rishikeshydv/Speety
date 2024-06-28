@@ -1,76 +1,70 @@
-import React from 'react';
-
-const LeftmostBar = () => {
+"use client";
+import {
+  collection,
+  getDoc,
+  doc
+} from "firebase/firestore";
+import { db } from "@/firebase/config";
+import React, { useEffect, useState } from 'react';
+import { auth } from "@/firebase/config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import { IoPeopleCircle } from "react-icons/io5";
+import { IoIosPersonAdd } from "react-icons/io";
+import Image from 'next/image';
+interface LeftmostBarProps {
+  userEmail: string;
+}
+const LeftmostBar:React.FC<LeftmostBarProps> = ({userEmail}) => {
+  const [user] = useAuthState(auth);
+  const [userPic,setUserPic] = useState<string|null>("");
+  useEffect(() => {
+  const getUserInfo = async (_userEmail:string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, _userEmail);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setUserPic(userSnapshot.data().profilePic);
+    }
+  }
+  if (userEmail){
+    getUserInfo(userEmail);
+  }
+   
+}, [userEmail]);
   return (
-  //   <aside className="w-60 bg-black text-white">
-  //         <div className={`absolute flex flex-col h-screen left-4`}> 
-  //   <div className="flex-grow bg-black w-36 h-auto mx-auto my-5 rounded-2xl shadow-lg">
-  //       <div className='mt-40'>
-  //   <a href="/buy"><img
-  //           src="/speety_logo_revert.png"
-  //           alt="Speety Logo"
-  //           width={100}
-  //           height={100}
-  //           className="ml-4 mt-10"
-  //         /></a>
-  //         <div>
-  //           <img src="/profile.png" alt="user_profile" className='mt-10 ml-7' width={80} height={80} />
-  //         </div>
-  //         <div className='flex flex-col items-center mt-10 py-10'>
-  //           <div><img src="/speech-balloon.png" alt="chat" width={50} height={50} /><h1 className='text-white ml-2'>Chat</h1></div>
-  //           <div className='mt-10'><img src="/people.png" alt="people" width={50} height={50}  /><h1 className='text-white'>People</h1></div>
-  //           <div className='mt-10'><img src="/hourglass-not-done.png" alt="requests" width={50} height={50}  /><h1 className='text-white'>Request</h1></div>
-  //           <div></div>
-  //         </div>
-  //         </div>
-  //   </div>
-  // </div>
-  //   </aside>
-
-<aside className="w-60 bg-black text-white rounded-3xl m-6">
+<aside className="hidden lg:block w-24 bg-black text-white rounded-3xl my-2 mx-2">
         <div className="flex items-center justify-center h-40 border-b border-gray-800">
-          <a href="/buy">
+          <a href={`/dashboard/${user?.email}`}>
             <img
-              src="/speety_logo_revert.png"
+              src="/speety_logo.png"
               alt="Speety Logo"
-              width={200}
-              height={200}
-              className="ml-4 mt-10"
+              className="ml-1 mt-10 w-[40px] xl:w-[75px]"
             />
           </a>
         </div>
         <nav className="flex flex-col p-2">
-          <div className="ml-9">
+          <div className="flex items-center">
+            <div className="relative w-10 h-10 mt-16 xl:mt-10 ml-1 xl:ml-5 2xl:ml-5 rounded-full overflow-hidden">
             <img
-              src="/profile.png"
+              src={userPic as string}
               alt="user_profile"
-              className="mt-10 ml-7"
-              width={80}
-              height={80}
+              className="object-cover w-full h-full"
             />
+            </div>
           </div>
-          <div className="flex flex-col items-center mt-10 py-10">
+          <div className="flex flex-col items-center mt-8 py-10">
             <div>
-              <img
-                src="/speech-balloon.png"
-                alt="chat"
-                width={50}
-                height={50}
-              />
-              <h1 className="text-white ml-2">Chat</h1>
+              <EmailRoundedIcon className="w-8 h-8 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12"/>
+              <h1 className="text-white ml-1 mt-1 text-xs">Chat</h1>
             </div>
-            <div className="mt-10">
-              <img src="/people.png" alt="people" width={50} height={50} />
-              <h1 className="text-white">People</h1>
+            <div className="mt-8">
+              <IoPeopleCircle  className="w-8 h-8 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12 ml-1 xl:ml-0 2xl:ml-0"/>
+              <h1 className="text-white text-xs mt-2">People</h1>
             </div>
-            <div className="mt-10">
-              <img
-                src="/hourglass-not-done.png"
-                alt="requests"
-                width={50}
-                height={50}
-              />
-              <h1 className="text-white">Request</h1>
+            <div className="mt-8">
+            <IoIosPersonAdd className="w-8 h-8 ml-2 xl:ml-1 2xl:ml-1 xl:w-10 xl:h-10 2xl:w-12 2xl:h-12 "/>
+              <h1 className="text-white text-xs mt-2">Request</h1>
             </div>
           </div>
         </nav>

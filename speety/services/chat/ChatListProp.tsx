@@ -6,33 +6,40 @@ import { Button } from "@/components/ui/button"
 interface ChatList {
   imgUrl: string;
   userName: string;
+  email: string;
   lastMsg: string;
   lastMsgTime: string;
   newMsg: boolean;
- onClick:(clickedUsername:string) => void;
+ onUserClick:(clickedUsername:string) => void;
   //onClick:() => void;
 }
 
 const ChatListProp: React.FC<ChatList> = ({
   imgUrl,
   userName,
+  email,
   lastMsg,
   lastMsgTime,
   newMsg,
-  onClick
+  onUserClick
 }) => {
+
+  if (lastMsg.length > 22) {
+    lastMsg = lastMsg.slice(0, 22) + "...";
+  }
+
   if (newMsg === true) {
     return (
  
-<div className="flex items-start justify-start w-full h-28" onClick={()=>onClick(userName)}>
-  <Button className="flex items-start justify-start w-full h-28 bg-blue-100" variant="outline">
-    <Avatar className="w-16 h-16 p-0.5 border rounded-full">
-      <AvatarImage alt="@jessica" src="/placeholder-user.jpg" />
+<div className="flex items-start justify-start h-16 w-full" onClick={()=>onUserClick(email)}>
+  <Button className="flex items-start justify-start w-full h-16 bg-blue-100 " variant="outline">
+    <Avatar className="w-11 h-11 p-0.5 border rounded-full mt-1">
+      <AvatarImage alt="" src={imgUrl} />
       <AvatarFallback>J</AvatarFallback>
     </Avatar>
-    <div className="grid text-left ml-4">
-      <div className="font-semibold text-2xl">{userName}</div>
-      <div className="text-lg line-clamp-1 font-bold"><h3>New Message</h3></div>
+    <div className="grid text-left mt-1">
+      <div className="font-semibold text-lg">{userName}</div>
+      <div className="text-xs line-clamp-1 font-bold text-gray-300"><h3>New Message</h3></div>
     </div>
   </Button>
 </div>
@@ -40,15 +47,22 @@ const ChatListProp: React.FC<ChatList> = ({
   } else {
     return (
       
-      <div className="flex items-start justify-start w-full h-28" onClick={()=>onClick(userName)}>
-      <Button className="flex items-start justify-start w-full h-28 gap-2" variant="outline">
-        <Avatar className="w-16 h-16 p-0.5 border rounded-full">
-          <AvatarImage alt="@jessica" src="/placeholder-user.jpg" />
+      <div className="flex items-start justify-start w-full truncate h-16" onClick={()=>onUserClick(email)}>
+      <Button className="flex items-start justify-start w-full h-16 gap-4 " variant="outline">
+        <Avatar className="w-11 h-11 border rounded-full mt-1">
+          <AvatarImage alt="@" src={imgUrl} />
           <AvatarFallback>J</AvatarFallback>
         </Avatar>
-        <div className="grid text-left ml-4">
-          <div className="font-semibold text-2xl">{userName}</div>
-          <div className="text-lg line-clamp-1"><h3>{lastMsg}</h3></div>
+        <div className="grid text-left mt-1">
+          <div className="font-semibold text-lg tracking-tighter">{userName}</div>
+          <div className="flex gap-16">
+          <div className="text-xs font-semibold text-gray-500 ">
+            <h3 className="w-24 pr-4">
+           {lastMsg}
+          </h3></div>
+        <div className="text-xs line-clamp-1 text-gray-400 tracking-tighter">{lastMsgTime}</div>
+          </div>
+          
         </div>
       </Button>
     </div>

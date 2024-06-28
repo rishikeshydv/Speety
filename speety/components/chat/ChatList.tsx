@@ -1,141 +1,252 @@
+"use client";
 
 import React, { useEffect, useState } from "react";
 import MessageProp1 from "@/services/chat/MessageProp1";
 import MessageProp2 from "@/services/chat/MessageProp2";
-import { getChats,updateChats } from "@/queries/chatSystem";
+import { getChats, updateChats } from "@/queries/chatSystem";
 import { Button } from "@/components/ui/button";
+import { collection, getDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import { send } from "process";
+import NewProp1 from "@/services/chat/NewProp1";
+import NewProp2 from "@/services/chat/NewProp2";
+import axios from "axios";
 
 interface eachMessage {
-      msg: string;
-      date: string;
+  type: string;
+  msg: string;
+  date: string;
+  status: string;
 }
 
 interface ChatListProps {
   sentMessage: eachMessage;
-  sentTime:string;
   receivedMessage: eachMessage;
-  receivedTime:string;
   senderEmail: string;
   receiverEmail: string;
-  sendMessageFunction:(textMessage:string)=>void;
+  sendMessageFunction: (textMessage: string) => void;
+  lastMsg: string;
+  setLastMsg: React.Dispatch<React.SetStateAction<string>>;
+  lastMsgTime: string;
+  setLastMsgTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// {sendMessageFunction}:{sendMessageFunction:(textMessage:string)=>void}
-
-const ChatList:React.FC<ChatListProps>=({sentMessage,sentTime, receivedMessage,receivedTime, senderEmail, receiverEmail,sendMessageFunction }) => {
+const ChatList: React.FC<ChatListProps> = ({
+  sentMessage,
+  receivedMessage,
+  senderEmail,
+  receiverEmail,
+  sendMessageFunction,
+  lastMsg,
+  setLastMsg,
+  lastMsgTime,
+  setLastMsgTime,
+}) => {
   //write a logic to retrieve the chatHistory or chatLists of sender and receiver
   //these are retrieved from the database
-  const [senderMsgs,setSenderMsgs] = useState<eachMessage[]>([]);
-  const [receiverMsgs,setReceiverMsgs] = useState<eachMessage[]>([]);
+  var [messagesExchanged, setMessagesExchanged] = useState<eachMessage[]>([]);
+  const [senderPic, setSenderPic] = useState<string>("");
+  const [receiverPic, setReceiverPic] = useState<string>("");
+
+  const refineTime = (msgTime: string) => {
+    const time = new Date(msgTime);
+    var hours = time.getHours();
+    const minutes = time.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    if (hours > 12) {
+      hours = hours - 12;
+    }
+    const updatedTime = `${hours}:${minutes} ${ampm}`;
+    return updatedTime;
+  };
+
+  const setupSender = async (_userEmail: string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, _userEmail);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setSenderPic(userSnapshot.data().profilePic);
+    }
+  };
+
+  const setupReceiver = async (_userEmail: string) => {
+    const userRef = collection(db, "User_Info");
+    const userDocRef = doc(userRef, _userEmail);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      setReceiverPic(userSnapshot.data().profilePic);
+    }
+  };
 
   useEffect(() => {
+    setupSender(senderEmail);
+  }, [senderEmail]);
+
+  useEffect(() => {
+    setupReceiver(receiverEmail);
+  }, [receiverEmail]);
+
+  //retrieveing the chat history from the database
+  useEffect(() => {
     const fetchMsgs = async () => {
-      const response = await getChats(senderEmail,receiverEmail);
-      setSenderMsgs(response.sentMessages)
-      setReceiverMsgs(response.receivedMessages)
-    }
+      const response = await getChats(senderEmail, receiverEmail);
+      if (response.length === 0) {
+        return;
+      }
+       //upon getting the messages from the database, we update the status of all the messages to "delivered"
+      //we only make changes in the messages exchanged, not in the database
+      const updatedMessages = response.map((msg) => ({
+        ...msg,
+        status: "delivered",
+      }));
+      setMessagesExchanged(updatedMessages);
+      if (response.length > 0) {
+        setLastMsg(response[response.length - 1].msg);
+        setLastMsgTime(refineTime(response[response.length - 1].date));
+      }
+
+    };
     fetchMsgs();
-  }, [senderEmail,receiverEmail]);
+  }, [senderEmail, receiverEmail]);
 
-    // Update senderMsgs when a new message is sent
-    useEffect(() => {
-      if (sentMessage) {
-        setSenderMsgs(prevState => [...prevState, sentMessage]);
-      }
-    }, [sentMessage]);
-  
-    // Update receiverMsgs when a new message is received
-    useEffect(() => {
-      if (receivedMessage) {
-        setReceiverMsgs(prevState => [...prevState, receivedMessage]);
-      }
-    }, [receivedMessage]);
+  // Update messagesExchanged when a new message is sent
+  useEffect(() => {
+    if (sentMessage.msg !== "") {
+      setMessagesExchanged((prevState) => [...prevState, sentMessage]);
+      setLastMsg(sentMessage.msg);
+      setLastMsgTime(refineTime(sentMessage.date));
+    }
+  }, [sentMessage]);
 
-      // Update database upon peerjs
-      useEffect(() => {
-        
-        async function updateChatsAsync() {
-          await updateChats(senderEmail, receiverEmail, sentMessage, receivedMessage);
-        }
-        updateChatsAsync();
-      }, [sentMessage, receivedMessage, senderEmail, receiverEmail]);
+  // Update messagesExchanged when a new message is received
+  useEffect(() => {
+    if (receivedMessage.msg !== "") {
+      setMessagesExchanged((prevState) => [...prevState, receivedMessage]);
+      setLastMsg(receivedMessage.msg);
+    }
+  }, [receivedMessage]);
 
-
-        const compareMessages = (a: eachMessage, b: eachMessage) => {
-          const timeA = new Date(a.date).getTime();
-          const timeB = new Date(b.date).getTime();
-          return timeA - timeB;
-        };    
-
-        senderMsgs.sort(compareMessages);
-        receiverMsgs.sort(compareMessages);
-
-      const combinedMessages = [...senderMsgs, ...receiverMsgs].sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+  useEffect(() => {
+    const handleBeforeUnload = (event:any) => {
+      const data = JSON.stringify({
+        senderEmail,
+        receiverEmail,
+        messagesExchanged,
       });
-    
-//the following is the logic for the Sendbar
-const [message, setMessage] = useState<string>("");
-
-      function messageFunc(event: any) {
-        setMessage(event.target.value);
+      if (navigator){
+        navigator.sendBeacon("/api/v1/message-push", data);
       }
-    
-      const handleSendMessage = () => {
-        sendMessageFunction(message);
-        setMessage('');
-      };
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [messagesExchanged, senderEmail, receiverEmail]);
+
+
+  //the following is the logic for the Sendbar
+  const [message, setMessage] = useState<string>("");
+
+  function messageFunc(event: any) {
+    setMessage(event.target.value);
+  }
+
+  const handleSendMessage = () => {
+    sendMessageFunction(message);
+    setMessage("");
+    console.log("Message sent");
+  };
 
   return (
-  <div className="flex h-[calc(100%-80px)] flex-col mt-3 py-1">
-              <div className="flex-1 bg-gray-200 rounded-xl p-4">
-              {combinedMessages.map((message, index) => (
-                <div key={index} className="flex items-start justify-start">
-            <div className="flex justify-start items-start mt-4 w-full h-20 rounded-2xl px-2">
-          <MessageProp1 message={message.msg} msgTime={message.date} />
-          </div>
-          {index < receiverMsgs.length && (
-          <div className="flex justify-end items-start mt-20 w-full mr-8 h-20 rounded-2xl">
-            <MessageProp2 message={message.msg} msgTime={message.date} />
+    <div className="flex w-[calc(100%-0px)] h-[calc(74%-0px)] md:h-[calc(88%-0px)] xl:h-[calc(89%-0px)] 2xl:h-[calc(92%-0px)] md:w-[calc(93%-0px)] xl:w-[calc(100%-0px)] 2xl:w-[calc(100%-0px)] flex-col mt-1">
+      <div className="flex-1 bg-gray-200 rounded-lg p-4 overflow-scroll">
+        {messagesExchanged.length > 0 ? (
+          messagesExchanged.map((message, index) => {
+            if (message.type === "sent" && message.msg !== "") {
+              return (
+                <div
+                  className="flex items-start justify-start mt-1"
+                  key={index}
+                >
+                  <div className="flex justify-start items-start mt-1 w-full h-20 rounded-2xl px-2">
+                    <NewProp1
+                      message={message.msg}
+                      msgTime={message.date}
+                      profilePic={senderPic}
+                      status={message.status}
+                    />
+                  </div>
+                </div>
+              );
+            } else if (message.type === "received" && message.msg !== "") {
+              return (
+                <div
+                  className="flex items-start justify-start mt-1"
+                  key={index}
+                >
+                  <div className="flex justify-end items-start w-full h-20 rounded-2xl">
+                    <NewProp2
+                      message={message.msg}
+                      msgTime={message.date}
+                      profilePic={receiverPic}
+                      status={message.status}
+                    />
+                  </div>
+                </div>
+              );
+            }
+          })
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-gray-400">
+              <MessageCircleIcon className="h-10 w-10" />
+              <p className="text-xl font-medium">No Messages Yet</p>
+              <p className="text-sm text-center max-w-[300px]">
+                Start a conversation by sending your first message. We&apos;ll
+                be here to help you along the way.
+              </p>
+            </div>
           </div>
         )}
-        </div>
-         ))}
-              </div>
+      </div>
 
-            
-    {/* Sendbar */}
-     <div className="h-16 flex flex-row w-full mt-3">
-    <div className="w-full bg-gray-200 border-gray-200 rounded-2xl">
-      <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-4 px-6">
-        <div className="grid w-full text-sm ">
-          <input 
-          className="text-black bg-gray-200 text-xl" 
-          placeholder='Type your message here...'
-          value={message}
-          onChange={messageFunc}
-          />
+      {/* Sendbar */}
+      <div className="h-4 flex flex-row w-full mt-1">
+        <div className="w-full bg-gray-200 border-gray-200 rounded-2xl">
+          <div className="rounded-xl bg-gray-200 dark:bg-gray-900 py-2 px-6">
+            <div className="grid w-full ">
+              <input
+                className="text-black bg-gray-200 text-md"
+                placeholder="Type your message here..."
+                value={message}
+                onChange={messageFunc}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSendMessage();
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
+        <button className="ml-4 h-10 w-10">
+          <SmileIcon className="w-6 h-6" />
+        </button>
+        <button className="ml-4 h-10 w-10 rounded-full">
+          <PaperclipIcon className="w-6 h-6" />
+        </button>
+        <button className="ml-4 h-10 w-10 rounded-full">
+          <MicIcon className="w-6 h-6" />
+        </button>
+        <Button className="ml-4 text-sm h-10 px-6" onClick={handleSendMessage}>
+          Send
+        </Button>
       </div>
     </div>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <SmileIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <PaperclipIcon className="w-10 h-10" />
-    </Button>
-    <Button className="ml-4 h-15 w-16 rounded-full" variant="outline">
-      <MicIcon className="w-10 h-10" />
-    </Button>
-    <Button 
-    className="ml-4 mr-12 text-xl h-14 px-10 py-1"
-    onClick={handleSendMessage}
-    >Send</Button>
-  </div>
-            </div>
-
   );
-}
+};
 
 export default ChatList;
 
@@ -179,7 +290,6 @@ function PaperclipIcon(props: any) {
   );
 }
 
-
 function SmileIcon(props: any) {
   return (
     <svg
@@ -198,6 +308,25 @@ function SmileIcon(props: any) {
       <path d="M8 14s1.5 2 4 2 4-2 4-2" />
       <line x1="9" x2="9.01" y1="9" y2="9" />
       <line x1="15" x2="15.01" y1="9" y2="9" />
+    </svg>
+  );
+}
+
+function MessageCircleIcon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
     </svg>
   );
 }
