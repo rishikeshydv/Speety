@@ -12,15 +12,34 @@ import { Button } from "@/components/ui/button"
 import { auth, db } from "@/firebase/config"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useEffect, useState } from "react"
-import { collection, doc, getDoc,setDoc } from "firebase/firestore"
+import { collection, doc, getDoc,getDocs,setDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import getImageUrl from "@/queries/ImgVidUrls/getImageUrl"
 import { uuidv4 } from "@firebase/util";  
+import axios from "axios"
+
+
+interface NewsType {
+    date: string,
+    source: string,
+    header: string,
+    paragraph1: string,
+    paragraph2: string,
+    paragraph3: string,
+    image: string
+}
+
 export default function NewsPost() {
     const [user] = useAuthState(auth)
     const [role, setRole] = useState<string>("")
     const router = useRouter()
     const uuid = uuidv4()
+
+    if (role){
+      if (role !== "admin") {
+          router.push("/auth/login")
+      }
+  }
 
     //form-data
     const [date, setDate] = useState<string>("")
@@ -31,7 +50,9 @@ export default function NewsPost() {
     const [paragraph3, setParagraph3] = useState<string>("")
     const [image, setImage] = useState<File|null>(null)
     const [imgUrl, setImgUrl] = useState<string>("")
-
+    const [month, setMonth] = useState<string>("")
+    const [news, setNews] = useState<NewsType[]>([])
+    const [emails, setEmails] = useState<string[]>([])
 
     useEffect(() => {
         async function getRole() {
@@ -46,12 +67,6 @@ export default function NewsPost() {
         getRole()
     }
     , [user])
-
-    if (role){
-        if (role !== "admin") {
-            router.push("/auth/login")
-        }
-    }
 
     async function publishNews(month:string) {
         await getImageUrl(image as File).then((url)=>{
@@ -72,6 +87,54 @@ export default function NewsPost() {
         })
     }
 
+
+    //getting all the latest news and all the emails associated with the newsletters subscription
+    useEffect(() => {
+    const getNews = async() => {
+      if (month === "") {
+          return
+      }
+        const docRef = doc(db, "newsletters", month)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            const docData = docSnap.data()
+            const dataKeys = Object.keys(docData)
+            for (let i = 0; i < dataKeys.length; i++) {
+                setNews((prev) => {
+                    return [...prev, docData[dataKeys[i]]]
+                })
+            }
+        }
+         else {
+            console.log("No such document!");
+        }
+    }
+
+    const getEmails = async() => {
+        const docRef = collection(db, "newslettersEmails")
+        await getDocs(docRef).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                setEmails((prev) => {
+                    return [...prev, doc.data().email]
+                })
+            });
+        })
+    }
+    getNews();
+    getEmails();
+    }
+    , [])
+
+    //send newsletters to users
+    async function sendNewsletters() {
+        for (let i = 0; i < emails.length; i++) {
+            await axios.post("https://localhost:3000/api/v1/newsletters-email", {
+                emails: emails,
+                news: news
+            })
+        }
+    }
+                
   return (
     <Card className="max-w-4xl mx-auto p-6 sm:p-8 md:p-10">
       <CardHeader>
@@ -121,11 +184,20 @@ export default function NewsPost() {
             </div>
           </div>
         <Input id="image" type="file" onChange={(e)=>setImage(e.target.files ? e.target.files[0] : null)}/>
+        <div className="grid gap-2">
+              <Label htmlFor="header" className="text-sm font-medium">
+               Month of the News
+              </Label>
+              <Input id="header" placeholder="July" onChange={(e)=>setMonth(e.target.value)}/>
+            </div>
         </form>
       </CardContent>
       <CardFooter>
-        <div className="flex justify-end">
-          <Button>Publish</Button>
+        <div className="flex gap-6 justify-end">
+          <Button onClick={(e)=>{
+            publishNews(month)
+          }}>Publish</Button>  
+          <Button onClick={sendNewsletters}>Send Newsletters</Button>
         </div>
       </CardFooter>
     </Card>

@@ -2,7 +2,11 @@ import React from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 
-export default function Mailing() {
+interface MailingProps {
+  EmailPush: () => void
+  setEmail: React.Dispatch<React.SetStateAction<string>>
+}
+const Mailing:React.FC<MailingProps> = ({EmailPush,setEmail}) => {
   return (
     <section className="mb-12 md:mb-16 lg:mb-20">
     <div className="space-y-4">
@@ -13,10 +17,15 @@ export default function Mailing() {
     </div>
     <div className="mx-auto w-full max-w-sm space-y-2 mt-6">
       <form className="flex gap-2">
-        <Input type="email" placeholder="Enter your email" className="max-w-lg flex-1" />
-        <Button type="submit">Subscribe</Button>
+        <Input type="email" placeholder="Enter your email" className="max-w-lg flex-1" onChange={(e)=>setEmail(e.target.value)}/>
+        <Button type="submit" onClick={(e)=>{
+          e.preventDefault();
+          EmailPush();
+        }}>Subscribe</Button>
       </form>
     </div>
   </section>
   )
 }
+
+export default Mailing
