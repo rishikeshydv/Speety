@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
 import { GrCaretNext } from "react-icons/gr";
+import { ProfileAvatar } from "./ProfileAvatar.component";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/config";
+import { Notifications } from "./Notification.component";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -57,9 +61,9 @@ const components: { title: string; href: string; description: string }[] = [
 export const Navbar = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = React.useState(false);
 
-  const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
+  const [user] = useAuthState(auth);
 
-  console.log(isMobileNavOpen);
+  const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
 
   return (
     <>
@@ -87,15 +91,19 @@ export const Navbar = () => {
               <RxHamburgerMenu size={30} />
             )}
           </button>
-          <div>
-            <Link
-              href={"/auth/login"}
-              className="bg-[#397367] text-white py-3 px-5 rounded-lg flex items-center gap-x-3 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
-            >
-              <span>Launch App</span>
-              <GrCaretNext />
-            </Link>
-          </div>
+          {!user && (
+            <div>
+              <Link
+                href={"/auth/login"}
+                className="bg-[#397367] text-white py-3 px-5 rounded-lg flex items-center gap-x-3 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
+              >
+                <span>Launch App</span>
+                <GrCaretNext />
+              </Link>
+            </div>
+          )}
+          {user && <Notifications />}
+          {user && <ProfileAvatar />}
         </div>
       </nav>
       {isMobileNavOpen && (
@@ -113,18 +121,17 @@ export const Navbar = () => {
             <li>
               <Link href={"/"}>Link</Link>
             </li>
-            
+
             <li>
               <Link href={"/"}>Link</Link>
             </li>
-            
+
             <li>
               <Link href={"/"}>Link</Link>
             </li>
-            
           </ul>
         </div>
-      )} 
+      )}
     </>
   );
 };
