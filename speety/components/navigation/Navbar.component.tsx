@@ -13,6 +13,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
+import { GrCaretNext } from "react-icons/gr";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -53,27 +55,77 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 export const Navbar = () => {
+  const [isMobileNavOpen, setIsMobileNavOpen] = React.useState(false);
+
+  const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
+
+  console.log(isMobileNavOpen);
+
   return (
-    <section className="flex items-center justify-between px-1 md:px-20 py-5  bg-white shadow-md">
-      <div className="logo">
-        <Link href={"/"}>
-          <Image src={"/speety_logo.png"} height={100} width={100} alt="Logo" />
-        </Link>
-      </div>
+    <>
+      <nav className="flex items-center justify-between px-1 md:px-20 py-5  bg-white shadow-md sticky top-0 z-10">
+        <div className="logo">
+          <Link href={"/"}>
+            <Image
+              src={"/speety_logo.png"}
+              height={100}
+              width={100}
+              alt="Logo"
+            />
+          </Link>
+        </div>
 
-      <div className="hidden lg:block">
-        <NavigationLinks />
-      </div>
+        <div className="hidden lg:block">
+          <NavigationLinks />
+        </div>
 
-      <div className="actions">
-        <Link
-          href={"/auth/login"}
-          className="bg-[#397367] text-white py-3 px-5 rounded-lg hover:scale-[1.2] hover:transition-all"
-        >
-          <span>Launch App</span>
-        </Link>
-      </div>
-    </section>
+        <div className="actions flex items-center justify-center gap-x-5">
+          <button className="block lg:hidden" onClick={toggleMobileNav}>
+            {isMobileNavOpen ? (
+              <RxCross1 size={30} />
+            ) : (
+              <RxHamburgerMenu size={30} />
+            )}
+          </button>
+          <div>
+            <Link
+              href={"/auth/login"}
+              className="bg-[#397367] text-white py-3 px-5 rounded-lg flex items-center gap-x-3 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
+            >
+              <span>Launch App</span>
+              <GrCaretNext />
+            </Link>
+          </div>
+        </div>
+      </nav>
+      {isMobileNavOpen && (
+        <div className="mobile-nav h-[70vh] w-full fixed border-4  bg-white flex lg:hidden z-10 rounded-lg px-8 py-8">
+          <ul className="flex flex-col gap-y-8">
+            <li>
+              <Link href={"/"}>Get Started</Link>
+            </li>
+            <li>
+              <Link href={"/"}>Support</Link>
+            </li>
+            <li>
+              <Link href={"/docs"}>Documentation</Link>
+            </li>
+            <li>
+              <Link href={"/"}>Link</Link>
+            </li>
+            
+            <li>
+              <Link href={"/"}>Link</Link>
+            </li>
+            
+            <li>
+              <Link href={"/"}>Link</Link>
+            </li>
+            
+          </ul>
+        </div>
+      )} 
+    </>
   );
 };
 
