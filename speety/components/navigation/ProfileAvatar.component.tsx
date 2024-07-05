@@ -11,14 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import getUserProfile from "@/queries/getUserProfile";
-import { IoMdNotifications, IoIosChatboxes } from "react-icons/io";
-import { FaCalendarAlt } from "react-icons/fa";
+import { IoIosLogOut } from "react-icons/io";
 import updateStatus from "@/queries/changeLoginStatus";
 import logout from "@/firebase/auth/logout";
 import { useRouter } from "next/navigation";
-import { IoLogOutSharp } from "react-icons/io5";
+import { CiCalendarDate } from "react-icons/ci";
 import Link from "next/link";
-import { RxAvatar } from "react-icons/rx";
+import { RxAvatar, RxChatBubble } from "react-icons/rx";
 
   
 
@@ -77,19 +76,19 @@ export const ProfileAvatar = () => {
                   href={"/chat"}
                   className="flex items-center gap-x-3"
                 >
-                  <IoIosChatboxes size={20} />
+                  <RxChatBubble size={20} />
                   <span className="text-[15px]">Chat</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center py-3 px-2 gap-x-3">
-                <FaCalendarAlt size={20} />
+                <CiCalendarDate size={20} />
                 <span className="text-[15px]">Appointments</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center py-3 px-2 gap-x-3"
                 onClick={logoutUser}
               >
-                <IoLogOutSharp size={20} />
+                <IoIosLogOut size={20} />
                 <span className="text-[15px]">Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
