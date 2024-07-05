@@ -18,14 +18,8 @@ import logout from "@/firebase/auth/logout";
 import { useRouter } from "next/navigation";
 import { IoLogOutSharp } from "react-icons/io5";
 import Link from "next/link";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
+import { RxAvatar } from "react-icons/rx";
+
   
 
 export const ProfileAvatar = () => {
@@ -69,6 +63,15 @@ export const ProfileAvatar = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{userName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem className="py-3 px-2">
+                <Link
+                  href={"/dashboard/"+user.email}
+                  className="flex items-center gap-x-3"
+                >
+                  <RxAvatar size={20} />
+                  <span className="text-[15px]">View Profile</span>
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem className="py-3 px-2">
                 <Link
                   href={"/chat"}
