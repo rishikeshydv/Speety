@@ -310,9 +310,6 @@ const sortedResults = useMemo(() => {
     }
   }, [addressLatLng]);
 
-
-
-
   return (
     <div className={poppins.className}>
       <Header />
