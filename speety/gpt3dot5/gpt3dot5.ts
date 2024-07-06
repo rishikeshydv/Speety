@@ -9,8 +9,8 @@ const openai = new OpenAI({
   });
 const getResponse = async(prompt: string) => {
     const chatCompletion = await openai.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-3.5-turbo',
+        messages: [{role:"system",content:"Your are a Real Estate AI Agent"},{ role: 'user', content: prompt }],
+        model: 'ft:gpt-3.5-turbo-0125:personal::9hVfplMI',
       });   
     return chatCompletion.choices[0].message.content;
 }

@@ -46,7 +46,6 @@ interface Property {
   yearBuilt: string;
   description: string;
   parkingSpace: string;
-  estimatedMortgage: string;
   amenities: string;
 }
 
@@ -252,7 +251,6 @@ export default function Property() {
                 <TagIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <div>
                   <p className="font-medium text-md">${property?.price}</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Estimated mortgage: ${property?.estimatedMortgage}/mo</p>
                 </div>
               </div>
             </div>
