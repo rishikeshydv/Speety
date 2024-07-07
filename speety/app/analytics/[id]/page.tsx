@@ -86,6 +86,78 @@ interface BikeData{
   score: number;
 }
 
+const renovationCriteria = {
+  // bath model
+  bath_model_medium_size: "5 x 7 sqft",
+  bath_model_large_size: "9 x 9 sqft",
+
+  bath_model_medium_do_it_yourself: 5000,
+
+  bath_model_medium_cost_low: 9000,
+  bath_model_medium_cost_high: 14000,
+
+  bath_model_large_cost_low: 35000,
+  bath_model_large_cost_high: 45000,
+
+  // kitchen model
+  kitchen_model_medium_size: "10 x 10 sqft", // 10x10 is the regular size of a kitchen
+
+  kitchen_model_medium_do_it_yourself: 10000,
+
+  kitchen_model_medium_cost_low: 15000,
+  kitchen_model_medium_cost_high: 20000,
+
+  kitchen_model_high_cost_low: 50000,
+  kitchen_model_high_cost_high: 65000,
+
+  // roof model
+  roof_model_medium_size: "1700 sqft", // sqft
+  roof_model_large_size: "2100 sqft", // sqft
+
+  roof_model_do_it_yourself_low: 2200, // asphalt shingles
+
+
+  tile_roof_low: 7650,
+  tile_roof_high: 18000,
+
+  metal_roof_low: 5100,
+  metal_roof_high: 20000,
+
+  slate_roof_low: 17000,
+  slate_roof_high: 60000,
+
+  // house clean model
+  house_clean_small_model:"900 sqft",
+  house_clean_medium_model:"1300 sqft",
+  house_clean_large_model:"2200 sqft",
+
+  house_clean_do_it_yourself_low: 0,
+
+  house_clean_small_low: 74, // 900 sqft
+  house_clean_small_high: 200, // 900 sqft
+
+  house_clean_medium_low: 95, // 1300 sqft
+  house_clean_medium_high: 300, // 1300 sqft
+
+  house_clean_large_low: 149, // 2200 sqft
+  house_clean_large_high: 400, // 2200 sqft
+
+  // central air conditioning model
+  air_conditioning_model_size: "2000 sqft", 
+
+  air_conditioning_model_do_it_yourself_low: 2000,
+
+  air_conditioning_model_low: 3500, // 2000 sq ft
+  air_conditioning_model_high: 4000, // 2000 sq ft
+
+  // water boiler model
+  water_boiler_model_do_it_yourself_low: 3000,
+
+  water_boiler_model_low: 4000,
+  water_boiler_model_high: 28000
+};
+
+
 export default function PropertyIDAnalytics() {
   const params = useParams();
   const propertyId = decodeURIComponent(params["id"] as string);
@@ -108,6 +180,26 @@ export default function PropertyIDAnalytics() {
   const [volatilityValue, setVolatilityValue] = useState<boolean>(false);
   const [rentPrice, setRentPrice] = useState<any>();
   const [salesProbability, setSalesProbability] = useState<any>();
+  //state variables for renovation properties
+  //model
+  const [bathModel, setBathModel] = useState<string>();
+  const [kitchenModel, setKitchenModel] = useState<string>();
+  const [roofModel, setRoofModel] = useState<string>();
+  const [houseCleanModel, setHouseCleanModel] = useState<string>();
+  const [airConditioningModel, setAirConditioningModel] = useState<string>();
+  const [waterBoilerModel, setWaterBoilerModel] = useState<string>();
+  //size
+  const [bathSize, setBathSize] = useState<string>();
+  const [kitchenSize, setKitchenSize] = useState<string>();
+  const [roofSize, setRoofSize] = useState<string>();
+  const [houseCleanSize, setHouseCleanSize] = useState<string>();
+  //cost
+  const [bathCost, setBathCost] = useState<number>(0);
+  const [kitchenCost, setKitchenCost] = useState<number>(0);
+  const [roofCost, setRoofCost] = useState<number>(0);
+  const [houseCleanCost, setHouseCleanCost] = useState<number>(0);
+  const [airConditioningCost, setAirConditioningCost] = useState<number>(0);
+  const [waterBoilerCost, setWaterBoilerCost] = useState<number>(0);
 
   //retrieve the property with the given id from the database
   async function getProperty() {
@@ -392,6 +484,16 @@ async function getCrimeInfo(city:string, state:string) {
         setVolatilityValue(false);
       }
     }
+
+    //now we do the cost benefit analysis of the property
+    function renovate_yourself() {
+      setBathCost(renovationCriteria.bath_model_medium_do_it_yourself);
+      setKitchenCost(renovationCriteria.kitchen_model_medium_do_it_yourself);
+      setRoofCost(renovationCriteria.roof_model_do_it_yourself_low);
+      setHouseCleanCost(renovationCriteria.house_clean_do_it_yourself_low);
+      setAirConditioningCost(renovationCriteria.air_conditioning_model_do_it_yourself_low);
+      setWaterBoilerCost(renovationCriteria.water_boiler_model_do_it_yourself_low);
+    }
    
   return (
     <div>
@@ -477,6 +579,25 @@ async function getCrimeInfo(city:string, state:string) {
         <div>
           <button className='bg-gray-300' onClick={checkVolatility}>Volatility Check</button>
           <h1>{volatilityValue ? `Yes, the property is volatile and has chances of profit making.` : `No, the property aligns with the normal price trend of the associated area.`}</h1>
+        </div>
+        {/* Cost Benefit Analysis is only done */}
+        <div>
+          {
+            volatilityValue ? (
+              <div>
+                {/* Buttons */}
+                <div>
+                  <button className='bg-green-300 p-3'>Do it Yourself</button>
+                  <button className='bg-green-300 p-3'>Contractor</button>
+                  
+                </div>
+                <div>
+                  <h1>Bath Cost:{bathCost}, Bath Size:{}</h1>
+                  <h1>Total Cost: {bathCost+kitchenCost+roofCost+houseCleanCost+airConditioningCost+waterBoilerCost}</h1>
+                </div>
+              </div>
+            ):null
+          }
         </div>
     </div>
   )
