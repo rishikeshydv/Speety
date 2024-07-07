@@ -101,6 +101,7 @@ const renovationCriteria = {
 
   // kitchen model
   kitchen_model_medium_size: "10 x 10 sqft", // 10x10 is the regular size of a kitchen
+  kitchen_model_large_size: "15 x 20 sqft", // 15x20 is the large size of a kitchen
 
   kitchen_model_medium_do_it_yourself: 10000,
 
@@ -494,6 +495,15 @@ async function getCrimeInfo(city:string, state:string) {
       setAirConditioningCost(renovationCriteria.air_conditioning_model_do_it_yourself_low);
       setWaterBoilerCost(renovationCriteria.water_boiler_model_do_it_yourself_low);
     }
+
+    function renovate_contractor() {
+      setBathCost(0);
+      setKitchenCost(0);
+      setRoofCost(0);
+      setHouseCleanCost(0);
+      setAirConditioningCost(0);
+      setWaterBoilerCost(0);
+    };
    
   return (
     <div>
@@ -586,13 +596,66 @@ async function getCrimeInfo(city:string, state:string) {
             volatilityValue ? (
               <div>
                 {/* Buttons */}
-                <div>
-                  <button className='bg-green-300 p-3'>Do it Yourself</button>
-                  <button className='bg-green-300 p-3'>Contractor</button>
-                  
+                <div className='flex gap-2'>
+                  <button className='bg-green-300 p-3' onClick={renovate_yourself}>Do it Yourself</button>
+                  <button className='bg-green-300 p-3' onClick={renovate_contractor}>Contractor</button>
                 </div>
                 <div>
-                  <h1>Bath Cost:{bathCost}, Bath Size:{}</h1>
+                <label htmlFor="bath-size">Choose a bath size:</label>
+                <select id="bath-size" className='bg-gray-200' defaultValue={"9000"} onChange={(e)=>setBathCost(Number(e.target.value))}>
+                  <option value="9000">5 x 7 sqft (Medium) Low Cost</option>
+                  <option value="14000">5 x 7 sqft (Medium) High Cost</option>
+                  <option value="35000">9 x 9 sqft (Large) Low Cost</option>
+                  <option value="45000">9 x 9 sqft (Large) High Cost</option>
+                </select>
+
+                <label htmlFor="bath-size">Choose a kitchen size:</label>
+                <select id="kitchen-size" className='bg-gray-200' defaultValue={"15000"} onChange={(e)=>setKitchenCost(Number(e.target.value))}>
+                  <option value="15000">10 x 10 sqft (Medium) Low Cost</option>
+                  <option value="20000">10 x 10 sqft (Medium) High Cost</option>
+                  <option value="50000">15 x 20 sqft (Large) Low Cost</option>
+                  <option value="65000">15 x 20 sqft (Large) High Cost</option>
+                </select>
+
+                <label htmlFor="roof-size">Choose a roof size:</label>
+                <select id="roof-size" className='bg-gray-200' defaultValue={"2200"} onChange={(e)=>setRoofCost(Number(e.target.value))}>
+                  <option value="7650">Tile Roof Low Cost</option>
+                  <option value="18000">Tile Roof High Cost</option>
+                  <option value="5100">Metal Roof Low Cost</option>
+                  <option value="20000">Metal Roof High Cost</option>
+                  <option value="17000">Slate Roof Low Cost</option>
+                  <option value="60000">Slate Roof High Cost</option>
+                </select>
+
+                <label htmlFor="house-clean-size">Choose a house clean size:</label>
+                <select id="house-clean-size" className='bg-gray-200' defaultValue={"74"} onChange={(e)=>setHouseCleanCost(Number(e.target.value))}>
+                  <option value="74">900 sqft (Small) Low Cost</option>
+                  <option value="200">900 sqft (Small) High Cost</option>
+                  <option value="95">1300 sqft (Medium) Low Cost</option>
+                  <option value="300">1300 sqft (Medium) High Cost</option>
+                  <option value="149">2200 sqft (Large) Low Cost</option>
+                  <option value="400">2200 sqft (Large) High Cost</option>
+                </select>
+
+                <label htmlFor="air-conditioning-size">Choose a air conditioning size:</label>
+                <select id="air-conditioning-size" className='bg-gray-200' defaultValue={"3500"} onChange={(e)=>setAirConditioningCost(Number(e.target.value))}>
+                  <option value="3500">2000 sqft Low Cost</option>
+                  <option value="4000">2000 sqft High Cost</option> 
+                </select>
+
+                <label htmlFor="water-boiler-size">Choose a water boiler size:</label>
+                <select id="water-boiler-size" className='bg-gray-200' defaultValue={"4000"} onChange={(e)=>setWaterBoilerCost(Number(e.target.value))}>
+                  <option value="4000">Low Cost</option>
+                  <option value="28000">High Cost</option>
+                </select>
+                </div>
+                <div>
+                  <h1>Bath Cost:{bathCost}</h1>
+                  <h1>Kitchen Cost:{kitchenCost}</h1>
+                  <h1>Roof Cost:{roofCost}</h1>
+                  <h1>House Clean Cost:{houseCleanCost}</h1>
+                  <h1>Air Conditioning Cost:{airConditioningCost}</h1>
+                  <h1>Water Boiler Cost:{waterBoilerCost}</h1>
                   <h1>Total Cost: {bathCost+kitchenCost+roofCost+houseCleanCost+airConditioningCost+waterBoilerCost}</h1>
                 </div>
               </div>
