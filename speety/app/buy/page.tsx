@@ -638,8 +638,6 @@ const sortedResults = useMemo(() => {
   );
 }
 
-
-
 function BathIcon(props:any) {
   return (
     <svg

@@ -216,9 +216,6 @@ export default function Property() {
    }
  }, [fullAddressLatLng.current]);
 
-
-
-
   return (
     <div className={`${poppins.className} bg-gray-100`}>
          <Header />

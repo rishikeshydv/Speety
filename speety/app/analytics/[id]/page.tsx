@@ -4,7 +4,7 @@ import axios from 'axios';
 import { set } from 'date-fns';
 import { collection, getDocs } from 'firebase/firestore';
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface PriceChanges{
   year: string;
@@ -97,12 +97,18 @@ export default function PropertyIDAnalytics() {
   const [demographics, setDemographics] = useState<DemographyType>();
   const [longitude, setLongitude] = useState<number>();
   const [latitude, setLatitude] = useState<number>();
-  const [isGoogleMapsLoaded, setGoogleMapsLoaded] = useState<boolean>(false);
   const [walkableScore, setWalkableScore] = useState<number>();
   const [transitData, setTransitData] = useState<TransitData>();
   const [bikeData, setBikeData] = useState<BikeData>();
+  const mapRef = useRef<HTMLDivElement>();
+  const [nearbyTypes, setNearbyTypes] = useState<string>("restaurant");
+  // "school","restaurant","grocery_or_supermarket","night_club","cafe","shopping_mall","museum","beauty_salon","gym"
+  const [radius, setRadius] = useState<number>(1000);
+  const [mapZoom, setMapZoom] = useState<number>(16);
+  const [volatilityValue, setVolatilityValue] = useState<boolean>(false);
+  const [rentPrice, setRentPrice] = useState<any>();
+  const [salesProbability, setSalesProbability] = useState<any>();
 
-console.log(currentProperty)
   //retrieve the property with the given id from the database
   async function getProperty() {
     const propertyRef = collection(db,"presentListings")
@@ -181,6 +187,38 @@ async function getCrimeInfo(city:string, state:string) {
     setPredictedPrice(res.data.price);
   }
 
+  //now we hit the rent predict ML Model to get the rent trend of the property
+  async function getRentPrediction() {
+    const requestData:PriceTrendRequest = {
+      "bed": [parseInt(currentProperty?.beds as string)],
+      "bath": [parseInt(currentProperty?.baths as string)],
+      "acre_lot": [parseFloat(currentProperty?.lotSize as string)],
+      "street": [893593.0],
+      "city": [currentProperty?.city as string],
+      "state": [currentProperty?.state as string],
+      "house_size": [parseInt(currentProperty?.sqft as string)],
+      "zip_code": [parseInt(currentProperty?.zip as string)],
+    }
+    const res = await axios.post('http://127.0.0.1:8080/api/v1/rent-price',requestData);
+    setRentPrice(res.data.rent);
+  }
+
+//now we hit the sales probability ML Model to get the sales probability of the property
+  async function getSalesProbability() {
+    const requestData:PriceTrendRequest = {
+      "bed": [parseInt(currentProperty?.beds as string)],
+      "bath": [parseInt(currentProperty?.baths as string)],
+      "acre_lot": [parseFloat(currentProperty?.lotSize as string)],
+      "street": [893593.0],
+      "city": [currentProperty?.city as string],
+      "state": [currentProperty?.state as string],
+      "house_size": [parseInt(currentProperty?.sqft as string)],
+      "zip_code": [parseInt(currentProperty?.zip as string)],
+    }
+    const res = await axios.post('http://127.0.0.1:8080/api/v1/sales-probability',requestData);
+    setSalesProbability(res.data.probability);
+  }
+
   //now we hit the price-trend-bot API to get the price trend of the individual property
   async function getPriceTrend() {
     const requestData = {
@@ -203,26 +241,7 @@ async function getCrimeInfo(city:string, state:string) {
   }
 
   //getting the longitude & latitude of the property
-  useEffect(() => {
-    const initializeMap = () => {
-      if (!google.maps.Map){
-        return; 
-      }
-      setGoogleMapsLoaded(true);
-    };
 
-    if (!window.google) {
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async`;
-      script.async = true;
-      script.defer = true;
-      script.addEventListener("load", initializeMap); 
-      document.body.appendChild(script);
-    } else {
-        initializeMap(); // If Google Maps is already loaded
-    }
-  }, [currentProperty]);
   useEffect(() => {
     //geocode function
     const geocodeDestination = async (address: any): Promise<LocationData> => {
@@ -257,6 +276,82 @@ async function getCrimeInfo(city:string, state:string) {
 
   }, [currentProperty]);
 
+  useEffect(() => {
+    const initializeMap = () => {
+      if (!google.maps.Map){
+        return; 
+      }
+    const map = new google.maps.Map(mapRef.current as HTMLDivElement, {
+        zoom: mapZoom,
+        center: {
+          lat: latitude as number,
+          lng: longitude as number,
+        },
+        mapId: "Nearby Places",
+      });
+
+ 
+      const service = new google.maps.places.PlacesService(map);
+      const request: google.maps.places.PlaceSearchRequest = {
+        location: {
+          lat: latitude as number,
+          lng: longitude as number,
+        },
+        radius: radius,
+        type: nearbyTypes, // Assuming nearbyTypes is an array, select the first element
+      };
+
+      service.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results ) {
+          for (let i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+          }
+        }
+      });
+
+      function createMarker(place: google.maps.places.PlaceResult) {
+        if (!place.geometry || !place.geometry.location) return;
+      
+        const marker = new google.maps.Marker({
+          map,
+          position: place.geometry.location,
+          label: {
+            text: place.name ?? "",
+            color: "#4E5166",
+            fontSize: "12px",
+            fontWeight: "bold",
+          },
+        });
+      
+      }
+      
+
+      const marker = new google.maps.Marker({
+        position: {
+          lat: latitude as number,
+          lng: longitude as number,
+        },
+        map,
+        icon: {
+          url: "https://cdn-icons-png.flaticon.com/512/6830/6830146.png",
+          scaledSize: new google.maps.Size(40, 40),
+        },
+      });
+    };
+
+    if (!window.google) {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `https://maps.googleapis.com/maps/api/js?v=3.57&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", initializeMap); 
+      document.body.appendChild(script);
+    } else {
+        initializeMap(); // If Google Maps is already loaded
+    }
+  }, [latitude,longitude,nearbyTypes,radius,mapZoom]);
+  
   //now we get the walkability score of a property
   async function getWalkabilityScore() {
     const requestData = {
@@ -285,6 +380,18 @@ async function getCrimeInfo(city:string, state:string) {
         score: res.data.transitData.transit_score,
      });
     }
+
+    //function to check the volatility of the property
+    function checkVolatility() {
+      if (!currentProperty || !predictedPrice) {
+        return;
+      }
+      if (Math.abs(Number(currentProperty?.price) - predictedPrice) > 80000) {
+        setVolatilityValue(true);
+      } else {
+        setVolatilityValue(false);
+      }
+    }
    
   return (
     <div>
@@ -309,6 +416,14 @@ async function getCrimeInfo(city:string, state:string) {
         <div>
           <button className='bg-gray-300 p-3' onClick={getPricePrediction}>Get Price Prediction</button>
           <h1>{predictedPrice}</h1>
+        </div>
+        <div>
+          <button className='bg-gray-300 p-3' onClick={getRentPrediction}>Get Rent Prediction</button>
+          <h1>{rentPrice}</h1>
+        </div>
+        <div>
+          <button className='bg-gray-300 p-3' onClick={getSalesProbability}>Get Sales Probability</button>
+          <h1>{salesProbability}</h1>
         </div>
         <div>
           <button className='bg-gray-300 p-3' onClick={getPriceTrend}>Get Price Trend</button>
@@ -342,6 +457,29 @@ async function getCrimeInfo(city:string, state:string) {
           <h1>Transit Score: {transitData?.score}</h1>
         </div>
       </div>
+      <div>
+          <h2>Nearby Places</h2>
+          <div className="w-[350px] h-[600px] shadow-lg md:w-[700px] md:h-[550px] xl:w-[1000px] xl:h-[550px] 2xl:w-[1000px] 2xl:h-[550px]" ref={mapRef as  React.RefObject<HTMLDivElement>}></div>
+          {/* "school","restaurant","grocery_or_supermarket","night_club","cafe","shopping_mall","museum","beauty_salon","gym" */}
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("school")}>Schools</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("restaurant")}>Restaurants</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("grocery_or_supermarket")}>Grocery Stores</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("night_club")}>Night Clubs</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("cafe")}>Cafes</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("shopping_mall")}>Shopping Malls</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("museum")}>Museums</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("beauty_salon")}>Beauty Salons</button>
+          <button className='bg-blue-300 p-3' onClick={()=>setNearbyTypes("gym")}>Gyms</button>
+          <input type="number" value={radius} onChange={(e) => setRadius(parseInt(e.target.value))} />
+          {/* The map zoom input type should be replaced with a slide bar */}
+          <input type="number" value={mapZoom} onChange={(e) => setMapZoom(parseInt(e.target.value))} />
+        </div>
+        <div>
+          <button className='bg-gray-300' onClick={checkVolatility}>Volatility Check</button>
+          <h1>{volatilityValue ? `Yes, the property is volatile and has chances of profit making.` : `No, the property aligns with the normal price trend of the associated area.`}</h1>
+        </div>
     </div>
   )
 }
+
+
