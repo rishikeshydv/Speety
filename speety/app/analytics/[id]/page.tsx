@@ -2,7 +2,7 @@
 import { db } from '@/firebase/config';
 import axios from 'axios';
 import { set } from 'date-fns';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs,doc, getDoc } from 'firebase/firestore';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -518,6 +518,31 @@ async function getCrimeInfo(city:string, state:string) {
       setAirConditioningCost(0);
       setWaterBoilerCost(0);
     };
+
+    //logic for finding all the resale probability properties by state
+    const [resaleState, setResaleState] = useState<string>();
+    interface Property {
+      // Add index signature
+      [key: string]: any;
+      state: string;
+    }
+
+    const [resaleProperties, setResaleProperties] = useState<Property[]>();
+    async function getResaleProperties() {
+      const propertyRef = doc(db,"volatileProperties",resaleState as string);
+      const propertySnapshot = await getDoc(propertyRef)
+      if (propertySnapshot.exists()) {
+        const properties = propertySnapshot.data() as Property;
+        const propertyKeys = Object.keys(properties);
+        propertyKeys.forEach(key => {
+          const property = properties[key] as Property;
+          if (property.state === resaleState) {
+            setResaleProperties([...resaleProperties as Property[], property]);
+          }
+        })
+      }
+    }
+
    
   return (
     <div>
@@ -525,7 +550,7 @@ async function getCrimeInfo(city:string, state:string) {
         <h1>Welcome to Analytics</h1>
         <p>My property ID: {propertyId}</p>
         <div>
-          {currentProperty?.priceOverTime?.map((priceChange, index) => (
+          {currentProperty?.priceOverTime?.map((priceChange:any, index:any) => (
             <div key={index}>
               <p>Date: {priceChange.year}</p>
               <p>Price: {priceChange.price}</p>
@@ -675,6 +700,24 @@ async function getCrimeInfo(city:string, state:string) {
               </div>
             ):null
           }
+        </div>
+        <div>
+          <h1 > Get Resale Properties by State</h1>
+          <label htmlFor="abc">Enter State</label>
+          <input type="text" placeholder='enter a state' value={resaleState} onChange={(e)=>setResaleState(e.target.value)} />
+          <button className='bg-gray-300 p-3' onClick={getResaleProperties}>Get Properties</button>
+          <div>
+            {
+              resaleProperties?.map((property,index) => (
+                <div key={index}>
+                  <p>Address: {property.address}</p>
+                  <p>City: {property.city}</p>
+                  <p>State: {property.state}</p>
+                  <p>Price: {property.price}</p>
+                </div>
+              ))
+            }
+          </div>
         </div>
     </div>
   )

@@ -35,11 +35,11 @@ export default function NewsPost() {
     const router = useRouter()
     const uuid = uuidv4()
 
-    if (role){
-      if (role !== "admin") {
-          router.push("/auth/login")
-      }
-  }
+  //   if (role){
+  //     if (role !== "admin") {
+  //         router.push("/auth/login")
+  //     }
+  // }
 
     //form-data
     const [date, setDate] = useState<string>("")
@@ -69,9 +69,7 @@ export default function NewsPost() {
     , [user])
 
     async function publishNews(month:string) {
-        await getImageUrl(image as File).then((url)=>{
-            setImgUrl(url)
-        })
+
         const docData = {
             date: date,
             source: source,
@@ -183,7 +181,13 @@ export default function NewsPost() {
               <Textarea id="paragraph3" rows={3} placeholder="Summarize the key points..." onChange={(e)=>setParagraph3(e.target.value)}/>
             </div>
           </div>
-        <Input id="image" type="file" onChange={(e)=>setImage(e.target.files ? e.target.files[0] : null)}/>
+        <Input id="image" type="file" onChange={(e)=>{
+          const file = e.target.files![0]
+          setImage(file)
+          getImageUrl(file).then((url)=>{
+            setImgUrl(url)
+          })
+        }}/>
         <div className="grid gap-2">
               <Label htmlFor="header" className="text-sm font-medium">
                Month of the News

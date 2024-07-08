@@ -23,6 +23,7 @@ import { uuidv4 } from "@firebase/util";
 import { useRouter } from 'next/navigation';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import axios from 'axios';
 
 
 export default function PropertyPost() {
@@ -37,6 +38,8 @@ export default function PropertyPost() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
+  const [lotSize, setLotSize] = useState('');
+  const [sqft,setSqft]=useState('');
   const [listing, setListing] = useState('');
   const [brokerId, setBrokerId] = useState("");
   const [imgList,setImgList]=useState<File[]>([])
@@ -44,6 +47,9 @@ export default function PropertyPost() {
  const [vidList,setVidList]=useState<File[]>([])
  const [vidUrlList,setVidUrlList]=useState<string []>([])
  const [date, setDate] = useState("");
+ const [resaleProbability, setResaleProbability] = useState(false);
+ 
+ const [predictedPrice, setPredictedPrice] = useState(0);
 
  const [user] = useAuthState(auth);
  const _uniqueId = uuidv4()
@@ -119,6 +125,81 @@ export default function PropertyPost() {
 
 
   async function postDB() {
+      //here we do the resale probability test
+      //now we hit the price predict ML Model to get the price trend of the property
+    const requestData = {
+      "bed": [parseInt(beds as string)],
+      "bath": [parseInt(baths as string)],
+      "acre_lot": [parseFloat(lotSize as string)],
+      "street": [893593.0],
+      "city": [city as string],
+      "state": [state as string],
+      "house_size": [parseInt(sqft as string)],
+      "zip_code": [parseInt(zip as string)],
+    }
+    const res = await axios.post('http://127.0.0.1:8080/api/v1/predict-price',requestData);
+    setPredictedPrice(res.data.price);
+
+    //logic for resale probability
+    if (Math.abs(parseInt(price)-predictedPrice) > 80000) {
+      setResaleProbability(true);
+    }
+
+    //storing the property details in the database in the 'volatileProperties' collection
+    const volatileRef = doc(db, "volatileProperties",state);
+    const volatileSnapshot = await getDoc(volatileRef);
+    if(!volatileSnapshot.exists()){
+      await setDoc( volatileRef, {
+          // If the document doesn't exist, create a new one
+          //each property to have a unique id
+          //so when we have to assign a property to an agent, we can just assign him the unique id
+          //instead of the whole property details
+          //this makes it easy while querying
+        [`${_uniqueId}`]: {
+        price: price,
+        beds: beds,
+        baths: baths,
+        houseType: houseType,
+        transactionType: transaction,
+        address: address,
+        apartment: apartment,
+        city: city,
+        state: state,
+        zip: zip,
+        listedBy: listing,
+        brokerId:brokerId,
+        imageUrl: imgUrlList,
+        videoUrl:vidUrlList,
+        date:date,
+        resaleProbability:resaleProbability
+        }
+        });
+    }
+    else{
+      await updateDoc( volatileRef, {
+        // If the document already exists, update it
+        [`${_uniqueId}`]: {
+        price: price,
+        beds: beds,
+        baths: baths,
+        houseType: houseType,
+        transactionType: transaction,
+        address: address,
+        apartment: apartment,
+        city: city,
+        state: state,
+        zip: zip,
+        listedBy: listing,
+        brokerId:brokerId,
+        imageUrl: imgUrlList,
+        videoUrl:vidUrlList,
+        date:date,
+        resaleProbability:resaleProbability
+        }
+        });
+    }
+
+
         const receiverRef = collection(db, "presentListings");
         const receiverDocRef =  doc(receiverRef, user?.email as string);
         const receiverSnapshot = await getDoc(receiverDocRef);
@@ -144,7 +225,8 @@ export default function PropertyPost() {
             brokerId:brokerId,
             imageUrl: imgUrlList,
             videoUrl:vidUrlList,
-            date:date
+            date:date,
+            resaleProbability:resaleProbability
             } 
             });
           router.push('/post/successful');
