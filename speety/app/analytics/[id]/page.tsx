@@ -60,6 +60,18 @@ interface PriceTrendRequest {
   zip_code: number[];
 }
 
+interface SalesProbabilityRequest {
+  bed: number[];
+  bath: number[];
+  acre_lot: number[];
+  street: number[];
+  city: string[];
+  state: string[];
+  house_size: number[];
+  zip_code: number[];
+  price: number[];
+}
+
 interface DemographyType {
   average_household_size: number;
   city: string;
@@ -282,7 +294,7 @@ async function getCrimeInfo(city:string, state:string) {
 
   //now we hit the rent predict ML Model to get the rent trend of the property
   async function getRentPrediction() {
-    const requestData:PriceTrendRequest = {
+    const requestData:SalesProbabilityRequest = {
       "bed": [parseInt(currentProperty?.beds as string)],
       "bath": [parseInt(currentProperty?.baths as string)],
       "acre_lot": [parseFloat(currentProperty?.lotSize as string)],
@@ -291,6 +303,7 @@ async function getCrimeInfo(city:string, state:string) {
       "state": [currentProperty?.state as string],
       "house_size": [parseInt(currentProperty?.sqft as string)],
       "zip_code": [parseInt(currentProperty?.zip as string)],
+      "price": [parseInt(currentProperty?.price as string)],
     }
     const res = await axios.post('http://127.0.0.1:8080/api/v1/rent-price',requestData);
     setRentPrice(res.data.rent);
@@ -298,7 +311,7 @@ async function getCrimeInfo(city:string, state:string) {
 
 //now we hit the sales probability ML Model to get the sales probability of the property
   async function getSalesProbability() {
-    const requestData:PriceTrendRequest = {
+    const requestData:SalesProbabilityRequest = {
       "bed": [parseInt(currentProperty?.beds as string)],
       "bath": [parseInt(currentProperty?.baths as string)],
       "acre_lot": [parseFloat(currentProperty?.lotSize as string)],
@@ -307,6 +320,7 @@ async function getCrimeInfo(city:string, state:string) {
       "state": [currentProperty?.state as string],
       "house_size": [parseInt(currentProperty?.sqft as string)],
       "zip_code": [parseInt(currentProperty?.zip as string)],
+      "price": [parseInt(currentProperty?.price as string)],
     }
     const res = await axios.post('http://127.0.0.1:8080/api/v1/sales-probability',requestData);
     setSalesProbability(res.data.probability);
@@ -587,7 +601,7 @@ async function getCrimeInfo(city:string, state:string) {
           <input type="number" value={mapZoom} onChange={(e) => setMapZoom(parseInt(e.target.value))} />
         </div>
         <div>
-          <button className='bg-gray-300' onClick={checkVolatility}>Volatility Check</button>
+          <button className='bg-gray-300' onClick={checkVolatility}>Check Resale Potential</button>
           <h1>{volatilityValue ? `Yes, the property is volatile and has chances of profit making.` : `No, the property aligns with the normal price trend of the associated area.`}</h1>
         </div>
         {/* Cost Benefit Analysis is only done */}
@@ -656,7 +670,7 @@ async function getCrimeInfo(city:string, state:string) {
                   <h1>House Clean Cost:{houseCleanCost}</h1>
                   <h1>Air Conditioning Cost:{airConditioningCost}</h1>
                   <h1>Water Boiler Cost:{waterBoilerCost}</h1>
-                  <h1>Total Cost: {bathCost+kitchenCost+roofCost+houseCleanCost+airConditioningCost+waterBoilerCost}</h1>
+                  <h1>Repair Cost: {bathCost+kitchenCost+roofCost+houseCleanCost+airConditioningCost+waterBoilerCost}</h1>
                 </div>
               </div>
             ):null

@@ -213,7 +213,7 @@ async function getCrimeInfo() {
         </div>
 
         <div>
-            <h1>Volatility</h1>
+            <h1>Resale Potential Properties</h1>
             <p>{
                 volatileProperties ? Object.keys(volatileProperties).map((key:any, index:number)=>{
                     return <div key={index}>
