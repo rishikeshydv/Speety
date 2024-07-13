@@ -53,6 +53,7 @@
     "face-api.js": "^0.20.0",
     "firebase": "^10.7.1",
     "firebase-admin": "^12.1.1",
+    "framer-motion": "^11.3.2",
     "http": "^0.0.1-security",
     "lucide-react": "^0.330.0",
     "moment": "^2.30.1",

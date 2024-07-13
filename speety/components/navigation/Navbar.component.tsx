@@ -75,7 +75,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className="flex items-center justify-between px-1 md:px-20 py-5  bg-white shadow-md sticky top-0 z-10">
+      <nav className="flex items-center justify-between px-1 md:px-20 py-5  bg-white sticky top-0 z-10">
         <div className="logo">
           <Link href={"/"}>
             <Image
