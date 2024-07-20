@@ -39,8 +39,8 @@ module.exports = withPWA({
     images: {
     
         remotePatterns: [{
-            hostname: "images.unsplash.com"
-        }]
+            hostname: "*.unsplash.com"
+        }, ]
         
     }
 });
