@@ -7,6 +7,7 @@ import { ContainerScroll } from "../ui/container-scroll-animation";
 import { AnimatedTooltip } from "../ui/animated-tooltip";
 import Image from "next/image";
 import { CarouselHero } from "./CarouselHero";
+import { HowWeHelp } from "./HowWeHelp";
 
 const people = [
   {
@@ -138,7 +139,47 @@ export default function Sec1() {
           </div>
         </div>
 
-        <ContainerScroll titleComponent={<></>}>
+        <div className="w-full h-full flex flex-col pt-10 px-10">
+          <div className="title text-2xl lg:text-3xl 2xl:text-5xl font-bold text-gray-400 w-full flex items-start justify-center pt-10">
+            How &nbsp; <span className="text-[#004346]"> Scail </span> &nbsp;
+            Can Help You ?
+          </div>
+
+          <div className="flex flex-col w-full pt-20 lg:flex-row gap-y-5 items-center lg:items-start">
+            <div className="flex-[0.4] px-10 flex flex-col gap-y-8 items-center justify-center lg:items-start lg:justify-start">
+              <div className="main text-5xl font-bold tracking-wide">
+                Scail has its own tailored suite of software.
+              </div>
+
+              <div className="text-2xl font-light mt-5">
+                Equipped with best AI and modern tech stacks that will help your
+                business grow faster.
+              </div>
+
+              <button
+                className="bg-[#397367] hover:bg-gray-900 font-medium text-white px-8 py-2 rounded-[30px] shadow-lg md:h-12 2xl:h-14 flex items-center justify-center space-x-2 text-lg 2xl:text-lg mb-4 md:mb-10 max-w-[300px]"
+                onClick={loginDirect}
+              >
+                <span>Explore more</span>
+                <GrCaretNext className="font-medium" />
+              </button>
+            </div>
+
+            <div className="flex-[0.6]">
+              <HowWeHelp />
+            </div>
+          </div>
+        </div>
+
+        <ContainerScroll
+          titleComponent={
+            <div className="mb-5">
+              <div className="text-2xl lg:text-5xl font-bold text-gray-400">
+                Virtual Tour
+              </div>
+            </div>
+          }
+        >
           {/* Video */}
           <video
             className="h-full w-full overflow-hidden [background:linear-gradient(45deg,#172033,theme(colors.slate.800)_50%,#172033)_padding-box,conic-gradient(from_var(--border-angle),theme(colors.slate.300/.48)_80%,_theme(colors.green.500)_86%,_theme(colors.green.300)_90%,_theme(colors.green.500)_94%,_theme(colors.green.600/.48))_border-box] rounded-2xl border-4 border-transparent animate-border"
