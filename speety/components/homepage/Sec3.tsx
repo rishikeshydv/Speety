@@ -1,6 +1,8 @@
 /* eslint-disable */
 import React from "react";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
+import Image from "next/image";
+import { CiCircleCheck } from "react-icons/ci";
 
 interface IFeatures {
   title: string;
@@ -52,25 +54,44 @@ export default function Sec3() {
           Our Features
         </h1>
       </div>
-      {/* The div following would create 3 features of the app */}
-      <section className="flex gap-x-5 gap-y-5 px-5 flex-col md:flex-row py-8">
-        {features.map((item, key) => (
-          <Card className="cursor-pointer flex flex-col items-center gap-4 p-3 md:px-6 py-16 shadow-md border-muted bg-[#A2D3C2] bg-opacity-20 hover:bg-opacity-30 w-1/3">
-            <img
-              src={item.image}
-              alt="Feature image"
-              className="w-10 h-10 xl:w-40 xl:h-40 2xl:w-24 2xl:h-24"
-              key={key + "_features_card"}
-            />
-            <CardTitle className="xl:text-2xl 2xl:text-2xl">
-              {item.title}
-            </CardTitle>
-            <CardDescription className="xl:px-6 2xl:px-6 xl:text-center 2xl:text-center text-xs xl:text-lg 2xl:text-lg">
-              {item.description}
-            </CardDescription>
-          </Card>
-        ))}
-      </section>
+      <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+        <div className="aspect-w-16 aspect-h-7">
+          <img
+            className="w-full h-[40vh] object-cover rounded-xl"
+            src="https://images.unsplash.com/photo-1624571409412-1f253e1ecc89?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
+            alt="Image Description"
+          />
+        </div>
+
+        <div className="mt-5 lg:mt-16 grid lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="lg:col-span-1">
+            <h2 className="font-bold text-2xl md:text-3xl text-gray-800">
+              What features do we offer ?
+            </h2>
+            <p className="mt-2 md:mt-4 text-gray-500">
+              Besides working with start-up enterprises as a partner for
+              digitalization, we have built enterprise products for common pain
+              points that we have encountered in various products and projects.
+            </p>
+          </div>
+
+          <div className="lg:col-span-2">
+            <div className="grid sm:grid-cols-2 gap-8 md:gap-12">
+              {features.map((item, key) => (
+                <div className="flex gap-x-5" key={key}>
+                  <div className="grow">
+                    <h3 className="text-lg font-semibold text-gray-800 flex gap-x-5 items-center">
+                      <CiCircleCheck size={25} />
+                      {item.title}
+                    </h3>
+                    <p className="mt-1 text-gray-600">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

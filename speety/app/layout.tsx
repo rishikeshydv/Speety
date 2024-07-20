@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navigation";
+import PrelineScript from "@/components/PrelineLoader";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Navbar />
         {children}
+        <PrelineScript />
       </body>
     </html>
   );
