@@ -1,4 +1,5 @@
-# Scail [Link to Website](https://www.scail.it/)
+# Scail
+##### [Link to Website](https://www.scail.it/)
 
 Scail is a highly secure, interactive, and modern real estate application designed to facilitate seamless interactions between clients and brokers. Utilizing advanced technologies such as Typescript, ReactJS, NextJS, Firebase, AWS Amplify, Rust, Tensorflow, and Keras, Scail offers real-time communication, AI-powered analytics, and robust security features.
 
