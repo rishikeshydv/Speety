@@ -11,9 +11,7 @@ import { Input } from "@/components/ui/input"
 import poppins from "@/font/font";
 import Footer from "@/components/Footer";
 import { useParams } from 'next/navigation';
-import Image from 'next/image';
 import ListingCard from "@/services/agent/ListingCard";
-import Header from "@/components/Header"
 import { Textarea } from "@/components/ui/textarea"
 import { useState,useEffect, useRef } from "react"
 import { collection,getDoc,doc, setDoc, updateDoc} from "firebase/firestore"; 
@@ -197,7 +195,6 @@ async function updateProfile(){
 
   return (
     <div className={`${poppins.className}`}>
-<Header/>
         <div className="flex flex-col items-center bg-gray-200">
     <Card className="w-full max-w-7xl mt-8 mb-8 shadow-md">
       <CardHeader>

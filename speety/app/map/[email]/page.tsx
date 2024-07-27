@@ -173,6 +173,9 @@ const LocationMap = () => {
         return; 
       }
 
+      if(!googlemap.current) return;
+
+
       const map = new google.maps.Map(googlemap.current as HTMLDivElement, {
         zoom: 4,
         center: position1.current,

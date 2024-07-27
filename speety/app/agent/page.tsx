@@ -164,6 +164,8 @@ export default function Agent() {
         return; 
       }
 
+      if(!googlemap.current) return;
+
       const _autocomplete = new window.google.maps.places.Autocomplete(
         document.getElementById('autocomplete') as HTMLInputElement
         );
