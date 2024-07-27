@@ -18,7 +18,7 @@ export default function Sec1() {
       <section>
         {/* Text */}
         {/* Logo and Get Started Button */}
-        <div className="flex flex-row justify-between mt-2 xl:mt-10 xl:mb-10 xl:mr-4 2xl:mt-10 2xl:mb-10 2xl:mr-6">
+        {/* <div className="flex flex-row justify-between mt-2 xl:mt-10 xl:mb-10 xl:mr-4 2xl:mt-10 2xl:mb-10 2xl:mr-6">
           <img
             src="/speety_logo.png"
             alt="Speety Logo"
@@ -40,9 +40,9 @@ export default function Sec1() {
             <IoDocumentText className="xl:w-4 md:h-4"/>
           </button>
           </div>
-        </div>
+        </div> */}
 
-<div className="flex items-center justify-center">
+<div className="flex items-center justify-center mt-10">
         {/* Rolling text, slogan, and get started button */}
         <div className="flex flex-col justify-center items-center px-6 md:px-16 mt-6 xl:mt-0 2xl:mt-0">
   <button className="text-[#508991] py-1 px-4 border border-blue-200 border-opacity-20 text-xs md:text-lg font-semibold tracking-tighter xl:mb-10 2xl:mb-10">

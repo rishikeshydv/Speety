@@ -320,6 +320,9 @@ async function checkRequestStatus(senderEmail:string, receiverEmail:string) {
         return; 
       }
 
+      if(!googlemap.current) return;
+
+
 //setting center as new york
       const map = new google.maps.Map(googlemap.current as HTMLDivElement, {
         zoom: 4,
